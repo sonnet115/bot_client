@@ -7,8 +7,6 @@ use App\Http\Controllers\Controller;
 use App\PaymentInfo;
 use App\Shop;
 use App\User;
-use DateInterval;
-use DateTime;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -64,6 +62,7 @@ class PageController extends Controller
                             'page_contact' => $page_contact,
                             'page_likes' => $pages_details['data'][$i]['fan_count'],
                             'is_published' => $pages_details['data'][$i]['is_published'],
+                            'page_subscription_status' => 1,
                             'is_webhooks_subscribed' => $pages_details['data'][$i]['is_webhooks_subscribed'],
                             'page_username' => $page_username,
                             'page_address' => $page_address,
@@ -76,11 +75,13 @@ class PageController extends Controller
                         //page is already in database. So update page status
                         $this->updatePageConnectionStatus(null, $pages_details['data'][$i]['id'], true);
                     }
-                    $page_access_token = $pages_details['data'][$i]['access_token'];
-                    $webhook_fields = json_decode($this->addFieldsToWebhook($page_access_token, $pages_details['data'][$i]['id']));
-                    $get_started_button = json_decode($this->addGetStartedButton($page_access_token));
-                    $persistent_menu = json_decode($this->addPersistentMenu($page_access_token));
-                    $white_listed_domain = json_decode($this->addWhiteListedDomains($page_access_token));
+                    if ($this->checkSubscriptionStatus($pages_details['data'][$i]['id'])) {
+                        $page_access_token = $pages_details['data'][$i]['access_token'];
+                        $webhook_fields = json_decode($this->addFieldsToWebhook($page_access_token, $pages_details['data'][$i]['id']));
+                        $get_started_button = json_decode($this->addGetStartedButton($page_access_token));
+                        $persistent_menu = json_decode($this->addPersistentMenu($page_access_token));
+                        $white_listed_domain = json_decode($this->addWhiteListedDomains($page_access_token));
+                    }
                 }
                 $this->updatePageAddedStatus($user_id, $long_lived_user_access_token, true);
             }
@@ -89,6 +90,16 @@ class PageController extends Controller
             return response()->json("failed");
         }
 
+    }
+
+    function checkSubscriptionStatus($page_id)
+    {
+        $status = Shop::where('page_id', $page_id)->where('page_subscription_status')->first();
+        if ($status) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     function updatePageConnectionStatus($user_id, $page_id, $page_connection_status)
@@ -123,7 +134,7 @@ class PageController extends Controller
     function startTrailPeriod($page_id)
     {
         $start_date = date('Y-m-d'); // Y-m-d
-        $end_date = date('Y-m-d', strtotime($start_date. ' + 10 days'));
+        $end_date = date('Y-m-d', strtotime($start_date . ' + 10 days'));
 
         Billing::create([
             'page_id' => $page_id,
@@ -160,7 +171,8 @@ class PageController extends Controller
         return datatables(Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1))->toJson();
     }
 
-    function storePaymentInfo(Request $request){
+    function storePaymentInfo(Request $request)
+    {
         PaymentInfo::create($request->all());
         return response()->json('Success');
     }
