@@ -122,4 +122,14 @@ class DiscountController extends Controller
         return redirect(route('discount.manage.view'));
     }
 
+    public function filterProductByShop(Request $request)
+    {
+        $shop_id = $request->shop_id;
+        if ($shop_id != 0) {
+            return response()->json(Product::selectRaw("id, name")->whereRaw('shop_id=' . $shop_id)->get());
+        } else {
+            return response()->json(null);
+        }
+    }
+
 }

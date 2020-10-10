@@ -43,7 +43,15 @@ class OrderController extends Controller
             $order->where('shop_id', '=', request('shop_id'));
         }
 
-        return datatables($order->orderBy('created_at', 'desc')->with('status_updated_by'))->toJson();
+        //only logged users orders
+        $shops = Shop::select('id')->where('page_owner_id', auth()->user()->user_id)->get();
+        $shops_id = array();
+        foreach ($shops as $key => $value) {
+            array_push($shops_id, $value['id']);
+        }
+        $order->whereIn('shop_id', $shops_id);
+
+        return datatables($order->where('')->orderBy('created_at', 'desc')->with('status_updated_by'))->toJson();
     }
 
     public function getOrdersDetails(Request $request)
