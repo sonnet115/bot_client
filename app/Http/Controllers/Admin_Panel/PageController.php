@@ -8,6 +8,7 @@ use App\PaymentInfo;
 use App\Shop;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PageController extends Controller
 {
@@ -75,12 +76,18 @@ class PageController extends Controller
                         //page is already in database. So update page status
                         $this->updatePageConnectionStatus(null, $pages_details['data'][$i]['id'], true);
                     }
+                    Log::channel('page_add')->info('subscription_status [' . $pages_details['data'][$i]['id'] . ']:' . $this->checkSubscriptionStatus($pages_details['data'][$i]['id']));
                     if ($this->checkSubscriptionStatus($pages_details['data'][$i]['id'])) {
                         $page_access_token = $pages_details['data'][$i]['access_token'];
                         $webhook_fields = json_decode($this->addFieldsToWebhook($page_access_token, $pages_details['data'][$i]['id']));
                         $get_started_button = json_decode($this->addGetStartedButton($page_access_token));
                         $persistent_menu = json_decode($this->addPersistentMenu($page_access_token));
-                        $white_listed_domain = json_decode($this->addWhiteListedDomains($page_access_token));
+                        $white_listed_domain = $this->addWhiteListedDomains($page_access_token);
+
+                        Log::channel('page_add')->info('whitelist_domain [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($white_listed_domain));
+                        Log::channel('page_add')->info('persistent_menu [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($persistent_menu));
+                        Log::channel('page_add')->info('get_started_button [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($get_started_button));
+                        Log::channel('page_add')->info('webhook_fields [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($webhook_fields) . PHP_EOL);
                     }
                 }
                 $this->updatePageAddedStatus($user_id, $long_lived_user_access_token, true);
@@ -94,7 +101,7 @@ class PageController extends Controller
 
     function checkSubscriptionStatus($page_id)
     {
-        $status = Shop::where('page_id', $page_id)->where('page_subscription_status')->first();
+        $status = Shop::where('page_id', $page_id)->where('page_subscription_status', '=', 1)->first();
         if ($status) {
             return true;
         } else {
@@ -278,7 +285,7 @@ class PageController extends Controller
     {
         $request_body = '{
                             "whitelisted_domains": [
-                                "' . env("APP_URL") . '"
+                                "' . env('WHITELIST_DOMAIN') . '"
                             ]
                         }';
 
