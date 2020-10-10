@@ -51,7 +51,7 @@ class OrderController extends Controller
         }
         $order->whereIn('shop_id', $shops_id);
 
-        return datatables($order->where('')->orderBy('created_at', 'desc')->with('status_updated_by'))->toJson();
+        return datatables($order->orderBy('created_at', 'desc')->with('status_updated_by'))->toJson();
     }
 
     public function getOrdersDetails(Request $request)
