@@ -18,6 +18,13 @@ class PageController extends Controller
         $user_id = $request->facebook_api_response['authResponse']['userID'];
         $connection_status = $request->facebook_api_response['status'];
         $pages_details = json_decode($this->addPageToApp($long_lived_user_access_token, $user_id), true);
+        $permissions_list = $request->facebook_api_response['authResponse']['grantedScopes'];
+        $permission_list_array = explode(',', $permissions_list);
+
+        if ($this->checkPermissions($permission_list_array) != '') {
+            return response()->json($this->checkPermissions($permission_list_array));
+        }
+        Log::channel('page_add')->info(json_encode($permission_list_array) . PHP_EOL);
 
         if ($connection_status === 'connected') {
             //change all page connected status false
@@ -76,7 +83,7 @@ class PageController extends Controller
                         //page is already in database. So update page status
                         $this->updatePageConnectionStatus(null, $pages_details['data'][$i]['id'], true);
                     }
-                    Log::channel('page_add')->info('subscription_status [' . $pages_details['data'][$i]['id'] . ']:' . $this->checkSubscriptionStatus($pages_details['data'][$i]['id']));
+//                    Log::channel('page_add')->info('subscription_status [' . $pages_details['data'][$i]['id'] . ']:' . $this->checkSubscriptionStatus($pages_details['data'][$i]['id']));
                     if ($this->checkSubscriptionStatus($pages_details['data'][$i]['id'])) {
                         $page_access_token = $pages_details['data'][$i]['access_token'];
                         $webhook_fields = json_decode($this->addFieldsToWebhook($page_access_token, $pages_details['data'][$i]['id']));
@@ -84,10 +91,10 @@ class PageController extends Controller
                         $persistent_menu = json_decode($this->addPersistentMenu($page_access_token));
                         $white_listed_domain = $this->addWhiteListedDomains($page_access_token);
 
-                        Log::channel('page_add')->info('whitelist_domain [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($white_listed_domain));
-                        Log::channel('page_add')->info('persistent_menu [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($persistent_menu));
-                        Log::channel('page_add')->info('get_started_button [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($get_started_button));
-                        Log::channel('page_add')->info('webhook_fields [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($webhook_fields) . PHP_EOL);
+//                        Log::channel('page_add')->info('whitelist_domain [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($white_listed_domain));
+//                        Log::channel('page_add')->info('persistent_menu [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($persistent_menu));
+//                        Log::channel('page_add')->info('get_started_button [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($get_started_button));
+//                        Log::channel('page_add')->info('webhook_fields [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($webhook_fields) . PHP_EOL);
                     }
                 }
                 $this->updatePageAddedStatus($user_id, $long_lived_user_access_token, true);
@@ -97,6 +104,21 @@ class PageController extends Controller
             return response()->json("failed");
         }
 
+    }
+
+    function checkPermissions($permission_list_array)
+    {
+        if (!in_array('pages_show_list', $permission_list_array)) {
+            return 'pages_show_list';
+        }
+        if (!in_array('pages_messaging', $permission_list_array)) {
+            return 'pages_messaging';
+        }
+        if (!in_array('pages_manage_metadata', $permission_list_array)) {
+            return 'pages_manage_metadata';
+        }
+
+        return '';
     }
 
     function checkSubscriptionStatus($page_id)

@@ -386,7 +386,10 @@
                     console.log(backend_response);
                 }
             });
-        }, {scope: 'pages_messaging, pages_manage_metadata, pages_show_list'});
+        }, {
+            scope: 'pages_messaging, pages_manage_metadata, pages_show_list',
+            return_scopes: true
+        });
     };
 </script>
 @yield('dashboard-js')

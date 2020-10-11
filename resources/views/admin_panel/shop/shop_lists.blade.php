@@ -6,6 +6,7 @@
         }
     </style>
 @endsection
+
 @section("main_content")
     <!-- Container -->
     <div class="container mt-xl-20 mt-sm-30 mt-15">
@@ -40,6 +41,36 @@
         <!-- /Row -->
     </div>
     <!-- /Container -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="message_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="text-center text-secondary">Page Management</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="message">
+                    <p class="text-center"><span class="text-warning"><i class="fa fa-exclamation-triangle"></i></span>
+                        You have declined <span class="text-danger">'Show a list of the Pages you manage'</span>
+                        permissions.
+                        Our application needs this permission to work properly.
+                    </p>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <button class="btn btn-sm btn-success" onclick="connectDisconnectPage()">
+                                <i class="fa fa-check-circle"></i> Give Permission
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section("product-js")
     <script src={{asset("assets/admin_panel/vendors/datatables.net/js/jquery.dataTables.min.js")}}></script>
@@ -109,10 +140,24 @@
 @section("shop-js")
     <script>
         function connectDisconnectPage() {
+            // $("#message_modal").modal(
+            //     {
+            //         backdrop: 'static',
+            //         keyboard: false,
+            //         show: true
+            //     }
+            // );
             FB.login(function (response) {
                 console.log(response);
-                let connect_text_container = $(".connect_text");
-                connect_text_container.html('Please Wait...')
+                $("#message_modal").modal(
+                    {
+                        backdrop: 'static',
+                        keyboard: false,
+                        show: true
+                    }
+                );
+                $("#message").html('<p class="text-center"><i class="fa fa-save"></i> Please Wait...</p>');
+
                 $.ajax({
                     type: "GET",
                     url: "{{route('page.store')}}",
@@ -120,21 +165,95 @@
                         facebook_api_response: response
                     },
                     success: function (backend_response) {
-                        if (backend_response === 'success') {
-                            connect_text_container.html("Completed!");
-                        } else if (backend_response === 'no_page_added') {
-                            connect_text_container.html('All Pages Removed. Connect Page Again!');
-                        } else {
-                            connect_text_container.html('Something went wrong! Try Again.');
-                        }
-                        setTimeout(function () {
-                            window.location.reload(true);
-                        }, 1000);
+                        $("#message").html(message(backend_response));
+                        // setTimeout(function () {
+                        //     window.location.reload(true);
+                        // }, 1000);
                         console.log(backend_response);
                     }
                 });
-            }, {scope: 'pages_messaging, pages_manage_metadata, pages_show_list'});
-        };
+            }, {
+                scope: 'pages_messaging, pages_manage_metadata, pages_show_list',
+                return_scopes: true
+            });
+        }
+
+        function message(backend_response) {
+            if (backend_response === 'success') {
+                return '<p class="text-center text-success font-15"><i class="fa fa-check"></i> Done</p>' +
+                    '   <div class="row">\n' +
+                    '       <div class="col-12 text-center">\n' +
+                    '            <button class="btn btn-sm btn-success" data-dismiss="modal">\n' +
+                    '                     <i class="fa fa-check-circle"></i> Close\n' +
+                    '            </button>\n' +
+                    '       </div>\n' +
+                    '   </div>';
+            } else if (backend_response === 'no_page_added') {
+                return '  <p class="text-center text-danger"><i class="fa fa-times"></i> You have disconnected all your pages!\n' +
+                    '     </p>\n' +
+                    '     <hr>\n' +
+                    '     <div class="row">\n' +
+                    '          <div class="col-6 text-left">\n' +
+                    '               <button class="btn btn-sm btn-success" onclick="connectDisconnectPage()">Connect</button>\n' +
+                    '          </div>\n' +
+                    '          <div class="col-6 text-right">\n' +
+                    '               <button class="btn btn-sm btn-danger" data-dismiss="modal">Close</button>\n' +
+                    '          </div>\n' +
+                    '     </div>';
+            } else if (backend_response === 'pages_show_list') {
+                return '<p class="text-center"><span class="text-warning"><i class="fa fa-exclamation-triangle"></i></span>\n' +
+                    '                        You have declined <span class="text-danger">"Show a list of the Pages you manage"</span>\n' +
+                    '                        permissions.\n' +
+                    '                        Our application needs this permission to work properly.\n' +
+                    '  </p>\n' +
+                    '  <hr>\n' +
+                    '  <div class="row">\n' +
+                    '       <div class="col-12 text-center">\n' +
+                    '            <button class="btn btn-sm btn-success" onclick="connectDisconnectPage()">\n' +
+                    '                     <i class="fa fa-check-circle"></i> Give Permission\n' +
+                    '            </button>\n' +
+                    '       </div>\n' +
+                    '  </div>';
+            } else if (backend_response === 'pages_messaging') {
+                return '<p class="text-center"><span class="text-warning"><i class="fa fa-exclamation-triangle"></i></span>\n' +
+                    '                        You have declined <span class="text-danger">"Manage and access Page conversations in Messenger"</span>\n' +
+                    '                        permissions.\n' +
+                    '                        Our application needs this permission to work properly.\n' +
+                    '  </p>\n' +
+                    '  <hr>\n' +
+                    '  <div class="row">\n' +
+                    '       <div class="col-12 text-center">\n' +
+                    '            <button class="btn btn-sm btn-success" onclick="connectDisconnectPage()">\n' +
+                    '                     <i class="fa fa-check-circle"></i> Give Permission\n' +
+                    '            </button>\n' +
+                    '       </div>\n' +
+                    '  </div>'
+            } else if (backend_response === 'pages_manage_metadata') {
+                return '<p class="text-center"><span class="text-warning"><i class="fa fa-exclamation-triangle"></i></span>\n' +
+                    '                        You have declined <span class="text-danger">"Manage accounts, settings, and webhooks for a Page"</span>\n' +
+                    '                        permissions.\n' +
+                    '                        Our application needs this permission to work properly.\n' +
+                    '  </p>\n' +
+                    '  <hr>\n' +
+                    '  <div class="row">\n' +
+                    '       <div class="col-12 text-center">\n' +
+                    '            <button class="btn btn-sm btn-success" onclick="connectDisconnectPage()">\n' +
+                    '                     <i class="fa fa-check-circle"></i> Give Permission\n' +
+                    '            </button>\n' +
+                    '       </div>\n' +
+                    '  </div>'
+            } else {
+                return '<p class="text-center text-success"><i class="fa fa-times"></i> Could not complete your request. Please try again!</p>' +
+                    '     <div class="row">\n' +
+                    '          <div class="col-6 text-left">\n' +
+                    '               <button class="btn btn-sm btn-success" onclick="connectDisconnectPage()">Try Again</button>\n' +
+                    '          </div>\n' +
+                    '          <div class="col-6 text-right">\n' +
+                    '               <button class="btn btn-sm btn-danger" data-dismiss="modal">Close</button>\n' +
+                    '          </div>\n' +
+                    '     </div>';
+            }
+        }
     </script>
 @endsection
 
