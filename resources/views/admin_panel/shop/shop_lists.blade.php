@@ -17,6 +17,10 @@
                 <section class="hk-sec-wrapper">
                     <div class="row">
                         <div class="col-sm">
+                            <div class="text-center">
+                                <button class="btn btn-success btn-rounded" onclick="connectDisconnectPage()"><i class="fa fa-facebook"></i> Connect Facebook Page</button>
+                            </div>
+                            <hr>
                             <span class="font-18 connect_text text-primary"></span>
                             @if(Session::has('success_message'))
                                 <p class="text-center alert {{ Session::get('alert-class', 'alert-success') }}">{{ Session::get('success_message') }}</p>
@@ -54,19 +58,7 @@
                     </button>
                 </div>
                 <div class="modal-body" id="message">
-                    <p class="text-center"><span class="text-warning"><i class="fa fa-exclamation-triangle"></i></span>
-                        You have declined <span class="text-danger">'Show a list of the Pages you manage'</span>
-                        permissions.
-                        Our application needs this permission to work properly.
-                    </p>
-                    <hr>
-                    <div class="row">
-                        <div class="col-12 text-center">
-                            <button class="btn btn-sm btn-success" onclick="connectDisconnectPage()">
-                                <i class="fa fa-check-circle"></i> Give Permission
-                            </button>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -93,7 +85,7 @@
     <script>
         $(document).ready(function () {
             $('#user_list_table').DataTable({
-                dom: 'frtip',
+                dom: 'rtip',
                 responsive: true,
                 "language": {
                     "processing": "Loading. Please wait..."
@@ -139,14 +131,12 @@
 
 @section("shop-js")
     <script>
+        $(document).ready(function (){
+            $('#message_modal').on('hidden.bs.modal', function () {
+                window.location.reload(true);
+            })
+        });
         function connectDisconnectPage() {
-            // $("#message_modal").modal(
-            //     {
-            //         backdrop: 'static',
-            //         keyboard: false,
-            //         show: true
-            //     }
-            // );
             FB.login(function (response) {
                 console.log(response);
                 $("#message_modal").modal(
@@ -166,9 +156,6 @@
                     },
                     success: function (backend_response) {
                         $("#message").html(message(backend_response));
-                        // setTimeout(function () {
-                        //     window.location.reload(true);
-                        // }, 1000);
                         console.log(backend_response);
                     }
                 });
@@ -180,9 +167,10 @@
 
         function message(backend_response) {
             if (backend_response === 'success') {
-                return '<p class="text-center text-success font-15"><i class="fa fa-check"></i> Done</p>' +
+                return '<p class="text-center text-success font-15"><i class="fa fa-check"></i> Completed</p>' +
+                    '   <hr>' +
                     '   <div class="row">\n' +
-                    '       <div class="col-12 text-center">\n' +
+                    '       <div class="col-12 text-right">\n' +
                     '            <button class="btn btn-sm btn-success" data-dismiss="modal">\n' +
                     '                     <i class="fa fa-check-circle"></i> Close\n' +
                     '            </button>\n' +

@@ -21,9 +21,12 @@ class PageController extends Controller
         $permissions_list = $request->facebook_api_response['authResponse']['grantedScopes'];
         $permission_list_array = explode(',', $permissions_list);
 
-        if ($this->checkPermissions($permission_list_array) != '') {
+        if ($this->checkPermissions($permission_list_array) != '' && count($permission_list_array) > 2) {
+            $this->updatePageAddedStatus($user_id, $long_lived_user_access_token, false);
+            $this->updatePageConnectionStatus($user_id, null, false);
             return response()->json($this->checkPermissions($permission_list_array));
         }
+
         Log::channel('page_add')->info(json_encode($permission_list_array) . PHP_EOL);
 
         if ($connection_status === 'connected') {
