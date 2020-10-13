@@ -1,5 +1,10 @@
 @extends("admin_panel.main")
-@section("product-css")
+@section("billing-css")
+    <link href={{asset("assets/admin_panel/vendors/datatables.net-dt/css/jquery.dataTables.min.css")}} rel="stylesheet"
+          type="text/css"/>
+    <link
+        href={{asset("assets/admin_panel/vendors/datatables.net-responsive-dt/css/responsive.dataTables.min.css")}} rel="stylesheet"
+        type="text/css"/>
     <style>
         .pagination {
             display: block !important;
@@ -8,8 +13,21 @@
         td {
             font-size: 11px !important;
         }
+
+        #user_list_table_length {
+            margin-right: 10px;
+        }
+
+        .dataTables_filter {
+            margin-top: -10px;
+        }
+
+        .dataTables_filter label {
+            text-align: left;
+        }
     </style>
 @endsection
+
 @section("main_content")
     <!-- Container -->
     <div class="container mt-xl-20 mt-sm-30 mt-15">
@@ -99,17 +117,17 @@
 
 @section("billing-js")
     <script src={{asset("assets/admin_panel/vendors/datatables.net/js/jquery.dataTables.min.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/datatables.net-bs4/js/dataTables.bootstrap4.min.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/datatables.net-dt/js/dataTables.dataTables.min.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/datatables.net-buttons/js/dataTables.buttons.min.js")}}></script>
-    <script
-        src={{asset("assets/admin_panel/vendors/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/datatables.net-buttons/js/buttons.flash.min.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/jszip/dist/jszip.min.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/pdfmake/build/pdfmake.min.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/pdfmake/build/vfs_fonts.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/datatables.net-buttons/js/buttons.html5.min.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/datatables.net-buttons/js/buttons.print.min.js")}}></script>
+    {{--    <script src={{asset("assets/admin_panel/vendors/datatables.net-bs4/js/dataTables.bootstrap4.min.js")}}></script>--}}
+    {{--    <script src={{asset("assets/admin_panel/vendors/datatables.net-dt/js/dataTables.dataTables.min.js")}}></script>--}}
+    {{--    <script src={{asset("assets/admin_panel/vendors/datatables.net-buttons/js/dataTables.buttons.min.js")}}></script>--}}
+    {{--    <script--}}
+    {{--        src={{asset("assets/admin_panel/vendors/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js")}}></script>--}}
+    {{--    <script src={{asset("assets/admin_panel/vendors/datatables.net-buttons/js/buttons.flash.min.js")}}></script>--}}
+    {{--    <script src={{asset("assets/admin_panel/vendors/jszip/dist/jszip.min.js")}}></script>--}}
+    {{--    <script src={{asset("assets/admin_panel/vendors/pdfmake/build/pdfmake.min.js")}}></script>--}}
+    {{--    <script src={{asset("assets/admin_panel/vendors/pdfmake/build/vfs_fonts.js")}}></script>--}}
+    {{--    <script src={{asset("assets/admin_panel/vendors/datatables.net-buttons/js/buttons.html5.min.js")}}></script>--}}
+    {{--    <script src={{asset("assets/admin_panel/vendors/datatables.net-buttons/js/buttons.print.min.js")}}></script>--}}
     <script
         src={{asset("assets/admin_panel/vendors/datatables.net-responsive/js/dataTables.responsive.min.js")}}></script>
     <script src={{asset("assets/admin_panel/dist/js/dataTables-data.js")}}></script>
@@ -229,20 +247,3 @@
         }
     </script>
 @endsection
-
-@section("custom_css")
-    <style>
-        #user_list_table_length {
-            margin-right: 10px;
-        }
-
-        .dataTables_filter {
-            margin-top: -10px;
-        }
-
-        .dataTables_filter label {
-            text-align: left;
-        }
-    </style>
-@endsection
-+
