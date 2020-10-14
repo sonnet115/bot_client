@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title>{{$title}}</title>
-    <meta name="description" content="A responsive bootstrap 4 admin dashboard template by hencework"/>
+    <meta name="description" content="Messenger Automation System"/>
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{asset("assets/admin_panel/dist/img/favicon.ico")}}">
