@@ -17,29 +17,37 @@
 {{--    <link href={{asset("assets/admin_panel/vendors/apexcharts/dist/apexcharts.html")}} rel="stylesheet"--}}
 {{--          type="text/css"/>--}}
 
-    <!-- Toggles CSS -->
+<!-- Toggles CSS -->
 {{--    <link href={{asset("assets/admin_panel/vendors/jquery-toggles/css/toggles.css")}} rel="stylesheet"--}}
 {{--          type="text/css">--}}
 
-    <!-- Toaster CSS -->
-{{--    <link--}}
-{{--        href={{asset("assets/admin_panel/vendors/jquery-toast-plugin/dist/jquery.toast.min.css")}} rel="stylesheet"--}}
-{{--        type="text/css">--}}
+<!-- Toaster CSS -->
+    {{--    <link--}}
+    {{--        href={{asset("assets/admin_panel/vendors/jquery-toast-plugin/dist/jquery.toast.min.css")}} rel="stylesheet"--}}
+    {{--        type="text/css">--}}
 
     <link href={{asset("assets/admin_panel/vendors/bootstrap/dist/css/bootstrap.min.css")}} rel="stylesheet"
           type="text/css">
-{{--    <link--}}
-{{--        href={{asset("assets/admin_panel/vendors/owl.carousel/dist/assets/owl.carousel.min.css")}} rel="stylesheet"--}}
-{{--        type="text/css">--}}
-{{--    <link--}}
-{{--        href={{asset("assets/admin_panel/vendors/owl.carousel/dist/assets/owl.theme.default.min.css")}} rel="stylesheet"--}}
-{{--        type="text/css">--}}
+    {{--    <link--}}
+    {{--        href={{asset("assets/admin_panel/vendors/owl.carousel/dist/assets/owl.carousel.min.css")}} rel="stylesheet"--}}
+    {{--        type="text/css">--}}
+    {{--    <link--}}
+    {{--        href={{asset("assets/admin_panel/vendors/owl.carousel/dist/assets/owl.theme.default.min.css")}} rel="stylesheet"--}}
+    {{--        type="text/css">--}}
 
 
-    <!-- Custom CSS -->
+<!-- Custom CSS -->
     <link href={{asset("assets/admin_panel/dist/css/style.css")}} rel="stylesheet" type="text/css">
     <link href={{asset("assets/admin_panel/dist/css/custom.css")}} rel="stylesheet" type="text/css">
+    <style>
+        .select2-selection__choice {
+            color: black !important;
+        }
 
+        .select2-selection__choice__remove {
+            color: black !important;
+        }
+    </style>
     @yield("dashboard_css")
     @yield("product-css")
     @yield("user-css")
@@ -47,6 +55,7 @@
     @yield("order-css")
     @yield("billing-css")
     @yield("shop-list-css")
+    @yield("profile-css")
     @yield("custom_css")
 </head>
 
@@ -65,7 +74,7 @@
             <span class="feather-icon"><i data-feather="menu"></i></span>
         </a>
         <a class="navbar-brand font-weight-900 text-white" style="font-size: 30px !important;"
-           href="{{route("dashboard")}}">HT
+           href="{{route("dashboard")}}">Howkar Technology
         </a>
         <ul class="navbar-nav hk-navbar-content">
             <li class="nav-item dropdown dropdown-authentication">
@@ -85,11 +94,11 @@
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" data-dropdown-in="flipInX" data-dropdown-out="flipOutX">
-                    <a class="dropdown-item" href="#">
-                        <i class="dropdown-icon zmdi zmdi-portable-wifi-changes"></i>
-                        <span>Change Password</span>
-                    </a>
-                    <div class="dropdown-divider"></div>
+                    {{--                    <a class="dropdown-item" href="#">--}}
+                    {{--                        <i class="dropdown-icon zmdi zmdi-portable-wifi-changes"></i>--}}
+                    {{--                        <span>Change Password</span>--}}
+                    {{--                    </a>--}}
+                    {{--                    <div class="dropdown-divider"></div>--}}
                     <a class="dropdown-item" href="{{route('logout')}}">
                         <i class="dropdown-icon zmdi zmdi-power"></i>
                         <span>Log out</span></a>
@@ -219,29 +228,16 @@
 
                     {{-- manage shops--}}
                     <hr class="nav-separator">
-                    <li class="nav-item">
-                        <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse"
-                           data-target="#shop_manager">
-                            <i class="fa fa-dollar"></i></span>
-                            <span class="nav-link-text">Shops & Billing</span>
-                        </a>
-                        <ul id="shop_manager"
-                            class="nav flex-column collapse collapse-level-1 {{ Request::segment(2) == "shop-billing" ? "show" : "" }}">
-                            <li class="nav-item">
-                                <ul class="nav flex-column">
-                                    <li class="nav-item {{\Request::route()->getName() == "shop.list.view" ? "active" : ""}}">
-                                        <a class="nav-link"
-                                           href="{{route('shop.list.view')}}"><i
-                                                class="fa fa-building-o"></i>My Shops</a>
-                                    </li>
-                                    <li class="nav-item {{\Request::route()->getName() == "billing.info" ? "active" : ""}}">
-                                        <a class="nav-link"
-                                           href="{{route('billing.info')}}"><i
-                                                class="fa fa-money"></i>Billing Info</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
+                    <li class="nav-item {{\Request::route()->getName() == "shop.list.view" ? "active" : ""}}">
+                        <a class="nav-link"
+                           href="{{route('shop.list.view')}}"><i
+                                class="fa fa-building-o"></i>My Pages</a>
+                    </li>
+                    <hr class="nav-separator">
+                    <li class="nav-item {{\Request::route()->getName() == "billing.info" ? "active" : ""}}">
+                        <a class="nav-link"
+                           href="{{route('billing.info')}}"><i
+                                class="fa fa-money"></i>Billing</a>
                     </li>
                 </ul>
             </div>
@@ -372,7 +368,7 @@
             scope: 'pages_messaging, pages_manage_metadata, pages_show_list',
             return_scopes: true
         });
-    };
+    }
 </script>
 @yield('dashboard-js')
 @yield("product-js")
@@ -380,6 +376,7 @@
 @yield('discount-js')
 @yield('manageDiscount-js')
 @yield('order-js')
+@yield("profile-js")
 @yield('shop-list-js')
 @yield('billing-js')
 </body>

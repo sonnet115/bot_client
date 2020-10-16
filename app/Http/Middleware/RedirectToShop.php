@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class RedirectIfNotAuthenticated
+class RedirectToShop
 {
     /**
      * Handle an incoming request.
@@ -19,12 +19,6 @@ class RedirectIfNotAuthenticated
     {
         if (!Auth::guard($guard)->check()) {
             return redirect(route('home'));
-        }
-        if (auth()->user()->page_added == 0) {
-            return redirect(route('shop.list.view'));
-        }
-        if (auth()->user()->profile_completed == 0) {
-            return redirect(route('clients.profile'));
         }
         return $next($request);
     }

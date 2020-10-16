@@ -17,7 +17,6 @@
                 <section class="hk-sec-wrapper">
                     <div class="row">
                         <div class="col-sm">
-                            <span class="font-18 connect_text text-primary"></span>
                             @if(Session::has('success_message'))
                                 <p class="text-center alert {{ Session::get('alert-class', 'alert-success') }}">{{ Session::get('success_message') }}</p>
                             @endif

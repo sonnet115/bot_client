@@ -122,7 +122,6 @@
                 error_count++;
             }
 
-
             if (user_password === "") {
                 user_password_error_message.html('password field is required');
                 error_count++;

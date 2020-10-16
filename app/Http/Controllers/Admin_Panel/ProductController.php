@@ -15,11 +15,6 @@ class ProductController extends Controller
 {
     private $shops;
 
-    public function __construct()
-    {
-
-    }
-
     public function viewAddProductForm()
     {
         if (request()->get('mode')) {
@@ -39,7 +34,7 @@ class ProductController extends Controller
         $shops = Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->get();
 
         return view('admin_panel.product.add_product_form')
-            ->with("title", "CBB | Add Product")
+            ->with("title", "Howkar Technology | Add Product")
             ->with('product_details', $product_details)
             ->with('shop_list', $shops);
     }

@@ -48,6 +48,24 @@ Route::group(['prefix' => 'bot/{app_id}'], function () {
     Route::get("get-product", "Bot\ProductController@getProduct")->name("product.get");
 });
 
+Route::group(['middleware' => 'page.not.added'], function () {
+    Route::group(['prefix' => 'admin'], function () {
+        //Routes for shops & billing
+        Route::group(['prefix' => 'shop-billing'], function () {
+            Route::get("store-page", "Admin_Panel\PageController@storePages")->name('page.store');
+            Route::get("shop-list", "Admin_Panel\PageController@viewShopList")->name('shop.list.view');
+            Route::get("get-list", "Admin_Panel\PageController@getShopsList")->name('shop.list.get');
+        });
+    });
+});
+
+Route::group(['middleware' => 'profile.not.completed'], function () {
+    Route::group(['prefix' => 'admin'], function () {
+        Route::get("client-profile", "Admin_Panel\DashboardController@showClientProfile")->name("clients.profile");
+        Route::post("submit-for-approval", "Admin_Panel\DashboardController@submitForApproval")->name("submit.for.approval");
+    });
+});
+
 Route::group(['middleware' => 'unauthenticated.user'], function () {
     Route::group(['prefix' => 'admin'], function () {
         Route::get("dashboard", "Admin_Panel\DashboardController@showDashboard")->name("dashboard");
@@ -99,15 +117,12 @@ Route::group(['middleware' => 'unauthenticated.user'], function () {
             Route::get("get-dc", "Admin_Panel\DeliveryChargeController@getDeliveryCharges")->name('dc.get');
         });
 
-        //Routes for shops & billing
         Route::group(['prefix' => 'shop-billing'], function () {
-            Route::get("store-page", "Admin_Panel\PageController@storePages")->name('page.store');
-            Route::get("shop-list", "Admin_Panel\PageController@viewShopList")->name('shop.list.view');
             Route::get("billing-info", "Admin_Panel\PageController@viewBillingInfo")->name('billing.info');
-            Route::get("get-list", "Admin_Panel\PageController@getShopsList")->name('shop.list.get');
             Route::post("get-billing-info", "Admin_Panel\PageController@getBillingInfo")->name('billing.info.get');
             Route::post("store-payment-info", "Admin_Panel\PageController@storePaymentInfo")->name('payment.info.store');
         });
+
     });
 
 });

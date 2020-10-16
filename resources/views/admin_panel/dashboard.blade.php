@@ -2,15 +2,15 @@
 @section("main_content")
     <!-- Container -->
     <div class="container mt-xl-25 mt-sm-30 mt-15">
-        @if (auth()->user()->page_added == 0)
-            <div class="d-flex justify-content-center">
-                <button class="btn btn-danger rounded-20 pl-20 pr-20 connect_page_btn"  onclick="connectPage()">
-                    <i class="fa fa-facebook"></i>
-                    <span class="connect_text">Connect Page to Messenger Bot</span>
-                </button>
-            </div>
-            <hr>
-        @endif
+{{--        @if (auth()->user()->page_added == 0)--}}
+{{--            <div class="d-flex justify-content-center">--}}
+{{--                <a href="{{route('shop.list.view')}}" class="btn btn-danger rounded-20 pl-20 pr-20 connect_page_btn">--}}
+{{--                    <i class="fa fa-facebook"></i>--}}
+{{--                    <span class="connect_text">Connect Page to Messenger Bot</span>--}}
+{{--                </a>--}}
+{{--            </div>--}}
+{{--            <hr>--}}
+{{--        @endif--}}
         <div>
             <!-- Title -->
             <div class="hk-pg-header align-items-top">

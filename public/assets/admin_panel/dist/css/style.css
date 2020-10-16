@@ -100,7 +100,7 @@ Project:	Marvin
 /*@import url(glyphicons.css);*/
 /*@import url(themify-icons.css);*/
 /*@import url(animate.css);*/
-/*@import url(simple-line-icons.css);*/
+@import url(simple-line-icons.css); /*for input fields icons*/
 /*@import url(linea-icon.css);*/
 /*@import url(pe-icon-7-stroke.css);*/
 @import url(material-design-iconic-font.min.css);

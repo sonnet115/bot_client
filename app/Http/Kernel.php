@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\RedirectIfNotAuthenticated;
+use App\Http\Middleware\RedirectToShop;
 use App\Http\Middleware\VerifyShopID;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -65,6 +66,8 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         "verify" => \App\Http\Middleware\VerifyWebhook::class,
         "unauthenticated.user" => RedirectIfNotAuthenticated::class,
+        "page.not.added" => RedirectToShop::class,
+        "profile.not.completed" => RedirectToShop::class,
     ];
 
     /**

@@ -190,8 +190,7 @@
                                     </div>
                                 @else
                                     <div class="d-flex justify-content-center">
-                                        <a class="btn btn-success rounded-20 pl-20 pr-20" href="javascript:void(0)"
-                                           onclick="connectPage()">
+                                        <a class="btn btn-success rounded-20 pl-20 pr-20" href="{{route('shop.list.view')}}">
                                             <i class="fa fa-facebook"></i> Connect Page to Add Discount
                                         </a>
                                     </div>
