@@ -254,21 +254,16 @@
             <footer class="footer">
                 <div class="row">
                     <div class="col-md-6 col-sm-12">
-                        <p>Pampered by<a href="https://hencework.com/" class="text-dark"
-                                         target="_blank">Howkar Technology</a> ©
-                            2019</p>
+                        <p>Developed by
+                            <a href="https://howkar.com/" class="text-dark" target="_blank">Howkar Technology</a> ©
+                            2020-2021
+                        </p>
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <p class="d-inline-block">Follow us</p>
-                        <a href="#"
+                        <a href="https://www.facebook.com/howkar.bd/"
                            class="d-inline-block btn btn-icon btn-icon-only btn-indigo btn-icon-style-4"><span
                                 class="btn-icon-wrap"><i class="fa fa-facebook"></i></span></a>
-                        <a href="#"
-                           class="d-inline-block btn btn-icon btn-icon-only btn-indigo btn-icon-style-4"><span
-                                class="btn-icon-wrap"><i class="fa fa-twitter"></i></span></a>
-                        <a href="#"
-                           class="d-inline-block btn btn-icon btn-icon-only btn-indigo btn-icon-style-4"><span
-                                class="btn-icon-wrap"><i class="fa fa-google-plus"></i></span></a>
                     </div>
                 </div>
             </footer>
@@ -308,9 +303,6 @@
 {{--<script src={{asset("assets/admin_panel/vendors/raphael/raphael.min.js")}}></script>--}}
 {{--<script src={{asset("assets/admin_panel/vendors/morris.js/morris.min.js")}}"../"></script>--}}
 
-{{--<!-- EChartJS JavaScript -->--}}
-{{--<script src={{asset("assets/admin_panel/vendors/echarts/dist/echarts-en.min.js")}}></script>--}}
-
 <!-- Sparkline JavaScript -->
 {{--<script src={{asset("assets/admin_panel/vendors/jquery.sparkline/dist/jquery.sparkline.min.js")}}></script>--}}
 
@@ -324,52 +316,14 @@
 
 <!-- Toaster JS -->
 {{--<script src={{asset("assets/admin_panel/vendors/jquery-toast-plugin/dist/jquery.toast.min.js")}}></script>--}}
-{{----}}
+
 {{--<!-- Init JavaScript -->--}}
 <script src={{asset("assets/admin_panel/dist/js/init.js")}}></script>
-<script src={{asset("assets/admin_panel/dist/js/dashboard-data.js")}}></script>
 
-<script async defer crossorigin="anonymous"
-        src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v8.0&appId=967186797063633&autoLogAppEvents=1"
-        nonce="AhbIxnz8"></script>
-<script>
-    function connectPage() {
-        FB.login(function (response) {
-            console.log(response);
-            let connect_btn = $(".connect_page_btn");
-            let connect_text = $(".connect_text");
-            connect_btn.removeClass('btn-danger').addClass('btn-primary');
-            connect_text.html('Please wait. Connecting your page...')
-            $.ajax({
-                type: "GET",
-                url: "{{route('page.store')}}",
-                data: {
-                    facebook_api_response: response
-                },
-                success: function (backend_response) {
-                    if (backend_response === 'success') {
-                        connect_btn.removeClass('btn-primary').addClass('btn-success');
-                        connect_text.html('Congratulation! Your Page is now connected.');
-                        setTimeout(function () {
-                            window.location.reload(true);
-                        }, 500);
-                    } else if (backend_response === 'no_page_added') {
-                        connect_btn.removeClass('btn-primary').addClass('btn-danger');
-                        connect_text.html('All Pages Removed. Connect Page Again!');
-                    } else {
-                        connect_btn.removeClass('btn-primary').addClass('btn-danger');
-                        connect_text.html('Something went wrong! Try Again.');
-                    }
-
-                    console.log(backend_response);
-                }
-            });
-        }, {
-            scope: 'pages_messaging, pages_manage_metadata, pages_show_list',
-            return_scopes: true
-        });
-    }
+<script src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v8.0&appId=967186797063633&autoLogAppEvents=1"
+        nonce="AhbIxnz8" async defer crossorigin="anonymous">
 </script>
+
 @yield('dashboard-js')
 @yield("product-js")
 @yield('user-js')

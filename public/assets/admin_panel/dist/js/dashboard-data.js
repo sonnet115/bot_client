@@ -68,6 +68,7 @@ $(document).ready(function () {
             parseTime: false
         });
     }
+
     if ($('#m_chart_4').length > 0) {
         // Line Chart
         var data = [{y: '100', a: 10, b: 20, c: 40},
@@ -97,20 +98,17 @@ $(document).ready(function () {
             lineColors: ['#ab26aa', '#97ca5a', '#aed67e'],
         });
     }
-
-
 });
 
 /*****E-Charts function start*****/
 var echartsConfig = function () {
     if ($('#e_chart_1').length > 0) {
-        let given = parseInt($("#total_given").val());
         let pending = parseInt($("#total_pending").val());
-        let approval_pending = parseInt($("#total_pending_approval").val());
-        let incomplete = parseInt($("#total_incomplete").val());
+        let delivered = parseInt($("#total_delivered").val());
+        let cancelled = parseInt($("#total_cancelled").val());
 
-        var eChart_1 = echarts.init(document.getElementById('e_chart_1'));
-        var option = {
+        let eChart_1 = echarts.init(document.getElementById('e_chart_1'));
+        let option = {
             tooltip: {
                 show: true,
                 backgroundColor: '#fff',
@@ -131,18 +129,17 @@ var echartsConfig = function () {
                 {
                     type: 'pie',
                     selectedMode: 'single',
-                    radius: ['80%', '60%'],
+                    radius: ['90%', '60%'],
                     labelLine: {
                         normal: {
                             show: false
                         }
                     },
-                    color: ['#cf020d', '#ff880e', '#1aa23e', '#0092ee'],
+                    color: ['#ff880e', '#1aa23e', '#cf020d'],
                     data: [
                         {value: pending, name: ''},
-                        {value: approval_pending, name: ''},
-                        {value: given, name: ''},
-                        {value: incomplete, name: ''},
+                        {value: delivered, name: ''},
+                        {value: cancelled, name: ''},
                     ]
                 }
             ]

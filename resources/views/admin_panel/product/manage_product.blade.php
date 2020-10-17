@@ -1,11 +1,5 @@
 @extends("admin_panel.main")
-@section("product-css")
-    <style>
-        .pagination {
-            display: block !important;
-        }
-    </style>
-@endsection
+
 @section("main_content")
     <!-- Container -->
     <div class="container mt-xl-20 mt-sm-30 mt-15">
@@ -52,20 +46,12 @@
             <!--state ends-->
 
             <!--button-->
-            @if (auth()->user()->page_added > 0)
-                <div class="text-left pl-4">
-                    <button type="text" id="btnFiterSubmitSearch" class="btn btn-info"><i
-                            class="fa fa-search">&nbsp;</i>Filter
-                    </button>
-                </div>
-            @else
-                <div class="text-left pl-4">
-                    <a class="btn btn-success rounded-20 pl-20 pr-20" href="{{route('shop.list.view')}}">
-                        <i class="fa fa-facebook"></i> Connect Page
-                    </a>
-                </div>
-        @endif
-        <!--button ends-->
+            <div class="text-left pl-4">
+                <button type="text" id="btnFiterSubmitSearch" class="btn btn-info"><i
+                        class="fa fa-search">&nbsp;</i>Filter
+                </button>
+            </div>
+            <!--button ends-->
         </div>
         <!-- filter ends-->
 
@@ -81,7 +67,7 @@
                                 <p class="text-center alert {{ Session::get('alert-class', 'alert-success') }}">{{ Session::get('success_message') }}</p>
                             @endif
                             <div class="table-wrap">
-                                <table id="user_list_table" class="table table-bordered w-100 display">
+                                <table id="product_list_table" class="table table-bordered w-100 display">
                                     <thead class="btn-gradient-info">
                                     <tr>
                                         <th class="text-center text-white" data-priority="1">Name</th>
@@ -108,16 +94,6 @@
 @section("product-js")
     <script src={{asset("assets/admin_panel/vendors/datatables.net/js/jquery.dataTables.min.js")}}></script>
     <script src={{asset("assets/admin_panel/vendors/datatables.net-bs4/js/dataTables.bootstrap4.min.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/datatables.net-dt/js/dataTables.dataTables.min.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/datatables.net-buttons/js/dataTables.buttons.min.js")}}></script>
-    <script
-        src={{asset("assets/admin_panel/vendors/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/datatables.net-buttons/js/buttons.flash.min.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/jszip/dist/jszip.min.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/pdfmake/build/pdfmake.min.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/pdfmake/build/vfs_fonts.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/datatables.net-buttons/js/buttons.html5.min.js")}}></script>
-    <script src={{asset("assets/admin_panel/vendors/datatables.net-buttons/js/buttons.print.min.js")}}></script>
     <script
         src={{asset("assets/admin_panel/vendors/datatables.net-responsive/js/dataTables.responsive.min.js")}}></script>
     <script src={{asset("assets/admin_panel/dist/js/dataTables-data.js")}}></script>
@@ -125,7 +101,7 @@
     <!-- data table-->
     <script>
         $(document).ready(function () {
-            $('#user_list_table').DataTable({
+            $('#product_list_table').DataTable({
                 dom: 'Blfrtip',
                 responsive: true,
                 language: {
@@ -206,44 +182,19 @@
             });
         });
         $('#btnFiterSubmitSearch').click(function () {
-            $('#user_list_table').DataTable().draw(true);
+            $('#product_list_table').DataTable().draw(true);
         });
-    </script>
-
-    <script>
-        function connectPageProduct() {
-            FB.login(function (response) {
-                console.log(response);
-                let connect_text_container = $(".connect_text");
-                connect_text_container.html('Please Wait...')
-                $.ajax({
-                    type: "GET",
-                    url: "{{route('page.store')}}",
-                    data: {
-                        facebook_api_response: response
-                    },
-                    success: function (backend_response) {
-                        if (backend_response === 'success') {
-                            connect_text_container.html("Completed!");
-                        } else if (backend_response === 'no_page_added') {
-                            connect_text_container.html('All Pages Removed. Connect Page Again!');
-                        } else {
-                            connect_text_container.html('Something went wrong! Try Again.');
-                        }
-                        setTimeout(function () {
-                            window.location.reload(true);
-                        }, 1000);
-                        console.log(backend_response);
-                    }
-                });
-            }, {scope: 'pages_messaging, pages_manage_metadata, pages_show_list'});
-        }
     </script>
 @endsection
 
-@section("custom_css")
+@section("product-css")
+    <link href={{asset("assets/admin_panel/vendors/datatables.net-dt/css/jquery.dataTables.min.css")}} rel="stylesheet"
+          type="text/css"/>
+    <link
+        href={{asset("assets/admin_panel/vendors/datatables.net-responsive-dt/css/responsive.dataTables.min.css")}} rel="stylesheet"
+        type="text/css"/>
     <style>
-        #user_list_table_length {
+        #product_list_table {
             margin-right: 10px;
         }
 
@@ -253,6 +204,10 @@
 
         .dataTables_filter label {
             text-align: left;
+        }
+
+        .pagination {
+            display: block !important;
         }
     </style>
 @endsection

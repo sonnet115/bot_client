@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Admin_Panel;
 
+use App\Customer;
 use App\Http\Controllers\Controller;
+use App\Order;
+use App\Product;
 use App\RequestedPage;
 use App\Shop;
 use App\User;
@@ -15,7 +18,38 @@ class DashboardController extends Controller
 {
     public function showDashboard()
     {
-        return view('admin_panel.dashboard')->with('title', "Howkar Technology || Dashboard");
+        $total_pages = Shop::where('page_owner_id', auth()->user()->user_id)->count();
+
+        $shops = Shop::select('id')->where('page_owner_id', auth()->user()->user_id)->get();
+        $shops_id = array();
+        foreach ($shops as $key => $value) {
+            array_push($shops_id, $value['id']);
+        }
+        $total_products = Product::whereIn('shop_id', $shops_id)->count();
+        $total_orders = Order::whereIn('shop_id', $shops_id)->count();
+        $total_pending = Order::whereIn('shop_id', $shops_id)->where('order_status', '=', 0)->count();
+        $total_delivered = Order::whereIn('shop_id', $shops_id)->where('order_status', '=', 3)->count();
+        $total_cancelled = Order::whereIn('shop_id', $shops_id)->where('order_status', '=', 4)->count();
+
+        $shops = Shop::select('page_id')->where('page_owner_id', auth()->user()->user_id)->get();
+        foreach ($shops as $key => $value) {
+            array_push($shops_id, $value['page_id']);
+        }
+        $total_customers = Customer::whereIn('app_id', $shops_id)->count();
+
+        $total_counts = array(
+            'total_pages' => $total_pages,
+            'total_products' => $total_products,
+            'total_orders' => $total_orders,
+            'total_customers' => $total_customers,
+            'total_pending' => $total_pending,
+            'total_delivered' => $total_delivered,
+            'total_cancelled' => $total_cancelled,
+        );
+
+        return view('admin_panel.dashboard')
+            ->with('title', "Howkar Technology || Dashboard")
+            ->with('total_counts', $total_counts);
     }
 
     public function showHome()

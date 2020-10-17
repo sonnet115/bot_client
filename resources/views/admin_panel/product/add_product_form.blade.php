@@ -1,17 +1,5 @@
 @extends("admin_panel.main")
-@section("product-css")
-    <link href="{{asset("assets/admin_panel/vendors/select2/dist/css/select2.min.css")}}" rel="stylesheet"
-          type="text/css"/>
-    <style>
-        .select2-container .select2-selection--single {
-            height: 40px !important;
-        }
 
-        .select2-selection__arrow {
-            top: 6px !important;
-        }
-    </style>
-@endsection
 
 @section("main_content")
     <!-- Container -->
@@ -136,7 +124,7 @@
                                             @if($product_details !== null)
                                                 @foreach($shop_list as $shop)
                                                     <option value="{{$shop->id."_".$shop->page_name}}"
-                                                    {{$shop->id == $product_details->shop_id ? "selected" : ""}}>
+                                                        {{$shop->id == $product_details->shop_id ? "selected" : ""}}>
                                                         {{$shop->page_name}}
                                                     </option>
                                                 @endforeach
@@ -229,21 +217,12 @@
                                 <input type="hidden" name="image_2_id"
                                        value="{{$product_details !== null ? count($product_details->images) > 1 ? $product_details->images[1]->id : "" : ""}}">
                                 <hr>
-
-                                @if (auth()->user()->page_added > 0)
-                                    <div class="d-flex justify-content-center">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fa fa-plus-circle"></i> {{ $product_details !== null ? "Update" : "Add" }}
-                                            Product
-                                        </button>
-                                    </div>
-                                @else
-                                    <div class="d-flex justify-content-center">
-                                        <a class="btn btn-success rounded-20 pl-20 pr-20" href="{{route('shop.list.view')}}">
-                                            <i class="fa fa-facebook"></i> Connect Page to Add Product
-                                        </a>
-                                    </div>
-                                @endif
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-plus-circle"></i> {{ $product_details !== null ? "Update" : "Add" }}
+                                        Product
+                                    </button>
+                                </div>
                                 <br>
                             </form>
                         </div>
@@ -352,4 +331,18 @@
             }
         });
     </script>
+@endsection
+
+@section("product-css")
+    <link href="{{asset("assets/admin_panel/vendors/select2/dist/css/select2.min.css")}}" rel="stylesheet"
+          type="text/css"/>
+    <style>
+        .select2-container .select2-selection--single {
+            height: 40px !important;
+        }
+
+        .select2-selection__arrow {
+            top: 6px !important;
+        }
+    </style>
 @endsection

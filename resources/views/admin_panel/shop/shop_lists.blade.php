@@ -1,28 +1,4 @@
 @extends("admin_panel.main")
-@section("shop-list-css")
-    <link href={{asset("assets/admin_panel/vendors/datatables.net-dt/css/jquery.dataTables.min.css")}} rel="stylesheet"
-          type="text/css"/>
-    <link
-        href={{asset("assets/admin_panel/vendors/datatables.net-responsive-dt/css/responsive.dataTables.min.css")}} rel="stylesheet"
-        type="text/css"/>
-    <style>
-        .pagination {
-            display: block !important;
-        }
-
-        #user_list_table_length {
-            margin-right: 10px;
-        }
-
-        .dataTables_filter {
-            margin-top: -10px;
-        }
-
-        .dataTables_filter label {
-            text-align: left;
-        }
-    </style>
-@endsection
 
 @section("main_content")
     <!-- Container -->
@@ -82,6 +58,31 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section("shop-list-css")
+    <link href={{asset("assets/admin_panel/vendors/datatables.net-dt/css/jquery.dataTables.min.css")}} rel="stylesheet"
+          type="text/css"/>
+    <link
+        href={{asset("assets/admin_panel/vendors/datatables.net-responsive-dt/css/responsive.dataTables.min.css")}} rel="stylesheet"
+        type="text/css"/>
+    <style>
+        .pagination {
+            display: block !important;
+        }
+
+        #user_list_table_length {
+            margin-right: 10px;
+        }
+
+        .dataTables_filter {
+            margin-top: -10px;
+        }
+
+        .dataTables_filter label {
+            text-align: left;
+        }
+    </style>
 @endsection
 
 @section("shop-list-js")

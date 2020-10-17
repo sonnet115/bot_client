@@ -80,13 +80,10 @@ class PageController extends Controller
                             'page_web_link' => $page_web_link,
                             'page_connected_status' => true,
                         ]);
-
-                        $this->startTrailPeriod($shop->id);
                     } else {
                         //page is already in database. So update page status
                         $this->updatePageConnectionStatus(null, $pages_details['data'][$i]['id'], true);
                     }
-//                    Log::channel('page_add')->info('subscription_status [' . $pages_details['data'][$i]['id'] . ']:' . $this->checkSubscriptionStatus($pages_details['data'][$i]['id']));
                     if ($this->checkSubscriptionStatus($pages_details['data'][$i]['id'])) {
                         $page_access_token = $pages_details['data'][$i]['access_token'];
                         $webhook_fields = json_decode($this->addFieldsToWebhook($page_access_token, $pages_details['data'][$i]['id']));
