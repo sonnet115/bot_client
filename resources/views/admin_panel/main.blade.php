@@ -47,6 +47,10 @@
         .select2-selection__choice__remove {
             color: black !important;
         }
+        td{
+            font-size: 13px !important;
+            color: black !important;
+        }
     </style>
     @yield("dashboard_css")
     @yield("product-css")
@@ -56,6 +60,7 @@
     @yield("billing-css")
     @yield("shop-list-css")
     @yield("profile-css")
+    @yield("dc-css")
     @yield("custom_css")
 </head>
 
@@ -320,18 +325,14 @@
 {{--<!-- Init JavaScript -->--}}
 <script src={{asset("assets/admin_panel/dist/js/init.js")}}></script>
 
-<script src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v8.0&appId=967186797063633&autoLogAppEvents=1"
-        nonce="AhbIxnz8" async defer crossorigin="anonymous">
-</script>
-
 @yield('dashboard-js')
 @yield("product-js")
 @yield('user-js')
 @yield('discount-js')
-@yield('manageDiscount-js')
 @yield('order-js')
 @yield("profile-js")
 @yield('shop-list-js')
+@yield('dc-js')
 @yield('billing-js')
 </body>
 </html>

@@ -15,7 +15,14 @@ class DiscountController extends Controller
     {
         if (request()->get('mode')) {
             $did = request()->get('did');
-            $discount_details = Discount::where('id', $did)->first();
+            $discount_details = Discount::where('id', $did)->with('shop')->first();
+            if ($discount_details->shop->page_connected_status != 1) {
+                return redirect(route('discount.manage.view'));
+            }
+
+            if ($discount_details->shop->page_owner_id !== auth()->user()->user_id) {
+                return redirect(route('discount.manage.view'));
+            }
         } else {
             $discount_details = null;
         }
@@ -23,7 +30,7 @@ class DiscountController extends Controller
         $shops = Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->get();
 
         return view("admin_panel.discount.add_discount_form")
-            ->with("title", "Howkar Technology | Add Discount")
+            ->with("title", "Howkar Technology || Add Discount")
             ->with('discount_details', $discount_details)
             ->with('shop_list', $shops);
     }
@@ -37,7 +44,7 @@ class DiscountController extends Controller
         }
         $products = Product::select('name', 'id')->whereIn('shop_id', $shops_id)->get();
 
-        return view("admin_panel.discount.manage_discount")->with("title", "CBB | manage Discount")->with('products', $products);
+        return view("admin_panel.discount.manage_discount")->with("title", "Howkar Technology || Manage Discount")->with('products', $products);
     }
 
     public function storeDiscount(Request $request)
@@ -66,31 +73,36 @@ class DiscountController extends Controller
         return redirect(route('discount.add.view'));
     }
 
-    public function getDiscount(Request $request)
+    public function getDiscount(Discount $discount)
     {
-        $start_date = "";
-        $end_date = "";
-        $date_range = "";
-        $pid = "";
+        $discount = $discount->newQuery();
 
         if (request()->has('start_date') && request('start_date') != null && request('end_date') == null) {
-            $start_date = " AND dis_from = '" . request('start_date') . "'";
+            $discount->where('dis_from', '=', request('start_date'));
         }
 
         if (request()->has('end_date') && request('end_date') != null && request('start_date') == null) {
-            $end_date = " AND dis_to = '" . request('end_date') . "'";
+            $discount->where('dis_to', '=', request('end_date'));
         }
 
         if (request()->has('start_date') && request()->has('end_date') && request('start_date') != null && request('end_date') != null) {
-            $date_range = " AND dis_from >= '" . request('start_date') . "' AND dis_to <= '" . request('end_date') . "'";
+            $discount->where('dis_from', '>=', request('start_date'))
+                ->where('dis_to', '<=', request('end_date'));
         }
 
         if (request()->has('pid') && request('pid') != "") {
-            $pid = " and pid IN(" . implode(',', request('pid')) . ")";
+            $discount->whereIn('pid', request('pid'));
         }
 
+        $shops = Shop::select('id')->where('page_owner_id', auth()->user()->user_id)->get();
+        $shops_id = array();
+        foreach ($shops as $key => $value) {
+            array_push($shops_id, $value['id']);
+        }
+        $discount->whereIn('shop_id', $shops_id);
+
         if (auth()->user()->page_added > 0) {
-            return datatables(Discount::selectRaw("*")->whereRaw(1 . $date_range . $pid . $start_date . $end_date)->orderBy('id', 'asc')->with('product')->with('shop'))->toJson();
+            return datatables($discount->orderBy('id', 'asc')->with('product')->with('shop'))->toJson();
         } else {
             return datatables(array())->toJson();
         }

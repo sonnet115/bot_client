@@ -27,7 +27,6 @@ class PageController extends Controller
             return response()->json($this->checkPermissions($permission_list_array));
         }
 
-        Log::channel('page_add')->info(json_encode($permission_list_array) . PHP_EOL);
 
         if ($connection_status === 'connected') {
             //change all page connected status false
@@ -91,10 +90,10 @@ class PageController extends Controller
                         $persistent_menu = json_decode($this->addPersistentMenu($page_access_token));
                         $white_listed_domain = $this->addWhiteListedDomains($page_access_token);
 
-//                        Log::channel('page_add')->info('whitelist_domain [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($white_listed_domain));
-//                        Log::channel('page_add')->info('persistent_menu [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($persistent_menu));
-//                        Log::channel('page_add')->info('get_started_button [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($get_started_button));
-//                        Log::channel('page_add')->info('webhook_fields [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($webhook_fields) . PHP_EOL);
+                        Log::channel('page_add')->info('whitelist_domain [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($white_listed_domain));
+                        Log::channel('page_add')->info('persistent_menu [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($persistent_menu));
+                        Log::channel('page_add')->info('get_started_button [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($get_started_button));
+                        Log::channel('page_add')->info('webhook_fields [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($webhook_fields) . PHP_EOL);
                     }
                 }
                 $this->updatePageAddedStatus($user_id, $long_lived_user_access_token, true);
@@ -251,13 +250,31 @@ class PageController extends Controller
         return curl_exec($ch);
     }
 
+    public function deletePersistentAndGetStartedMenu($page_access_token)
+    {
+        $request_body = '{
+                            "fields": [
+                                "persistent_menu",
+                                "get_started"
+                            ]
+                        }';
+
+        $ch = curl_init('https://graph.facebook.com/v6.0/me/messenger_profile?access_token=' . $page_access_token);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $request_body);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
+        return curl_exec($ch);
+    }
+
     public function addPersistentMenu($page_access_token)
     {
         $request_body = '{
                             "persistent_menu": [
                                 {
                                     "locale": "default",
-                                    "composer_input_disabled": true,
+                                    "composer_input_disabled": false,
                                     "call_to_actions": [
                                         {
                                             "type": "postback",

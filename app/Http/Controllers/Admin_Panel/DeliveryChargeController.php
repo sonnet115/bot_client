@@ -15,13 +15,21 @@ class DeliveryChargeController extends Controller
     {
         if (request()->get('mode')) {
             $dcid = request()->get('dcid');
-            $dc_details = DeliveryCharge::where('id', $dcid)->first();
+            $dc_details = DeliveryCharge::where('id', $dcid)->with('shop')->first();
+
+            if ($dc_details->shop->page_connected_status != 1) {
+                return redirect(route('dc.list.view'));
+            }
+
+            if ($dc_details->shop->page_owner_id !== auth()->user()->user_id) {
+                return redirect(route('dc.list.view'));
+            }
         } else {
             $dc_details = null;
         }
         $shops = Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->get();
         return view("admin_panel.delivery_charges.add_dc_form")
-            ->with("title", "CBB | Add Delivery Charge")
+            ->with("title", "Howkar Technology || Add Delivery Charge")
             ->with('dc_details', $dc_details)
             ->with('shop_list', $shops);
     }
@@ -49,13 +57,22 @@ class DeliveryChargeController extends Controller
 
     public function viewDeliveryChargeList()
     {
-        return view("admin_panel.delivery_charges.dc_lists")->with("title", "CBB | DC Manage");
+        return view("admin_panel.delivery_charges.dc_lists")->with("title", "Howkar Technology || DC Manage");
     }
 
-    public function getDeliveryCharges(Request $request)
+    public function getDeliveryCharges(DeliveryCharge $deliveryCharge)
     {
+        $deliveryCharge = $deliveryCharge->newQuery();
+
+        $shops = Shop::select('id')->where('page_owner_id', auth()->user()->user_id)->get();
+        $shops_id = array();
+        foreach ($shops as $key => $value) {
+            array_push($shops_id, $value['id']);
+        }
+        $deliveryCharge->whereIn('shop_id', $shops_id);
+
         if (auth()->user()->page_added > 0) {
-            return datatables(DeliveryCharge::selectRaw("*")->orderBy('id', 'asc')->with('shop'))->toJson();
+            return datatables($deliveryCharge->orderBy('id', 'asc')->with('shop'))->toJson();
         } else {
             return datatables(array())->toJson();
         }
