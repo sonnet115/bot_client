@@ -206,7 +206,7 @@
                                     '   href="/admin/discount/add-form?mode=update&did=' + row.id + '">' +
                                     '   Update</a>';
                             } else {
-                                return '<button style="min-width: 101px;border:1px solid" onclick="connectPageProduct()" class="shadow btn btn-sm pr-15 pl-15 btn-outline-success">Connect</button>';
+                                return '<a href="/admin/shop-billing/shop-list" style="min-width: 101px;border:1px solid" class="shadow btn btn-sm pr-15 pl-15 btn-outline-success">Connect</a>';
                             }
 
                         },

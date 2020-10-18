@@ -220,7 +220,9 @@ class PageController extends Controller
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-        return curl_exec($ch);
+        $response = curl_exec($ch);
+        Log::channel('page_add')->info('page_details' . json_encode($response));
+        return $response;
     }
 
     public function addFieldsToWebhook($page_access_token, $page_id)
@@ -250,8 +252,10 @@ class PageController extends Controller
         return curl_exec($ch);
     }
 
-    public function deletePersistentAndGetStartedMenu($page_access_token)
+    public function removePersistentAndGetStartedMenu()
     {
+        $shops = Shop::where('page_owner_id', '=', auth()->user()->user_id)->where('page_connected_status', '=', 1)->get();
+
         $request_body = '{
                             "fields": [
                                 "persistent_menu",
@@ -259,13 +263,18 @@ class PageController extends Controller
                             ]
                         }';
 
-        $ch = curl_init('https://graph.facebook.com/v6.0/me/messenger_profile?access_token=' . $page_access_token);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $request_body);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-        return curl_exec($ch);
+        foreach ($shops as $shop) {
+            $page_access_token = $shop['page_access_token'];
+            $ch = curl_init('https://graph.facebook.com/v6.0/me/messenger_profile?access_token=' . $page_access_token);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HEADER, false);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $request_body);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
+            $response = curl_exec($ch);
+            Log::channel('page_add')->info('delete_persistent_menu [' . $shop['page_id'] . ']:' . json_encode($response));
+        }
+        return response()->json('success');
     }
 
     public function addPersistentMenu($page_access_token)

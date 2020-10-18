@@ -58,6 +58,36 @@
             </div>
         </div>
     </div>
+
+    {{--warning modal--}}
+    <div class="modal fade" id="warning_modal" tabindex="-1" role="dialog" aria-labelledby="warning_modal"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="text-center text-secondary">Disconnect Page</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-center text-danger">
+                        <i class="fa fa-warning text-warning"></i> This will disconnect your page from out bot
+                    </p>
+                    <p class="font-21 text-center">Are you sure?</p>
+
+                    <div id="remove_persistent_menu_message">
+                        <div class="float-left">
+                            <button class="btn btn-danger" id="confirm-disconnect">Confirm</button>
+                        </div>
+                        <div class="float-right">
+                            <button class="btn btn-success" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section("shop-list-css")
@@ -86,8 +116,9 @@
 @endsection
 
 @section("shop-list-js")
-    <script src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v8.0&appId=967186797063633&autoLogAppEvents=1"
-            nonce="AhbIxnz8" async defer crossorigin="anonymous">
+    <script
+        src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v8.0&appId=967186797063633&autoLogAppEvents=1"
+        nonce="AhbIxnz8" async defer crossorigin="anonymous">
     </script>
     <script src={{asset("assets/admin_panel/vendors/datatables.net/js/jquery.dataTables.min.js")}}></script>
     <script src={{asset("assets/admin_panel/vendors/datatables.net-bs4/js/dataTables.bootstrap4.min.js")}}></script>
@@ -139,9 +170,14 @@
                     },
                     {
                         'render': function (data, type, row) {
-                            let color = row.page_connected_status === 1 ? "danger" : "success";
-                            let text = row.page_connected_status === 1 ? "Disconnect" : "Connect";
-                            return '<button style="min-width: 101px;border:1px solid" onclick="connectDisconnectPage()" class="shadow btn btn-sm pr-15 pl-15 btn-outline-' + color + '">' + text + '</button>';
+                            let btn = '';
+
+                            if (row.page_connected_status === 1) {
+                                btn = '<button style="min-width: 101px;border:1px solid" onclick="showConfirmation()" class="shadow btn btn-sm pr-15 pl-15 btn-outline-danger">Disconnected</button>';
+                            } else {
+                                btn = '<button style="min-width: 101px;border:1px solid" onclick="connectDisconnectPage()" class="shadow btn btn-sm pr-15 pl-15 btn-outline-success">Connected</button>';
+                            }
+                            return btn;
                         },
                     }
                 ],
@@ -154,10 +190,30 @@
         $(document).ready(function () {
             $('#message_modal').on('hidden.bs.modal', function () {
                 window.location.reload(true);
-            })
+            });
+
+            $("#confirm-disconnect").on("click", function () {
+                $("#remove_persistent_menu_message").html('<p class="text-center text-green">Please wait ...</p>');
+                $.ajax({
+                    type: "GET",
+                    url: "{{route('remove.persistent_menu')}}",
+                    success: function (backend_response) {
+                        let disconnect = '<div class="text-center">' +
+                            '<button class="btn btn-danger" id="disconnect_btn" onclick="connectDisconnectPage()">Disconnect Page</button>' +
+                            '</div>'
+                        $("#remove_persistent_menu_message").html(disconnect);
+                        console.log(backend_response);
+                    }
+                });
+            });
         });
 
+        function showConfirmation() {
+            $('#warning_modal').modal('toggle');
+        }
+
         function connectDisconnectPage() {
+            $('#warning_modal').modal('hide');
             FB.login(function (response) {
                 console.log(response);
                 $("#message_modal").modal(

@@ -55,6 +55,7 @@ Route::group(['middleware' => 'page.not.added'], function () {
             Route::get("store-page", "Admin_Panel\PageController@storePages")->name('page.store');
             Route::get("shop-list", "Admin_Panel\PageController@viewShopList")->name('shop.list.view');
             Route::get("get-list", "Admin_Panel\PageController@getShopsList")->name('shop.list.get');
+            Route::get("remove-persistent-menu", "Admin_Panel\PageController@removePersistentAndGetStartedMenu")->name('remove.persistent_menu');
         });
     });
 });
