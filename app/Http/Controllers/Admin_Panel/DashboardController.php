@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin_Panel;
 
+use App\Category;
 use App\Customer;
 use App\Http\Controllers\Controller;
 use App\Order;
@@ -98,6 +99,23 @@ class DashboardController extends Controller
             DB::rollBack();
             Session::flash('error_message', 'Something went wrong! Please Try again');
             return redirect(route('clients.profile'));
+        }
+    }
+
+    function getTestData()
+    {
+        $categories = Category::where("parent_id", NULL)->with("subCategory")->get();
+        $this->printCat($categories);
+    }
+
+    function printCat($categories)
+    {
+        foreach ($categories as $cat) {
+            echo $cat->name . '<br>';
+            if (count($cat->subCategory) > 0) {
+                echo '<br>';
+                $this->printCat($cat->subCategory);
+            }
         }
     }
 }
