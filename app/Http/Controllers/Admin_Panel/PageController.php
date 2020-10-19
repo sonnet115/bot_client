@@ -216,7 +216,7 @@ class PageController extends Controller
 
     public function addPageToApp($user_access_token, $user_id)
     {
-        $ch = curl_init('https://graph.facebook.com/' . $user_id . '/accounts?fields=name,access_token,fan_count,is_published,is_webhooks_subscribed,phone,single_line_address,username,website&access_token=' . $user_access_token);
+        $ch = curl_init('https://graph.facebook.com/' . $user_id . '/accounts?fields=name,access_token,fan_count,is_published,is_webhooks_subscribed,single_line_address,username,website&access_token=' . $user_access_token);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
