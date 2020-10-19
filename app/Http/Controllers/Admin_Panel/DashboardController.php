@@ -110,12 +110,31 @@ class DashboardController extends Controller
 
     function printCat($categories)
     {
-        foreach ($categories as $cat) {
-            echo $cat->name . '<br>';
-            if (count($cat->subCategory) > 0) {
-                echo '<br>';
-                $this->printCat($cat->subCategory);
+//        foreach ($categories as $cat) {
+//            echo $cat->name . '<br>';
+//            if (count($cat->subCategory) > 0) {
+//                echo '<br>';
+//                $this->printCat($cat->subCategory);
+//            }
+//        }
+        echo $this->getCategoryTree();
+    }
+
+    protected function getCategoryTree($level = NULL, $prefix = '') {
+        $rows = Category::where("parent_id", $level)->with("subCategory")->get();
+
+        $category = '';
+        if (count($rows) > 0) {
+            foreach ($rows as $row) {
+                $category .= $prefix . $row->name . "\n";
+                // Append subcategories
+                $category .= $this->getCategoryTree($row->id, $prefix . '-');
             }
         }
+        return $category;
+    }
+
+    public function printCategoryTree() {
+        echo $this->getCategoryTree();
     }
 }
