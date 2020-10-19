@@ -61,7 +61,7 @@ class DashboardController extends Controller
     {
         $shops = Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->get();
         return view('admin_panel.profile.profile')
-            ->with('title', "Howkar Technology || Profile")
+            ->with('title', "Howkar Technology || Approval")
             ->with('shop_list', $shops);
     }
 
@@ -81,6 +81,7 @@ class DashboardController extends Controller
             $user = User::find(auth()->user()->id);
             $user->contact = $request->contact;
             $user->email = $request->email;
+            $user->profile_completed = 1;
             $user->save();
 
             for ($i = 0; $i < sizeof($request->pages); $i++) {
@@ -91,7 +92,7 @@ class DashboardController extends Controller
             }
 
             DB::commit();
-            Session::flash('success_message', 'Your request has been submitted');
+            Session::flash('success_message', 'We have received your request. We will notify you within 1 hour');
             return redirect(route('clients.profile'));
         } catch (\Exception $e) {
             DB::rollBack();

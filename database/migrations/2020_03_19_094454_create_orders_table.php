@@ -18,7 +18,7 @@ class CreateOrdersTable extends Migration
             $table->string('code', 30);
             $table->bigInteger('customer_id');
             $table->string('customer_name', 50);
-            $table->string('billing_address', 100);
+            $table->string('billing_address', 100)->nullable();
             $table->string('shipping_address', 100);
             $table->string('contact', 15);
             $table->string('additional_order_details', 255)->nullable();

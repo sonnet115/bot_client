@@ -14,6 +14,9 @@ class PageController extends Controller
 {
     function storePages(Request $request)
     {
+        if($request->facebook_api_response['authResponse']== null){
+            return response()->json('cancelled');
+        }
         $long_lived_user_access_token = $this->getLongLivedUserAccessToken($request->facebook_api_response['authResponse']['accessToken'])->access_token;
         $user_id = $request->facebook_api_response['authResponse']['userID'];
         $connection_status = $request->facebook_api_response['status'];
@@ -26,7 +29,6 @@ class PageController extends Controller
             $this->updatePageConnectionStatus($user_id, null, false);
             return response()->json($this->checkPermissions($permission_list_array));
         }
-
 
         if ($connection_status === 'connected') {
             //change all page connected status false
@@ -102,7 +104,6 @@ class PageController extends Controller
         } else {
             return response()->json("failed");
         }
-
     }
 
     function checkPermissions($permission_list_array)
@@ -182,6 +183,10 @@ class PageController extends Controller
     function viewShopList()
     {
         return view("admin_panel.shop.shop_lists")->with("title", "Howkar Technology || Shops List");
+    }
+
+    function viewShopListApproval(){
+        return view("admin_panel.shop.shops_approval")->with("title", "Howkar Technology || Shops Approval");
     }
 
     function viewBillingInfo()
@@ -287,7 +292,7 @@ class PageController extends Controller
                                     "call_to_actions": [
                                         {
                                             "type": "postback",
-                                            "title": "Search Product",
+                                            "title": "Products",
                                             "payload": "PRODUCT_SEARCH"
                                         },
                                         {
@@ -297,22 +302,12 @@ class PageController extends Controller
                                         },
                                         {
                                             "type": "postback",
-                                            "title": "New Order",
-                                            "payload": "ORDER_PRODUCT"
-                                        },
-                                        {
-                                            "type": "postback",
                                             "title": "Track Orders",
                                             "payload": "TRACK_ORDER"
                                         },
                                         {
                                             "type": "postback",
-                                            "title": "Cancel Order",
-                                            "payload": "CANCEL_ORDER"
-                                        },
-                                        {
-                                            "type": "postback",
-                                            "title": "Chat with Agent",
+                                            "title": "Help",
                                             "payload": "TALK_TO_AGENT"
                                         }
                                     ]
