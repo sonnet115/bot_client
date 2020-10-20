@@ -21,18 +21,19 @@
                                 <div class="col-sm-3">
                                     <div class="card card-sm">
                                         <div class="card-body">
-                                            <div class="d-flex justify-content-between mb-5">
+                                            <div class="d-flex justify-content-center mb-5">
                                                 <div>
-                                                <span class="d-block font-15 text-primary font-weight-500">
+                                                <span
+                                                    class="d-block font-15 text-primary text-uppercase  font-weight-700">
                                                     Total Pages
                                                 </span>
                                                 </div>
                                             </div>
-                                            <div>
-                                            <span class="d-block display-5 text-dark mb-5 font-weight-bold">
-                                                {{$total_counts['total_pages']}}
-                                            </span>
-                                                <a href="#" class="d-block"
+                                            <div class="text-center">
+                                                <span class="d-block display-5 text-dark mb-5 font-weight-bold">
+                                                    {{$total_counts['total_pages']}}
+                                                </span>
+                                                <a href="{{route('shop.list.view')}}" class="d-block"
                                                    style="font-size: 14px">Learn more...</a>
                                             </div>
                                         </div>
@@ -41,19 +42,20 @@
                                 <div class="col-sm-3">
                                     <div class="card card-sm">
                                         <div class="card-body">
-                                            <div class="d-flex justify-content-between mb-5">
+                                            <div class="d-flex justify-content-center mb-5">
                                                 <div>
-                                                <span class="d-block font-15 text-warning font-weight-500">
+                                                <span
+                                                    class="d-block font-15 text-warning text-uppercase font-weight-700">
                                                     Total Products
                                                 </span>
                                                 </div>
                                                 <br>
                                             </div>
-                                            <div>
-                                            <span class="d-block display-5 text-dark mb-5 font-weight-bold">
-                                              {{$total_counts['total_products']}}
-                                            </span>
-                                                <a href="#" class="d-block"
+                                            <div class="text-center">
+                                                <span class="d-block display-5 text-dark mb-5 font-weight-bold">
+                                                  {{$total_counts['total_products']}}
+                                                </span>
+                                                <a href="{{route('product.manage.view')}}" class="d-block"
                                                    style="font-size: 14px">Learn more...</a>
                                             </div>
                                         </div>
@@ -62,17 +64,18 @@
                                 <div class="col-sm-3">
                                     <div class="card card-sm">
                                         <div class="card-body">
-                                            <div class="d-flex justify-content-between mb-5">
+                                            <div class="d-flex justify-content-center mb-5">
                                                 <div>
-                                                <span class="d-block font-15 text-success font-weight-500">
+                                                <span
+                                                    class="d-block font-15 text-success text-uppercase font-weight-700">
                                                     Total Customers
                                                 </span>
                                                 </div>
                                             </div>
-                                            <div>
-                                            <span class="d-block display-5 text-dark mb-5 font-weight-bold">
-                                                  {{$total_counts['total_customers']}}
-                                            </span>
+                                            <div class="text-center">
+                                                <span class="d-block display-5 text-dark mb-5 font-weight-bold">
+                                                      {{$total_counts['total_customers']}}
+                                                </span>
                                                 <a href="#" class="d-block"
                                                    style="font-size: 14px">Learn more...</a>
                                             </div>
@@ -82,18 +85,19 @@
                                 <div class="col-sm-3">
                                     <div class="card card-sm">
                                         <div class="card-body">
-                                            <div class="d-flex justify-content-between mb-5">
+                                            <div class="d-flex justify-content-center mb-5">
                                                 <div>
-                                                <span class="d-block font-15 text-danger font-weight-500">
+                                                <span
+                                                    class="d-block font-15 text-danger text-uppercase font-weight-700">
                                                     Total Orders
                                                 </span>
                                                 </div>
                                             </div>
-                                            <div>
-                                            <span class="d-block display-5 text-dark mb-5 font-weight-bold">
-                                                   {{$total_counts['total_orders']}}
-                                            </span>
-                                                <a href="#" class="d-block"
+                                            <div class="text-center">
+                                                <span class="d-block display-5 text-dark mb-5 font-weight-bold">
+                                                       {{$total_counts['total_orders']}}
+                                                </span>
+                                                <a href="{{route('order.manage.view')}}" class="d-block"
                                                    style="font-size: 14px">Learn more...</a>
                                             </div>
                                         </div>
@@ -139,7 +143,7 @@
                                                         <i class="text-orange fa fa-warning"></i> Pending
                                                         <hr>
                                                         <i class="text-orange font-20">
-                                                            {{($total_counts['total_orders'])*($total_counts['total_pending'])/100}}%
+                                                            {{ceil(100*($total_counts['total_pending'])/($total_counts['total_orders']))}}%
                                                         </i>
                                                     </span>
                                                 </div>
@@ -148,17 +152,16 @@
                                                         <i class="text-green fa fa-flag-checkered "></i> Delivered
                                                          <hr>
                                                         <i class="text-green font-20">
-                                                              {{($total_counts['total_orders'])*($total_counts['total_delivered'])/100}}%
+                                                              {{ceil(100*($total_counts['total_delivered'])/($total_counts['total_orders']))}}%
                                                         </i>
                                                     </span>
                                                 </div>
-
                                                 <div class="col-4 text-center">
                                                     <span class="d-block font-14 text-capitalize mb-5">
                                                         <i class="text-red fa fa-check-circle"></i> Cancelled
                                                           <hr>
                                                         <i class="text-red font-20">
-                                                              {{($total_counts['total_orders'])*($total_counts['total_cancelled'])/100}}%
+                                                              {{(ceil(100*($total_counts['total_cancelled'])/$total_counts['total_orders']))}}%
                                                         </i>
                                                     </span>
                                                 </div>
@@ -183,6 +186,10 @@
     <script src={{asset("assets/admin_panel/dist/js/dashboard-data.js")}}></script>
 @endsection
 
-@section('dashboard_css')
-
+@section('dashboard-css')
+    <style>
+        .hk-pg-wrapper .hk-pg-header{
+            margin-bottom: 0 !important;
+        }
+    </style>
 @endsection

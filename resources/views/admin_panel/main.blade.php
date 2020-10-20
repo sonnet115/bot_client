@@ -52,7 +52,7 @@
             color: black !important;
         }
     </style>
-    @yield("dashboard_css")
+    @yield("dashboard-css")
     @yield("product-css")
     @yield("user-css")
     @yield("discount-css")
@@ -266,9 +266,9 @@
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <p class="d-inline-block">Follow us</p>
-                        <a href="https://www.facebook.com/howkar.bd/"
+                        <a target="_blank" href="https://www.facebook.com/howkar.bd/"
                            class="d-inline-block btn btn-icon btn-icon-only btn-indigo btn-icon-style-4"><span
-                                class="btn-icon-wrap"><i class="fa fa-facebook"></i></span></a>
+                                class="btn-icon-wrap"><i class="fa fa-facebook-official"></i></span></a>
                     </div>
                 </div>
             </footer>
