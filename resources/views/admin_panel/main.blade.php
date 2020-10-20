@@ -254,6 +254,7 @@
     <!-- Main Content -->
     <div class="hk-pg-wrapper">
     @yield("main_content")
+
     <!-- Footer -->
         <div class="hk-footer-wrap container">
             <footer class="footer">

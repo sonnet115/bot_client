@@ -22,6 +22,7 @@ class CreateProductsTable extends Migration
             $table->float('price');
             $table->smallInteger('shop_id');
             $table->tinyInteger('state')->default(1);
+            $table->integer('category_id')->default(null)->nullable();
             $table->timestamps();
         });
     }
