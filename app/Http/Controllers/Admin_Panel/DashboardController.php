@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin_Panel;
 
+use App\Category;
 use App\Customer;
 use App\Http\Controllers\Controller;
 use App\Order;
@@ -61,7 +62,7 @@ class DashboardController extends Controller
     {
         $shops = Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->get();
         return view('admin_panel.profile.profile')
-            ->with('title', "Howkar Technology || Profile")
+            ->with('title', "Howkar Technology || Approval")
             ->with('shop_list', $shops);
     }
 
@@ -81,6 +82,7 @@ class DashboardController extends Controller
             $user = User::find(auth()->user()->id);
             $user->contact = $request->contact;
             $user->email = $request->email;
+            $user->profile_completed = 1;
             $user->save();
 
             for ($i = 0; $i < sizeof($request->pages); $i++) {
@@ -91,12 +93,48 @@ class DashboardController extends Controller
             }
 
             DB::commit();
-            Session::flash('success_message', 'Your request has been submitted');
+            Session::flash('success_message', 'We have received your request. We will notify you within 1 hour');
             return redirect(route('clients.profile'));
         } catch (\Exception $e) {
             DB::rollBack();
             Session::flash('error_message', 'Something went wrong! Please Try again');
             return redirect(route('clients.profile'));
         }
+    }
+
+    function getTestData()
+    {
+        $categories = Category::where("parent_id", NULL)->with("subCategory")->get();
+        $this->printCat($categories);
+    }
+
+    function printCat($categories)
+    {
+//        foreach ($categories as $cat) {
+//            echo $cat->name . '<br>';
+//            if (count($cat->subCategory) > 0) {
+//                echo '<br>';
+//                $this->printCat($cat->subCategory);
+//            }
+//        }
+        echo $this->getCategoryTree();
+    }
+
+    protected function getCategoryTree($level = NULL, $prefix = '') {
+        $rows = Category::where("parent_id", $level)->with("subCategory")->get();
+
+        $category = '';
+        if (count($rows) > 0) {
+            foreach ($rows as $row) {
+                $category .= $prefix . $row->name . "\n";
+                // Append subcategories
+                $category .= $this->getCategoryTree($row->id, $prefix . '-');
+            }
+        }
+        return $category;
+    }
+
+    public function printCategoryTree() {
+        echo $this->getCategoryTree();
     }
 }

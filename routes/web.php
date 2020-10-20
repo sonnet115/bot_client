@@ -23,6 +23,7 @@ Route::get("bot/verify-web-hook", "Bot\BotController@verifyWebhook")->middleware
 Route::post("bot/verify-web-hook", "Bot\BotController@verifyWebhook");
 
 Route::get("bot/{app_id}/test", "Bot\OrderController@getTestData");
+Route::get("test", "Admin_Panel\DashboardController@getCategoryTree");
 
 Route::group(['prefix' => 'bot/{app_id}'], function () {
     //Routes for place orders
@@ -51,11 +52,11 @@ Route::group(['prefix' => 'bot/{app_id}'], function () {
 Route::group(['middleware' => 'page.not.added'], function () {
     Route::group(['prefix' => 'admin'], function () {
         //Routes for shops & billing
-        Route::group(['prefix' => 'shop-billing'], function () {
-            Route::get("store-page", "Admin_Panel\PageController@storePages")->name('page.store');
-            Route::get("shop-list", "Admin_Panel\PageController@viewShopList")->name('shop.list.view');
-            Route::get("get-list", "Admin_Panel\PageController@getShopsList")->name('shop.list.get');
-            Route::get("remove-persistent-menu", "Admin_Panel\PageController@removePersistentAndGetStartedMenu")->name('remove.persistent_menu');
+        Route::group(['prefix' => 'shop-approval'], function () {
+            Route::get("store-page", "Admin_Panel\PageController@storePages")->name('page.store.approval');
+            Route::get("shop-list", "Admin_Panel\PageController@viewShopListApproval")->name('shop.list.view.approval');
+            Route::get("get-list", "Admin_Panel\PageController@getShopsList")->name('shop.list.get.approval');
+            Route::get("remove-persistent-menu", "Admin_Panel\PageController@removePersistentAndGetStartedMenu")->name('remove.persistent_menu.approval');
         });
     });
 });
@@ -116,6 +117,16 @@ Route::group(['middleware' => 'unauthenticated.user'], function () {
             Route::get("dc-list", "Admin_Panel\DeliveryChargeController@viewDeliveryChargeList")->name('dc.list.view');
             Route::post("update-dc", "Admin_Panel\DeliveryChargeController@updateDeliveryCharge")->name('dc.update');
             Route::get("get-dc", "Admin_Panel\DeliveryChargeController@getDeliveryCharges")->name('dc.get');
+        });
+
+        Route::group(['prefix' => 'admin'], function () {
+            //Routes for shops & billing
+            Route::group(['prefix' => 'shop-billing'], function () {
+                Route::get("store-page", "Admin_Panel\PageController@storePages")->name('page.store');
+                Route::get("shop-list", "Admin_Panel\PageController@viewShopList")->name('shop.list.view');
+                Route::get("get-list", "Admin_Panel\PageController@getShopsList")->name('shop.list.get');
+                Route::get("remove-persistent-menu", "Admin_Panel\PageController@removePersistentAndGetStartedMenu")->name('remove.persistent_menu');
+            });
         });
 
         Route::group(['prefix' => 'shop-billing'], function () {

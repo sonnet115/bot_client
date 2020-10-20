@@ -21,7 +21,7 @@ class RedirectIfNotAuthenticated
             return redirect(route('home'));
         }
         if (auth()->user()->page_added == 0) {
-            return redirect(route('shop.list.view'));
+            return redirect(route('shop.list.view.approval'));
         }
         if (auth()->user()->profile_completed == 0) {
             return redirect(route('clients.profile'));

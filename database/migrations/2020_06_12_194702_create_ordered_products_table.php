@@ -21,7 +21,7 @@ class CreateOrderedProductsTable extends Migration
             $table->integer('price');
             $table->double('discount')->default(0);
             $table->string('additional_product_details', 100)->nullable();
-            $table->tinyInteger('product_status')->default(0);
+            $table->tinyInteger('product_status')->default(1);
             $table->timestamps();
         });
     }
