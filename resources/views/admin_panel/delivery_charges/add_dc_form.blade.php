@@ -3,8 +3,6 @@
 @section('discount-css')
     <link href="{{asset("assets/admin_panel/vendors/select2/dist/css/select2.min.css")}}" rel="stylesheet"
           type="text/css"/>
-    <link href={{asset("assets/admin_panel/vendors/daterangepicker/daterangepicker.css")}} rel="stylesheet"
-          type="text/css"/>
     <style>
         .select2-container .select2-selection--single {
             height: 40px !important;

@@ -53,6 +53,7 @@
         }
     </style>
     @yield("dashboard-css")
+    @yield("category-css")
     @yield("product-css")
     @yield("user-css")
     @yield("discount-css")
@@ -125,6 +126,33 @@
                             <span class="feather-icon"><i data-feather="activity"></i></span>
                             <span class="nav-link-text">Dashboard</span>
                         </a>
+                    </li>
+
+                    {{-- manage category--}}
+                    <hr class="nav-separator">
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse"
+                           data-target="#category_manager">
+                            <i class="fa fa-chain"></i></span>
+                            <span class="nav-link-text">Manage Category </span>
+                        </a>
+                        <ul id="category_manager"
+                            class="nav flex-column collapse collapse-level-1 {{ Request::segment(2) == "category" ? "show" : "" }}">
+                            <li class="nav-item">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item {{\Request::route()->getName() == "category.add.view" ? "active" : ""}}">
+                                        <a class="nav-link"
+                                           href="{{route('category.add.view')}}"><i class="fa fa-plus-square"></i>Add
+                                            Category</a>
+                                    </li>
+                                    <li class="nav-item {{\Request::route()->getName() == "category.manage.view" ? "active" : ""}}">
+                                        <a class="nav-link"
+                                           href="{{route('category.manage.view')}}"><i class="fa fa-list-ul"></i>Category
+                                            Lists</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
                     </li>
 
                     {{-- manage products--}}
@@ -327,6 +355,7 @@
 <script src={{asset("assets/admin_panel/dist/js/init.js")}}></script>
 
 @yield('dashboard-js')
+@yield("category-js")
 @yield("product-js")
 @yield('user-js')
 @yield('discount-js')

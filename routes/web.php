@@ -72,6 +72,15 @@ Route::group(['middleware' => 'unauthenticated.user'], function () {
     Route::group(['prefix' => 'admin'], function () {
         Route::get("dashboard", "Admin_Panel\DashboardController@showDashboard")->name("dashboard");
 
+        //Routes for Category
+        Route::group(['prefix' => 'category'], function () {
+            Route::get("add-form", "Admin_Panel\CategoryController@viewAddCategoryForm")->name("category.add.view");
+            Route::post("store-category", "Admin_Panel\CategoryController@storeCategory")->name("category.store");
+            Route::get("manage-form", "Admin_Panel\CategoryController@viewUpdateCategory")->name("category.manage.view");
+            Route::post("update-category", "Admin_Panel\CategoryController@updateCategory")->name("category.update");
+            Route::get("get-category", "Admin_Panel\CategoryController@getCategory")->name("category.get");
+        });
+
         //Routes for Products
         Route::group(['prefix' => 'product'], function () {
             Route::get("add-form", "Admin_Panel\ProductController@viewAddProductForm")->name("product.add.view");
@@ -119,15 +128,14 @@ Route::group(['middleware' => 'unauthenticated.user'], function () {
             Route::get("get-dc", "Admin_Panel\DeliveryChargeController@getDeliveryCharges")->name('dc.get');
         });
 
-        Route::group(['prefix' => 'admin'], function () {
-            //Routes for shops & billing
-            Route::group(['prefix' => 'shop-billing'], function () {
-                Route::get("store-page", "Admin_Panel\PageController@storePages")->name('page.store');
-                Route::get("shop-list", "Admin_Panel\PageController@viewShopList")->name('shop.list.view');
-                Route::get("get-list", "Admin_Panel\PageController@getShopsList")->name('shop.list.get');
-                Route::get("remove-persistent-menu", "Admin_Panel\PageController@removePersistentAndGetStartedMenu")->name('remove.persistent_menu');
-            });
+        //Routes for shops & billing
+        Route::group(['prefix' => 'shop-billing'], function () {
+            Route::get("store-page", "Admin_Panel\PageController@storePages")->name('page.store');
+            Route::get("shop-list", "Admin_Panel\PageController@viewShopList")->name('shop.list.view');
+            Route::get("get-list", "Admin_Panel\PageController@getShopsList")->name('shop.list.get');
+            Route::get("remove-persistent-menu", "Admin_Panel\PageController@removePersistentAndGetStartedMenu")->name('remove.persistent_menu');
         });
+
 
         Route::group(['prefix' => 'shop-billing'], function () {
             Route::get("billing-info", "Admin_Panel\PageController@viewBillingInfo")->name('billing.info');

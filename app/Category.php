@@ -12,4 +12,9 @@ class Category extends Model
     {
         return $this->hasMany(self::class, 'parent_id')->with('subCategory');
     }
+
+    public function shop()
+    {
+        return $this->hasOne(Shop::class, 'id', 'shop_id');
+    }
 }
