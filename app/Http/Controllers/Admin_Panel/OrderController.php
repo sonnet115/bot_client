@@ -87,6 +87,9 @@ class OrderController extends Controller
             $order->status_updated_by = auth()->user()->id;
             $order->save();
 
+            OrderedProducts::where('oid', $order_id)
+                ->update(['product_status' => $order_status]);
+
             return response()->json('Successfully updated status', 200);
         } catch (\Exception $e) {
             return response()->json('Update Failed', 400);

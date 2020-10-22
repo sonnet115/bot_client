@@ -11,7 +11,8 @@
             <div class="form-group col-md-2">
                 <h5 style="font-size: 16px;color: #708090">From:<span class="text-danger"></span></h5>
                 <div class="controls">
-                    <input class="form-control discount_date" autocomplete="off" type="text" name="start_date" id="start_date" value=""/>
+                    <input class="form-control discount_date" autocomplete="off" type="text" name="start_date"
+                           id="start_date" value=""/>
                 </div>
             </div>
             <!--start date filter starts-->
@@ -20,7 +21,8 @@
             <div class="form-group col-md-2">
                 <h5 style="font-size: 16px;color: #708090">To:<span class="text-danger"></span></h5>
                 <div class="controls">
-                    <input class="form-control discount_date" autocomplete="off" type="text" name="end_date" id="end_date" value=""/>
+                    <input class="form-control discount_date" autocomplete="off" type="text" name="end_date"
+                           id="end_date" value=""/>
                 </div>
             </div>
             <!--end date filter ends-->
@@ -100,7 +102,7 @@
         </div>
         <!-- Order list ends -->
 
-        <!-- modal body starts-->
+        <!-- Modal body starts-->
         <div class="modal fade" id="myModal">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
@@ -143,7 +145,7 @@
                                 </table>
                             </div>
                             <!--summary starts-->
-                            <div class="col-4" style="color: #2b383e" id="summary_details">
+                            <div class="col-12" style="color: #2b383e" id="summary_details">
 
                             </div>
                             <!-- summary ends-->
@@ -158,7 +160,7 @@
                 </div>
             </div>
         </div>
-        <!-- moadal body ends-->
+        <!-- Modal body ends-->
     </div>
     <!-- /Container -->
 @endsection
@@ -174,6 +176,7 @@
     <script src={{asset("assets/admin_panel/vendors/moment/min/moment.min.js")}}></script>
     <script src={{asset("assets/admin_panel/vendors/daterangepicker/daterangepicker.js")}}></script>
     <script src={{asset("assets/admin_panel/dist/js/daterangepicker-data.js")}}></script>
+
     <!-- data table-->
     <script>
         $(document).ready(function () {
@@ -327,6 +330,8 @@
                 $('#total_price').html("");
                 $('#total_discount').html("");
                 let order_id = $(this).parent().find('.order_id').val();
+                let view_details_button = $(this);
+                view_details_button.prop('disabled', true);
 
                 $.ajax({
                     type: "GET",
@@ -336,6 +341,7 @@
                     },
 
                     success: function (response) {
+                        view_details_button.prop('disabled', false);
                         console.log(response);
                         //order details
                         for (let i = 0; i < response.ordered_products.length; i++) {
@@ -411,41 +417,31 @@
                     let product_status = product_status_parent.find('.product_status_td');
 
                     if ((response.product_status) === 0) {
-                        product_status.html("<span class='badge badge-pill badge-warning'>Unavailable</span>");
+                        product_status.html("<span class='badge badge-pill badge-info'>Pending</span>");
                     }
                     if ((response.product_status) === 1) {
-                        product_status.html("<span class='badge badge-pill badge-primary'>Available</span>");
+                        product_status.html("<span class='badge badge-pill badge-primary'>Processing</span>");
                     }
                     if ((response.product_status) === 2) {
-                        product_status.html("<span class='badge badge-pill badge-success'>Delivered</span>");
+                        product_status.html("<span class='badge badge-pill badge-warning'>Dispatched</span>");
                     }
                     if ((response.product_status) === 3) {
+                        product_status.html("<span class='badge badge-pill badge-success'>Delivered</span>");
+                    }
+                    if ((response.product_status) === 4) {
                         product_status.html("<span class='badge badge-pill badge-danger'>Cancelled</span>");
                     }
 
                     if (old_product_status !== new_product_status) {
-                        if (new_product_status === "1") {
-                            if (old_product_status !== "2") {
+                        // adjustOnchangeTotalPrice(response);
+                        if (new_product_status === "0" || new_product_status !== "1" || new_product_status !== "2" || new_product_status !== "3") {
+                            if (old_product_status === "4") {
                                 adjustOnchangeTotalPrice(response);
                             }
                         }
 
-                        if (new_product_status === "2") {
-                            if (old_product_status !== "1") {
-                                adjustOnchangeTotalPrice(response);
-                            }
-                        }
-
-                        if (new_product_status === "0") {
-                            if (old_product_status !== "3") {
-                                adjustOnchangeTotalPrice(response);
-                            }
-                        }
-
-                        if (new_product_status === "3") {
-                            if (old_product_status !== "0") {
-                                adjustOnchangeTotalPrice(response);
-                            }
+                        if (new_product_status === "4") {
+                            adjustOnchangeTotalPrice(response);
                         }
                     }
                 }
@@ -458,15 +454,18 @@
             let product_status = response.ordered_products[i].pivot.product_status;
 
             if (product_status === 0) {
-                product_status_show = '<span class="badge badge-pill badge-warning">Unavailable</span>';
+                product_status_show = '<span class="badge badge-pill badge-info">Pending</span>';
             }
             if (product_status === 1) {
-                product_status_show = '<span class="badge badge-pill badge-primary">Available</span>';
+                product_status_show = '<span class="badge badge-pill badge-primary">Processing</span>';
             }
             if (product_status === 2) {
-                product_status_show = '<span class="badge badge-pill badge-success">Delivered</span>';
+                product_status_show = '<span class="badge badge-pill badge-warning">Dispatched</span>';
             }
             if (product_status === 3) {
+                product_status_show = '<span class="badge badge-pill badge-success">Delivered</span>';
+            }
+            if (product_status === 4) {
                 product_status_show = '<span class="badge badge-pill badge-danger">Cancelled</span>';
             }
 
@@ -479,10 +478,11 @@
                 '        <td>' +
                 '           <select name="cars" class="form-control product_status_select" style="font-size: 13px">\n' +
                 '               <option value="" selected>Choose Status</option>\n' +
-                '               <option value="0">Unavailable</option>\n' +
-                '               <option value="1">Available</option>\n' +
-                '               <option value="2">Delivered</option>\n' +
-                '               <option value="3">Cancelled</option>\n' +
+                '               <option value="0">Pending</option>\n' +
+                '               <option value="1">Processing</option>\n' +
+                '               <option value="2">Dispatched</option>\n' +
+                '               <option value="3">Delivered</option>\n' +
+                '               <option value="4">Cancelled</option>\n' +
                 '           </select>' +
                 '           <input type="hidden" class="product_id" value="' + response.ordered_products[i].id + '">' +
                 '           <input type="hidden" class="order_id" value="' + response.id + '">' +
@@ -493,27 +493,27 @@
 
         function myCustomers(response) {
             let customer = '<thead>\n' +
-                '                                   <tr>\n' +
-                '                                            <td>Name</td>\n' +
-                '                                            <td>' + response.customer_name + '</td>\n' +
-                '                                        </tr>\n' +
-                '                                    </thead>\n' +
-                '                                    <tbody id="customer_table_data">\n' +
-                '                                        <tr>\n' +
-                '                                            <td>Billing Address</td>\n' +
-                '                                            <td>' + response.billing_address + '</td>\n' +
-                '                                        </tr>\n' +
-                '                                        <tr>\n' +
-                '                                            <td>Shipping Address</td>\n' +
-                '                                            <td>' + response.shipping_address + '</td>\n' +
-                '                                        </tr>\n' +
-                '                                        <tr>\n' +
-                '                                            <td>Contact Number</td>\n' +
-                '                                            <td>' + response.contact +
-                '                                               <input type="hidden" value="' + response.delivery_charge + '" id="old_delivery_charge">' +
-                '                                            </td>\n' +
-                '                                        </tr>\n' +
-                '                                    </tbody>';
+                    '             <tr>\n' +
+                    '                <td style="border-top: 1px solid lightgray">Name</td>\n' +
+                    '                <td style="border-top: 1px solid lightgray">' + response.customer_name + '</td>\n' +
+                    '             </tr>\n' +
+                    '        </thead>\n' +
+                    '        <tbody id="customer_table_data">\n' +
+                    '              <tr>\n' +
+                    '                <td>Billing Address</td>\n' +
+                    '                <td>' + response.billing_address + '</td>\n' +
+                    '              </tr>\n' +
+                    '              <tr>\n' +
+                    '                 <td>Shipping Address</td>\n' +
+                    '                 <td>' + response.shipping_address + '</td>\n' +
+                    '               </tr>\n' +
+                    '               <tr>\n' +
+                    '                  <td>Contact Number</td>\n' +
+                    '                  <td>' + response.contact +
+                    '                  <input type="hidden" value="' + response.delivery_charge + '" id="old_delivery_charge">' +
+                    '                  </td>\n' +
+                    '               </tr>\n' +
+                    '        </tbody>';
 
             return customer;
         }
@@ -535,7 +535,7 @@
             let total_price = 0;
             let total_discount = 0;
             for (let i = 0; i < response.ordered_products.length; i++) {
-                if (response.ordered_products[i].pivot.product_status == 1 || response.ordered_products[i].pivot.product_status == 2) {
+                if (response.ordered_products[i].pivot.product_status !== 4) {
                     let quantity = response.ordered_products[i].pivot.quantity;
                     let price = response.ordered_products[i].pivot.price;
                     let discount = response.ordered_products[i].pivot.discount;
@@ -564,13 +564,12 @@
             adjusted_subtotal = old_subtotal;
             adjusted_discount = old_discount;
 
-            if (response.product_status === 1 || response.product_status === 2) {
-                adjusted_discount = adjusted_discount + (new_quantity * new_discount);
-                adjusted_subtotal = adjusted_subtotal + (new_quantity * new_price);
-            }
-            if (response.product_status === 3 || response.product_status === 0) {
+            if (response.product_status === 4) {
                 adjusted_discount = adjusted_discount - (new_quantity * new_discount);
                 adjusted_subtotal = adjusted_subtotal - (new_quantity * new_price);
+            } else {
+                adjusted_discount = adjusted_discount + (new_quantity * new_discount);
+                adjusted_subtotal = adjusted_subtotal + (new_quantity * new_price);
             }
 
             if (!adjusted_subtotal) {
