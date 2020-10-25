@@ -2,9 +2,9 @@
 
 @section("main_content")
     <!-- Container -->
-    <div class="container mt-xl-20 mt-sm-30 mt-15">
+    <div class="container mt-xl-20 mt-sm-30 mt-50 mt-lg-15">
         <!-- filter starts-->
-        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted"><i class="fa fa-filter">&nbsp;Filter Products</i>
+        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-filter">&nbsp;Filter Products</i>
         </h4>
         <p style="font-size: 20px">Stock</p>
         <div class="d-flex flex-wrap">
@@ -47,8 +47,8 @@
 
             <!--button-->
             <div class="text-left pl-4">
-                <button type="text" id="btnFiterSubmitSearch" class="btn btn-info"><i
-                        class="fa fa-search">&nbsp;</i>Filter
+                <button id="btnFiterSubmitSearch" class="btn btn-primary"><i
+                        class="fa fa-filter">&nbsp;</i>Filter
                 </button>
             </div>
             <!--button ends-->
@@ -56,7 +56,7 @@
         <!-- filter ends-->
 
         <!-- Product List starts -->
-        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted"><i class="fa fa-list-alt"> Product List</i></h4>
+        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-list-alt"> Product List</i></h4>
         <div class="row">
             <div class="col-xl-12">
                 <section class="hk-sec-wrapper">
@@ -64,7 +64,14 @@
                         <div class="col-sm">
                             <span class="font-18 connect_text text-primary"></span>
                             @if(Session::has('success_message'))
-                                <p class="text-center alert {{ Session::get('alert-class', 'alert-success') }}">{{ Session::get('success_message') }}</p>
+                                <p class="text-center alert {{ Session::get('alert-class', 'alert-success') }}">
+                                    <i class="fa fa-check-circle"></i> {{ Session::get('success_message') }}
+                                </p>
+                            @endif
+                            @if(Session::has('failed_message'))
+                                <p class="text-center alert {{ Session::get('alert-class', 'alert-danger') }}">
+                                    <i class="fa fa-times-circle"></i> {{ Session::get('failed_message') }}
+                                </p>
                             @endif
                             <div class="table-wrap">
                                 <table id="product_list_table" class="table table-bordered w-100 display">
@@ -73,9 +80,11 @@
                                         <th class="text-center text-white" data-priority="1">Name</th>
                                         <th class="text-center text-white">Code</th>
                                         <th class="text-center text-white">Stock</th>
-                                        <th class="text-center text-white">UoM</th>
+                                        <th class="text-center text-white">UoM<p style="font-size: 10px">(Unit of
+                                                measurement)</p></th>
                                         <th class="text-center text-white">Price</th>
-                                        <th class="text-center text-white">Shop Name</th>
+                                        <th class="text-center text-white">Page Name</th>
+                                        <th class="text-center text-white">Category</th>
                                         <th class="text-center text-white">State</th>
                                         <th class="text-center text-white" data-priority="1">Action</th>
                                     </tr>
@@ -152,6 +161,7 @@
                     {data: 'uom', name: 'uom'},
                     {data: 'price', name: 'price'},
                     {data: 'shop.page_name', name: 'shop.page_name'},
+                    {data: 'category.name', name: 'category.name'},
                     {
                         'render': function (data, type, row) {
                             let color = row.state === 1 ? "success" : "danger";
@@ -208,6 +218,11 @@
 
         .pagination {
             display: block !important;
+            margin-top: 10px !important;
+        }
+
+        .paginate_button {
+            padding: 0 !important;
         }
     </style>
 @endsection

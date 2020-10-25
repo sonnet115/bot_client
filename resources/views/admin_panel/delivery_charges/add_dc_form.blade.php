@@ -1,31 +1,11 @@
 @extends("admin_panel.main")
 
-@section('discount-css')
-    <link href="{{asset("assets/admin_panel/vendors/select2/dist/css/select2.min.css")}}" rel="stylesheet"
-          type="text/css"/>
-    <style>
-        .select2-container .select2-selection--single {
-            height: 40px !important;
-            border-top-left-radius: 0px;
-            border-bottom-left-radius: 0px;
-        }
-
-        .select2-selection__arrow {
-            top: 6px !important;
-        }
-
-        .select2-selection__choice__display {
-            color: #f40600 !important;
-        }
-    </style>
-@endsection
-
 @section("main_content")
     <!-- Container -->
-    <div class="container mt-xl-30 mt-sm-30 mt-15">
+    <div class="container mt-xl-30 mt-sm-30 mt-50 mt-lg-15">
         <!-- Title -->
         <div class="hk-pg-header align-items-top">
-            <h2 class="hk-pg-title font-weight-700 mb-10 text-muted"><i
+            <h2 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i
                     class="fa fa-plus"> {{$dc_details!==null ? "Update Delivery Charge" : "Add Delivery Charge"}}</i>
             </h2>
         </div>
@@ -35,6 +15,16 @@
         <div class="row">
             <div class="col-xl-7">
                 <section class="hk-sec-wrapper" style="padding-bottom: 0px">
+                    @if(Session::has('success_message'))
+                        <p class="text-center alert {{ Session::get('alert-class', 'alert-success') }}">
+                            <i class="fa fa-check-circle"></i> {{ Session::get('success_message') }}
+                        </p>
+                    @endif
+                    @if(Session::has('failed_message'))
+                        <p class="text-center alert {{ Session::get('alert-class', 'alert-danger') }}">
+                            <i class="fa fa-times-circle"></i> {{ Session::get('failed_message') }}
+                        </p>
+                    @endif
                     <div class="row">
                         <div class="col-sm">
                             <form action="{{$dc_details!==null ? route('dc.update') : route('dc.store')}}"
@@ -46,7 +36,7 @@
                                     <span style="font-size: 12px"> [Max 20 characters]</span>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="icon-user"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-edit"></i></span>
                                         </div>
                                         <input type="text" id="dc_name" name="dc_name"
                                                placeholder="Enter Delivery Charge Name" class="form-control"
@@ -65,7 +55,7 @@
                                             class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="icon-present"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-dollar"></i></span>
                                         </div>
                                         <input class="form-control discount_date" type="text" name="dc_amount"
                                                placeholder="Enter Delivery Charge Cost"
@@ -114,20 +104,12 @@
                                            value="{{$dc_details !== null ? $dc_details->id : ""}}">
                                 @endif
 
-                                @if (auth()->user()->page_added > 0)
-                                    <div class="d-flex justify-content-center">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fa fa-plus-circle"></i> {{$dc_details!==null ? "Update" : "Store"}}
-                                            Delivery Charge
-                                        </button>
-                                    </div>
-                                @else
-                                    <div class="d-flex justify-content-center">
-                                        <a class="btn btn-success rounded-20 pl-20 pr-20" href="{{route('shop.list.view')}}">
-                                            <i class="fa fa-facebook"></i> Connect Page to Add Discount
-                                        </a>
-                                    </div>
-                                @endif
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-primary btn-rounded">
+                                        <i class="fa fa-plus-circle"></i> {{$dc_details!==null ? "Update" : "Save"}}
+                                        Delivery Charge
+                                    </button>
+                                </div>
                                 <br>
                             </form>
                         </div>
@@ -197,4 +179,24 @@
         });
 
     </script>
+@endsection
+
+@section('discount-css')
+    <link href="{{asset("assets/admin_panel/vendors/select2/dist/css/select2.min.css")}}" rel="stylesheet"
+          type="text/css"/>
+    <style>
+        .select2-container .select2-selection--single {
+            height: 40px !important;
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
+        }
+
+        .select2-selection__arrow {
+            top: 6px !important;
+        }
+
+        .select2-selection__choice__display {
+            color: #f40600 !important;
+        }
+    </style>
 @endsection

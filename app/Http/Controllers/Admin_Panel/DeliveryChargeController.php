@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin_Panel;
 
 use App\DeliveryCharge;
-use App\Discount;
 use App\Http\Controllers\Controller;
 use App\Shop;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
 class DeliveryChargeController extends Controller
@@ -36,7 +36,6 @@ class DeliveryChargeController extends Controller
 
     public function storeDeliveryCharge(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'dc_name' => 'required',
             'dc_amount' => 'required|numeric',
@@ -47,11 +46,16 @@ class DeliveryChargeController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $dc = new DeliveryCharge();
-        $dc->name = $request->dc_name;
-        $dc->delivery_charge = $request->dc_amount;
-        $dc->shop_id = $request->shop_id;
-        $dc->save();
+        try {
+            $dc = new DeliveryCharge();
+            $dc->name = $request->dc_name;
+            $dc->delivery_charge = $request->dc_amount;
+            $dc->shop_id = $request->shop_id;
+            $dc->save();
+            Session::flash('success_message', 'Delivery Charge Saved Successfully');
+        } catch (\Exception $e) {
+            Session::flash('error_message', 'Something went wrong! Please Try again');
+        }
         return redirect(route('dc.add.view'));
     }
 
@@ -89,12 +93,17 @@ class DeliveryChargeController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
+        try {
+            $dc = DeliveryCharge::find($request->dc_id);
+            $dc->name = $request->dc_name;
+            $dc->delivery_charge = $request->dc_amount;
+            $dc->shop_id = $request->shop_id;
+            $dc->save();
+            Session::flash('success_message', 'Delivery Charge Updated Successfully');
+        } catch (\Exception $e) {
+            Session::flash('error_message', 'Something went wrong! Please Try again');
+        }
 
-        $dc = DeliveryCharge::find($request->dc_id);
-        $dc->name = $request->dc_name;
-        $dc->delivery_charge = $request->dc_amount;
-        $dc->shop_id = $request->shop_id;
-        $dc->save();
         return redirect(route('dc.list.view'));
     }
 

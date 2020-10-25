@@ -27,7 +27,7 @@
     <div class="container mt-xl-30 mt-sm-30 mt-15">
         <!-- Title -->
         <div class="hk-pg-header align-items-top">
-            <h2 class="hk-pg-title font-weight-700 mb-10 text-muted"><i
+            <h2 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i
                     class="fa fa-plus">{{$discount_details!==null?"Update Discount":"Add Discount"}}</i>
             </h2>
         </div>
@@ -37,6 +37,16 @@
         <div class="row">
             <div class="col-xl-7">
                 <section class="hk-sec-wrapper" style="padding-bottom: 0px">
+                    @if(Session::has('success_message'))
+                        <p class="text-center alert {{ Session::get('alert-class', 'alert-success') }}">
+                            <i class="fa fa-check-circle"></i> {{ Session::get('success_message') }}
+                        </p>
+                    @endif
+                    @if(Session::has('failed_message'))
+                        <p class="text-center alert {{ Session::get('alert-class', 'alert-danger') }}">
+                            <i class="fa fa-times-circle"></i> {{ Session::get('failed_message') }}
+                        </p>
+                    @endif
                     <div class="row">
                         <div class="col-sm">
                             <form action="{{$discount_details!==null?route('discount.update'):route('discount.store')}}"
@@ -48,7 +58,7 @@
                                     <span style="font-size: 12px"> [Max 50 characters]</span>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="icon-user"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-edit"></i></span>
                                         </div>
                                         <input type="text" id="discount_name" name="discount_name"
                                                placeholder="Enter Discount Name" class="form-control"
@@ -67,7 +77,7 @@
                                             class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="icon-present"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-calendar-check-o"></i></span>
                                         </div>
                                         <input class="form-control discount_date" type="text" name="discount_from"
                                                value="{{$discount_details!==null?$discount_details->dis_from:old('discount_from')}}"
@@ -84,7 +94,7 @@
                                             class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="icon-magnet"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-calendar-check-o"></i></span>
                                         </div>
                                         <input class="form-control discount_date" type="text" name="discount_to"
                                                id="discount_to"
@@ -97,14 +107,14 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="control-label mb-10">Choose a shop<span
+                                    <label class="control-label mb-10">Choose a Page<span
                                             class="text-danger font-16">*</span></label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="icon-shuffle"></i></span>
                                         </div>
                                         <select class="form-control" id="shop_id" name="shop_id" required>
-                                            <option value="0" disabled selected>Select shop</option>
+                                            <option value="0" disabled selected>Select Page</option>
                                             @if($discount_details !== null)
                                                 @foreach($shop_list as $shop)
                                                     <option value="{{$shop->id}}"
@@ -121,7 +131,7 @@
                                             @endif
                                         </select>
                                     </div>
-                                    <label for="product_price" class="error text-danger"></label>
+                                    <label for="shop_id" class="error text-danger"></label>
                                     @if($errors->has('shop_id'))
                                         <p class="text-danger font-14">{{ $errors->first('shop_id') }}</p>
                                     @endif
@@ -131,7 +141,7 @@
                                     <label class="control-label mb-10">Select Product<span class="text-danger">*</span></label>
                                     <div class="d-flex flex-row justify-content-between">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="icon-magnet"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-search"></i></span>
                                         </div>
 
                                         @if($discount_details===null)
@@ -180,21 +190,13 @@
                                            value="{{$discount_details !== null ? $discount_details->pid : ""}}">
                                 @endif
 
-                                @if (auth()->user()->page_added > 0)
-                                    <div class="d-flex justify-content-center">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fa fa-plus-circle"></i> {{$discount_details!==null?"Update":"Store"}}
-                                            Discount
-                                            Product
-                                        </button>
-                                    </div>
-                                @else
-                                    <div class="d-flex justify-content-center">
-                                        <a class="btn btn-success rounded-20 pl-20 pr-20" href="{{route('shop.list.view')}}">
-                                            <i class="fa fa-facebook"></i> Connect Page to Add Discount
-                                        </a>
-                                    </div>
-                                @endif
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-primary btn-rounded">
+                                        <i class="fa fa-save"></i> {{$discount_details!==null?"Update":"Save"}}
+                                        Discount
+                                    </button>
+                                </div>
+
                                 <br>
                             </form>
                         </div>
@@ -260,6 +262,11 @@
                     product_id: {
                         required: true
                     },
+
+                    shop_id: {
+                        required: true
+                    },
+
                     discount_percentage: {
                         required: true,
                         min: 1,
@@ -280,6 +287,11 @@
                     product_id: {
                         required: "Product is required",
                     },
+
+                    shop_id: {
+                        required: "Choose a page",
+                    },
+
                     discount_percentage: {
                         required: "Discount percentage is required",
                         min: "minimum 1% is required",

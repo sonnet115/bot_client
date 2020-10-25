@@ -23,4 +23,8 @@ class Product extends Model
     public function shop(){
         return $this->hasOne(Shop::class, 'id', 'shop_id');
     }
+
+    public function category(){
+        return $this->hasOne(Category::class, 'id', 'category_id');
+    }
 }

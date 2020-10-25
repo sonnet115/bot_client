@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin_Panel;
 
+use App\Category;
 use App\Http\Controllers\Controller;
 use App\Product;
 use App\ProductImage;
@@ -27,15 +28,22 @@ class ProductController extends Controller
             if ($product_details->shop->page_owner_id !== auth()->user()->user_id) {
                 return redirect(route('product.manage.view'));
             }
+
         } else {
             $product_details = null;
         }
 
         $shops = Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->get();
+        $shops_id = array();
+        foreach ($shops as $key => $value) {
+            array_push($shops_id, $value['id']);
+        }
+        $categories = Category::whereIn('shop_id', $shops_id)->get();
 
         return view('admin_panel.product.add_product_form')
             ->with("title", "Howkar Technology | Add Product")
             ->with('product_details', $product_details)
+            ->with('categories', $categories)
             ->with('shop_list', $shops);
     }
 
@@ -49,6 +57,7 @@ class ProductController extends Controller
             'product_uom' => 'required|string|max:10',
             'product_price' => 'required|numeric|between:0,500000',
             'shop_id_name' => 'required',
+            'category_ids' => 'required',
             'product_image_1' => 'required|file|max:1024',
             'product_image_1.*' => 'mimes:jpeg,png,jpg',
             'product_image_2' => 'file|max:1024',
@@ -69,6 +78,7 @@ class ProductController extends Controller
             $product->stock = $request->product_stock;
             $product->uom = $request->product_uom;
             $product->price = $request->product_price;
+            $product->category_id = $request->category_ids;
             $product->shop_id = explode('_', $request->shop_id_name)[0];
             $product->save();
             $product_id = $product->id;
@@ -78,7 +88,7 @@ class ProductController extends Controller
             $this->storeProductImage($request, $product_id, 'product_image_2', 2, $shop_name);
 
             DB::commit();
-            Session::flash('success_message', 'Product added successfully');
+            Session::flash('success_message', 'Product Saved Successfully');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -90,8 +100,17 @@ class ProductController extends Controller
 
     public function viewUpdateProduct()
     {
-        $this->shops = Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->get();
-        return view("admin_panel.product.manage_product")->with('shops', $this->shops)->with("title", "Howkar Technology || Manage Product");
+        $shops = Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->get();
+        $shops_id = array();
+        foreach ($shops as $key => $value) {
+            array_push($shops_id, $value['id']);
+        }
+        $categories = Category::whereIn('shop_id', $shops_id)->get();
+
+        return view("admin_panel.product.manage_product")
+            ->with('shops', $shops)
+            ->with('categories', $categories)
+            ->with("title", "Howkar Technology || Manage Product");
     }
 
     public function getProduct(Product $product)
@@ -120,7 +139,7 @@ class ProductController extends Controller
         $product->whereIn('shop_id', $shops_id);
 
         if (auth()->user()->page_added > 0) {
-            return datatables($product->orderBy('id', 'asc')->with("images")->with('shop'))->toJson();
+            return datatables($product->orderBy('id', 'asc')->with("images")->with('shop')->with('category'))->toJson();
         } else {
             return datatables(array())->toJson();
         }
@@ -134,6 +153,7 @@ class ProductController extends Controller
             'product_uom' => 'required|string|max:10',
             'product_price' => 'required|numeric|between:0,500000',
             'shop_id_name' => 'required',
+            'category_ids' => 'required',
             'product_image_1' => 'file|max:1024',
             'product_image_1.*' => 'mimes:jpeg,png,jpg',
             'product_image_2' => 'file|max:1024',
@@ -162,6 +182,7 @@ class ProductController extends Controller
             $product->uom = $request->product_uom;
             $product->price = $request->product_price;
             $product->state = $request->product_state;
+            $product->category_id = $request->category_ids;
             $product->shop_id = explode('_', $request->shop_id_name)[0];
             $product->save();
 
@@ -174,7 +195,7 @@ class ProductController extends Controller
             }
 
             DB::commit();
-
+            Session::flash('success_message', 'Product Updated Successfully');
         } catch (\Exception $e) {
             DB::rollBack();
             Session::flash('error_message', 'Something went wrong! Please Try again');
@@ -188,7 +209,6 @@ class ProductController extends Controller
         if ($request->hasfile($image)) {
             $file = $request->file($image);
             $image_name = $request->product_code . '_' . $image_no . '.' . $file->extension();
-            $shop_name = $shop_name;
             $file->move(public_path() . '/images/products/' . $shop_name . '/', $image_name);
 
             $productImage = new ProductImage();
@@ -202,7 +222,6 @@ class ProductController extends Controller
     {
         $file = $request->file($image);
         $image_name = $request->product_code . '_' . $image_no . '.' . $file->extension();
-        $shop_name = $shop_name;
         $file->move(public_path() . '/images/products/' . $shop_name . '/', $image_name);
 
         $image_id = 0;

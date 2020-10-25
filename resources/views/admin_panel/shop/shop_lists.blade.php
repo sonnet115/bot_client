@@ -4,7 +4,7 @@
     <!-- Container -->
     <div class="container mt-xl-20 mt-sm-30 mt-15">
         <!-- Product List starts -->
-        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted"><i class="fa fa-list-alt"> Shop List</i></h4>
+        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-list-alt"> Pages List</i></h4>
         <div class="row">
             <div class="col-xl-12">
                 <section class="hk-sec-wrapper">
@@ -75,13 +75,13 @@
                         <i class="fa fa-warning text-warning"></i> This will disconnect your page from out bot
                     </p>
                     <p class="font-21 text-center">Are you sure?</p>
-
+                    <hr>
                     <div id="remove_persistent_menu_message">
                         <div class="float-left">
-                            <button class="btn btn-danger" id="confirm-disconnect">Confirm</button>
+                            <button class="btn btn-danger btn-sm" id="confirm-disconnect">Confirm</button>
                         </div>
                         <div class="float-right">
-                            <button class="btn btn-success" data-dismiss="modal">Cancel</button>
+                            <button class="btn btn-success btn-sm" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -173,9 +173,9 @@
                             let btn = '';
 
                             if (row.page_connected_status === 1) {
-                                btn = '<button style="min-width: 101px;border:1px solid" onclick="showConfirmation()" class="shadow btn btn-sm pr-15 pl-15 btn-outline-danger">Disconnected</button>';
+                                btn = '<button style="min-width: 101px;border:1px solid" onclick="showConfirmation()" class="shadow btn btn-sm pr-15 pl-15 btn-outline-danger">Disconnect</button>';
                             } else {
-                                btn = '<button style="min-width: 101px;border:1px solid" onclick="connectDisconnectPage()" class="shadow btn btn-sm pr-15 pl-15 btn-outline-success">Connected</button>';
+                                btn = '<button style="min-width: 101px;border:1px solid" onclick="connectDisconnectPage()" class="shadow btn btn-sm pr-15 pl-15 btn-outline-success">Connect</button>';
                             }
                             return btn;
                         },
@@ -308,7 +308,8 @@
                     '       </div>\n' +
                     '  </div>'
             } else {
-                return '<p class="text-center text-success"><i class="fa fa-times"></i> Could not complete your request. Please try again!</p>' +
+                return '<p class="text-center text-danger"><i class="fa fa-times"></i> Could not complete your request. Please try again!</p>' +
+                    '  <hr>\n' +
                     '     <div class="row">\n' +
                     '          <div class="col-6 text-left">\n' +
                     '               <button class="btn btn-sm btn-success" onclick="connectDisconnectPage()">Try Again</button>\n' +

@@ -1,12 +1,11 @@
 @extends("admin_panel.main")
 
-
 @section("main_content")
     <!-- Container -->
     <div class="container mt-xl-30 mt-sm-30 mt-15">
         <!-- Title -->
         <div class="hk-pg-header align-items-top">
-            <h2 class="hk-pg-title font-weight-700 mb-10 text-muted"><i class="fa fa-plus">
+            <h2 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-plus">
                     {{$product_details !== null ? "Update" : "Add New" }} Product</i>
             </h2>
         </div>
@@ -15,7 +14,17 @@
         <!-- Row -->
         <div class="row">
             <div class="col-xl-7">
-                <section class="hk-sec-wrapper" style="padding-bottom: 0px">
+                <section class="hk-sec-wrapper" style="padding-bottom: 0">
+                    @if(Session::has('success_message'))
+                        <p class="text-center alert {{ Session::get('alert-class', 'alert-success') }}">
+                            <i class="fa fa-check-circle"></i> {{ Session::get('success_message') }}
+                        </p>
+                    @endif
+                    @if(Session::has('failed_message'))
+                        <p class="text-center alert {{ Session::get('alert-class', 'alert-danger') }}">
+                            <i class="fa fa-times-circle"></i> {{ Session::get('failed_message') }}
+                        </p>
+                    @endif
                     <div class="row">
                         <div class="col-sm">
                             <form
@@ -28,7 +37,7 @@
                                     <span class="text-muted font-12">[Max 30 Characters]</span>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="icon-user"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-edit"></i></span>
                                         </div>
 
                                         <input type="text" id="product_name" name="product_name"
@@ -47,7 +56,7 @@
                                     <span class="text-muted font-12">[Max 15 Characters]</span>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="icon-present"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-code"></i></span>
                                         </div>
                                         <input type="text" id="product_code" name="product_code"
                                                placeholder="Enter Product Code" class="form-control"
@@ -64,7 +73,7 @@
                                     <span class="text-muted font-12">[Max 1,000,00]</span>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="icon-magnet"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-circle-thin"></i></span>
                                         </div>
                                         <input type="text" id="product_stock" name="product_stock"
                                                placeholder="Enter Product Stock Amount" class="form-control"
@@ -82,7 +91,7 @@
                                     <span class="text-muted font-12">[Max 10 Characters]</span>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="icon-magnet"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-circle-thin"></i></span>
                                         </div>
                                         <input type="text" id="product_uom" name="product_uom"
                                                placeholder="Enter Product UoM" class="form-control"
@@ -100,7 +109,7 @@
                                     <span class="text-muted font-12">[Max 5,000,00]</span>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="icon-magnet"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-dollar"></i></span>
                                         </div>
                                         <input type="text" id="product_price" name="product_price"
                                                placeholder="Enter Product Price" class="form-control"
@@ -140,6 +149,37 @@
                                     <label for="product_price" class="error text-danger"></label>
                                     @if($errors->has('shop_id_name'))
                                         <p class="text-danger font-14">{{ $errors->first('shop_id_name') }}</p>
+                                    @endif
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label mb-10">Choose Category<span
+                                            class="text-danger font-16">*</span></label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="icon-shuffle"></i></span>
+                                        </div>
+                                        <select class="form-control" id="category_ids" name="category_ids" required>
+                                            <option selected value={{null}}>Select Category</option>
+                                            @if($product_details !== null)
+                                                @foreach($categories as $category)
+                                                    <option value="{{$category->id}}"
+                                                        {{$category->id == $product_details->category_id ? "selected" : ""}}>
+                                                        {{$category->name}}
+                                                    </option>
+                                                @endforeach
+                                            @else
+                                                @foreach($categories as $category)
+                                                    <option value="{{$category->id}} ">
+                                                        {{$category->name}}
+                                                    </option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                    <label for="category_ids" class="error text-danger"></label>
+                                    @if($errors->has('category_ids'))
+                                        <p class="text-danger font-14">{{ $errors->first('category_ids') }}</p>
                                     @endif
                                 </div>
 
@@ -218,8 +258,8 @@
                                        value="{{$product_details !== null ? count($product_details->images) > 1 ? $product_details->images[1]->id : "" : ""}}">
                                 <hr>
                                 <div class="d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fa fa-plus-circle"></i> {{ $product_details !== null ? "Update" : "Add" }}
+                                    <button type="submit" class="btn btn-primary btn-rounded">
+                                        <i class="fa fa-save"></i> {{ $product_details !== null ? "Update" : "Save" }}
                                         Product
                                     </button>
                                 </div>
@@ -273,6 +313,9 @@
                         max: 500000,
                         number: true
                     },
+                    category_ids: {
+                        required: true,
+                    },
                 },
                 messages: {
                     product_name: {
@@ -293,6 +336,9 @@
                     product_price: {
                         required: "Price is required",
                         maxlength: "Max value {0}"
+                    },
+                    category_ids: {
+                        required: "Category is required",
                     },
                 },
                 submitHandler: function (form) {

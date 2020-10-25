@@ -2,9 +2,9 @@
 
 @section("main_content")
     <!-- Container -->
-    <div class="container mt-xl-20 mt-sm-30 mt-15">
+    <div class="container mt-xl-20 mt-sm-30 mt-50 mt-lg-15">
         <!-- filter stast-->
-        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted"><i class="fa fa-filter">&nbsp;Filter Discounts</i>
+        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-filter">&nbsp;Filter Discounts</i>
         </h4>
         <div class="row">
             <!--start date filter starts-->
@@ -41,8 +41,8 @@
 
             @if (auth()->user()->page_added > 0)
                 <div class="text-left col-md-2" style="margin-left: 15px">
-                    <button type="text" id="btnFiterSubmitSearch" class="btn btn-info" style="margin-top: 19px"><i
-                            class="fa fa-search">&nbsp;</i>Filter
+                    <button type="text" id="btnFiterSubmitSearch" class="btn btn-primary" style="margin-top: 19px"><i
+                            class="fa fa-filter">&nbsp;</i>Filter
                     </button>
                 </div>
             @else
@@ -56,7 +56,7 @@
         <!-- filter ends-->
 
         <!--product list starts -->
-        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted" style="margin-top: 10px"><i class="fa fa-list-alt">&nbsp;Discounts Lists</i></h4>
+        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase" style="margin-top: 10px"><i class="fa fa-list-alt">&nbsp;Discounts Lists</i></h4>
         <div class="row">
             <div class="col-xl-12">
                 <section class="hk-sec-wrapper">
@@ -64,7 +64,14 @@
                         <div class="col-sm">
                             <span class="font-18 connect_text text-primary"></span>
                             @if(Session::has('success_message'))
-                                <p class="text-center alert {{ Session::get('alert-class', 'alert-success') }}">{{ Session::get('success_message') }}</p>
+                                <p class="text-center alert {{ Session::get('alert-class', 'alert-success') }}">
+                                    <i class="fa fa-check-circle"></i> {{ Session::get('success_message') }}
+                                </p>
+                            @endif
+                            @if(Session::has('failed_message'))
+                                <p class="text-center alert {{ Session::get('alert-class', 'alert-danger') }}">
+                                    <i class="fa fa-times-circle"></i> {{ Session::get('failed_message') }}
+                                </p>
                             @endif
                             <div class="table-wrap">
                                 <table id="discount_list_table" class="table table-bordered w-100 display">

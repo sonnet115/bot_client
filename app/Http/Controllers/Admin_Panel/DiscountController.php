@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Product;
 use App\Shop;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
 class DiscountController extends Controller
@@ -62,14 +63,19 @@ class DiscountController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $discount = new Discount();
-        $discount->name = $request->discount_name;
-        $discount->dis_from = $request->discount_from;
-        $discount->dis_to = $request->discount_to;
-        $discount->pid = $request->product_id;
-        $discount->dis_percentage = $request->discount_percentage;
-        $discount->shop_id = $request->shop_id;
-        $discount->save();
+        try {
+            $discount = new Discount();
+            $discount->name = $request->discount_name;
+            $discount->dis_from = $request->discount_from;
+            $discount->dis_to = $request->discount_to;
+            $discount->pid = $request->product_id;
+            $discount->dis_percentage = $request->discount_percentage;
+            $discount->shop_id = $request->shop_id;
+            $discount->save();
+            Session::flash('success_message', 'Discount Saved Successfully');
+        } catch (\Exception $e) {
+            Session::flash('error_message', 'Something went wrong. Please Try again!');
+        }
         return redirect(route('discount.add.view'));
     }
 
@@ -94,7 +100,7 @@ class DiscountController extends Controller
             $discount->whereIn('pid', request('pid'));
         }
 
-        $shops = Shop::select('id')->where('page_owner_id', auth()->user()->user_id)->get();
+        $shops = Shop::select('id')->where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->get();
         $shops_id = array();
         foreach ($shops as $key => $value) {
             array_push($shops_id, $value['id']);
@@ -122,15 +128,20 @@ class DiscountController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-        $discount = Discount::find($request->discount_id);
-        $discount->name = $request->discount_name;
-        $discount->dis_from = $request->discount_from;
-        $discount->dis_to = $request->discount_to;
-        $discount->pid = $request->product_id;
-        $discount->dis_percentage = $request->discount_percentage;
-        $discount->shop_id = $request->shop_id;
-        $discount->save();
 
+        try {
+            $discount = Discount::find($request->discount_id);
+            $discount->name = $request->discount_name;
+            $discount->dis_from = $request->discount_from;
+            $discount->dis_to = $request->discount_to;
+            $discount->pid = $request->product_id;
+            $discount->dis_percentage = $request->discount_percentage;
+            $discount->shop_id = $request->shop_id;
+            $discount->save();
+            Session::flash('success_message', 'Discount Updated Successfully');
+        } catch (\Exception $e) {
+            Session::flash('error_message', 'Something went wrong. Please Try again!');
+        }
         return redirect(route('discount.manage.view'));
     }
 
@@ -138,7 +149,12 @@ class DiscountController extends Controller
     {
         $shop_id = $request->shop_id;
         if ($shop_id != 0) {
-            return response()->json(Product::selectRaw("id, name")->whereRaw('shop_id=' . $shop_id)->get());
+            try {
+                $products = Product::select('id', 'name')->where('shop_id', $shop_id)->get();
+                return response()->json($products);
+            } catch (\Exception $e) {
+                return response()->json(null);
+            }
         } else {
             return response()->json(null);
         }

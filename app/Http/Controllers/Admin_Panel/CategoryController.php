@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Admin_Panel;
 
 use App\Category;
-use App\DeliveryCharge;
 use App\Http\Controllers\Controller;
-use App\Product;
 use App\Shop;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
@@ -47,21 +46,34 @@ class CategoryController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $cat = new Category();
-        $cat->name = $request->category_name;
-        $cat->shop_id = $request->shop_id;
-        $cat->save();
+        try {
+            $cat = new Category();
+            $cat->name = $request->category_name;
+            $cat->shop_id = $request->shop_id;
+            $cat->save();
+            Session::flash('success_message', 'Category Saved Successfully');
+        } catch (\Exception $e) {
+            Session::flash('failed_message', 'Something went wrong. Try again!');
+        }
+
         return redirect(route('category.add.view'));
     }
 
     public function viewUpdateCategory()
     {
-        return view("admin_panel.category.category_lists")->with("title", "Howkar Technology || Category Manage");
+        $shops = Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->get();
+        return view("admin_panel.category.category_lists")
+            ->with("shops", $shops)
+            ->with("title", "Howkar Technology || Category Manage");
     }
 
     public function getCategory(Category $category)
     {
         $category = $category->newQuery();
+
+        if (request()->has('shop_id') && request('shop_id') != null) {
+            $category->where('shop_id', '=', request('shop_id'));
+        }
 
         $shops = Shop::select('id')->where('page_owner_id', auth()->user()->user_id)->get();
         $shops_id = array();
@@ -88,10 +100,16 @@ class CategoryController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $cat = Category::find($request->category_id);
-        $cat->name = $request->category_name;
-        $cat->shop_id = $request->shop_id;
-        $cat->save();
+        try {
+            $cat = Category::find($request->category_id);
+            $cat->name = $request->category_name;
+            $cat->shop_id = $request->shop_id;
+            $cat->save();
+            Session::flash('success_message', 'Category Updated Successfully');
+        } catch (\Exception $e) {
+            Session::flash('failed_message', 'Something went wrong. Try again!');
+        }
+
         return redirect(route('category.manage.view'));
     }
 

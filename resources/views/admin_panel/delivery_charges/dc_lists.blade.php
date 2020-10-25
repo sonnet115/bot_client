@@ -2,9 +2,9 @@
 
 @section("main_content")
     <!-- Container -->
-    <div class="container mt-xl-20 mt-sm-30 mt-15">
+    <div class="container mt-xl-20 mt-sm-30 mt-50 mt-lg-15">
         <!-- Product List starts -->
-        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted"><i class="fa fa-list-alt"> Delivery Charges List</i>
+        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-list-alt"> Delivery Charges List</i>
         </h4>
         <div class="row">
             <div class="col-xl-12">
@@ -12,7 +12,14 @@
                     <div class="row">
                         <div class="col-sm">
                             @if(Session::has('success_message'))
-                                <p class="text-center alert {{ Session::get('alert-class', 'alert-success') }}">{{ Session::get('success_message') }}</p>
+                                <p class="text-center alert {{ Session::get('alert-class', 'alert-success') }}">
+                                    <i class="fa fa-check-circle"></i> {{ Session::get('success_message') }}
+                                </p>
+                            @endif
+                            @if(Session::has('failed_message'))
+                                <p class="text-center alert {{ Session::get('alert-class', 'alert-danger') }}">
+                                    <i class="fa fa-times-circle"></i> {{ Session::get('failed_message') }}
+                                </p>
                             @endif
                             <div class="table-wrap">
                                 <table id="dc_list_table" class="table table-bordered w-100 display">
@@ -20,7 +27,7 @@
                                     <tr>
                                         <th class="text-center text-white" data-priority="1"> Name</th>
                                         <th class="text-center text-white">Delivery Charge</th>
-                                        <th class="text-center text-white">Shop</th>
+                                        <th class="text-center text-white">Page</th>
                                         <th class="text-center text-white">State</th>
                                         <th class="text-center text-white" data-priority="1">Action</th>
                                     </tr>
@@ -85,7 +92,7 @@
                                     '   href="/admin/delivery-charge/add-form?mode=update&dcid=' + row.id + '">' +
                                     '   Update</a>';
                             } else {
-                                return '<a href="/admin/shop-billing/shop-list" style="min-width: 101px;border:1px solid" class="shadow btn btn-sm pr-15 pl-15 btn-outline-success">Connect</a>';
+                                return '<a href="/admin/shop-billing/shop-list" style="min-width: 101px;border:1px solid" class="shadow btn btn-sm pr-15 pl-15 btn-success">Connect</a>';
                             }
                         },
                     }

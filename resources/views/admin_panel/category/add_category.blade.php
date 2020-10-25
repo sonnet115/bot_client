@@ -5,7 +5,7 @@
     <div class="container mt-xl-30 mt-sm-30 mt-15">
         <!-- Title -->
         <div class="hk-pg-header align-items-top">
-            <h2 class="hk-pg-title font-weight-700 mb-10 text-muted"><i
+            <h2 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i
                     class="fa fa-plus"> {{$category_details!==null ? "Update Category" : "Add Category"}}</i>
             </h2>
         </div>
@@ -14,7 +14,17 @@
         <!-- Row -->
         <div class="row">
             <div class="col-xl-7">
-                <section class="hk-sec-wrapper" style="padding-bottom: 0px">
+                <section class="hk-sec-wrapper" style="padding-bottom: 0">
+                    @if(Session::has('success_message'))
+                        <p class="text-center alert {{ Session::get('alert-class', 'alert-success') }}">
+                            <i class="fa fa-check-circle"></i> {{ Session::get('success_message') }}
+                        </p>
+                    @endif
+                    @if(Session::has('failed_message'))
+                        <p class="text-center alert {{ Session::get('alert-class', 'alert-danger') }}">
+                            <i class="fa fa-times-circle"></i> {{ Session::get('failed_message') }}
+                        </p>
+                    @endif
                     <div class="row">
                         <div class="col-sm">
                             <form
@@ -27,7 +37,7 @@
                                     <span style="font-size: 12px"> [Max 20 characters]</span>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="icon-user"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-th-list "></i></span>
                                         </div>
                                         <input type="text" id="category_name" name="category_name"
                                                placeholder="Enter Category Name" class="form-control"
@@ -45,7 +55,7 @@
                                             class="text-danger font-16">*</span></label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="icon-shuffle"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-list-alt"></i></span>
                                         </div>
                                         <select class="form-control" id="shop_id" name="shop_id" required>
                                             <option value="0" disabled selected>Select shop</option>
@@ -77,8 +87,8 @@
                                 @endif
 
                                 <div class="d-flex justify-content-center">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fa fa-plus-circle"></i> {{$category_details!==null ? "Update" : "Store"}}
+                                    <button type="submit" class="btn btn-primary btn-rounded">
+                                        <i class="fa fa-save"></i> {{$category_details!==null ? "Update" : "Save"}}
                                         Category
                                     </button>
                                 </div>

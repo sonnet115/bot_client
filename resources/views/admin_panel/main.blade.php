@@ -51,6 +51,14 @@
             font-size: 13px !important;
             color: black !important;
         }
+        .pagination {
+            display: block !important;
+            margin-top: 10px !important;
+        }
+
+        .paginate_button {
+            padding: 0 !important;
+        }
     </style>
     @yield("dashboard-css")
     @yield("category-css")

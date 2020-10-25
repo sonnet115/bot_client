@@ -2,11 +2,12 @@
 
 @section("main_content")
     <!-- Container -->
-    <div class="container mt-xl-20 mt-sm-30 mt-15">
+    <div class="container mt-xl-20 mt-sm-30 mt-50 mt-lg-15">
         <!-- filter starts-->
-        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted"><i class="fa fa-filter">&nbsp;Filter Orders</i>
+        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-filter">&nbsp;Filter
+                Orders</i>
         </h4>
-        <div class="d-flex flex-wrap">
+        <div class="d-flex flex-wrap mb-20 mb-lg-0">
             <!--start date filter starts-->
             <div class="form-group col-md-2">
                 <h5 style="font-size: 16px;color: #708090">From:<span class="text-danger"></span></h5>
@@ -31,7 +32,7 @@
             <div class="form-group col-md-2">
                 <h5 style="font-size: 16px;color: #708090">Status<span class="text-danger"></span></h5>
                 <select class="form-control" name="status">
-                    <option value="" selected>Status</option>
+                    <option value="" selected>All Status</option>
                     <option value="0">Pending</option>
                     <option value="1">Processing</option>
                     <option value="2">Dispatched</option>
@@ -43,9 +44,9 @@
 
             <!-- state starts-->
             <div class="form-group col-md-2">
-                <h5 style="font-size: 16px;color: #708090">Shops<span class="text-danger"></span></h5>
+                <h5 style="font-size: 16px;color: #708090">Pages<span class="text-danger"></span></h5>
                 <select class="form-control" name="shop_id">
-                    <option value="" selected>Select a shop</option>
+                    <option value="" selected>All Page</option>
                     @foreach($shops as $shop)
                         <option value="{{$shop->id}}">{{$shop->page_name}}</option>
                     @endforeach
@@ -54,25 +55,18 @@
             <!--state ends-->
 
             <!--button-->
-            @if (auth()->user()->page_added > 0)
-                <div class="text-left col-md-2">
-                    <button type="text" id="orderFilterButton" class="btn btn-info" style="margin-top:19px"><i
-                            class="fa fa-search">&nbsp;</i>Filter
-                    </button>
-                </div>
-            @else
-                <div class="text-left pl-3" style="margin-top: 19px">
-                    <a class="btn btn-success rounded-20 pl-20 pr-20" href="{{route('shop.list.view')}}">
-                        <i class="fa fa-facebook"></i> Connect Page
-                    </a>
-                </div>
-        @endif
-        <!--button ends-->
+            <div class="text-left col-md-2">
+                <button type="text" id="orderFilterButton" class="btn btn-primary" style="margin-top:19px"><i
+                        class="fa fa-filter">&nbsp;</i>Filter
+                </button>
+            </div>
+            <!--button ends-->
+
         </div>
         <!-- filter ends-->
 
         <!-- Order List starts -->
-        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted"><i class="fa fa-list-alt"> Orders List</i></h4>
+        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-list-alt"> Orders List</i></h4>
         <div class="row">
             <div class="col-xl-12">
                 <section class="hk-sec-wrapper">
@@ -109,7 +103,9 @@
 
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">Your Orders</h4>
+                        <h4 class="modal-title text-muted text-uppercase">
+                            Order Code: <span class="text-dark" id="order_code_display"></span>
+                        </h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
@@ -117,10 +113,8 @@
                     <div class="modal-body" style="overflow: auto">
                         <div class="row">
                             <div class="col-12 col-lg-8">
-                                <p style="color: #2b383e;font-size: 17px;text-decoration: underline">Ordered
-                                    Products:</p>
-                                <br>
-                                <table class="table">
+                                <p class="text-uppercase text-muted">Ordered Products</p>
+                                <table class="table table-responsive table-striped table-bordered">
                                     <thead>
                                     <tr>
                                         <th class="font-weight-bold">Name</th>
@@ -137,15 +131,14 @@
                                 </table>
                             </div>
                             <div class="col-12 col-lg-4">
-                                <p style="color: #2b383e;font-size: 17px;text-decoration: underline">Customer
-                                    Details</p>
-                                <br>
+                                <p class="text-uppercase text-muted">Customer Details</p>
+
                                 <table class="table table-bordered" style="padding-left: 10px" id="customer_table_data">
 
                                 </table>
                             </div>
                             <!--summary starts-->
-                            <div class="col-12" style="color: #2b383e" id="summary_details">
+                            <div class="col-12 col-md-6 col-lg-3" id="summary_details">
 
                             </div>
                             <!-- summary ends-->
@@ -262,6 +255,7 @@
                                 '> View\n' +
                                 '  </button>' +
                                 '<input type="hidden" value="' + row.id + '" class="order_id">' +
+                                '<input type="hidden" value="' + row.code + '" class="order_code_display">' +
                                 '</div>';
 
                             return details_button;
@@ -330,9 +324,10 @@
                 $('#total_price').html("");
                 $('#total_discount').html("");
                 let order_id = $(this).parent().find('.order_id').val();
+                let order_code = $(this).parent().find('.order_code_display').val();
                 let view_details_button = $(this);
                 view_details_button.prop('disabled', true);
-
+                $("#order_code_display").html(order_code);
                 $.ajax({
                     type: "GET",
                     url: "{{route('order.details.get')}}",
@@ -493,27 +488,27 @@
 
         function myCustomers(response) {
             let customer = '<thead>\n' +
-                    '             <tr>\n' +
-                    '                <td style="border-top: 1px solid lightgray">Name</td>\n' +
-                    '                <td style="border-top: 1px solid lightgray">' + response.customer_name + '</td>\n' +
-                    '             </tr>\n' +
-                    '        </thead>\n' +
-                    '        <tbody id="customer_table_data">\n' +
-                    '              <tr>\n' +
-                    '                <td>Billing Address</td>\n' +
-                    '                <td>' + response.billing_address + '</td>\n' +
-                    '              </tr>\n' +
-                    '              <tr>\n' +
-                    '                 <td>Shipping Address</td>\n' +
-                    '                 <td>' + response.shipping_address + '</td>\n' +
-                    '               </tr>\n' +
-                    '               <tr>\n' +
-                    '                  <td>Contact Number</td>\n' +
-                    '                  <td>' + response.contact +
-                    '                  <input type="hidden" value="' + response.delivery_charge + '" id="old_delivery_charge">' +
-                    '                  </td>\n' +
-                    '               </tr>\n' +
-                    '        </tbody>';
+                '             <tr>\n' +
+                '                <td style="border-top: 1px solid lightgray">Name</td>\n' +
+                '                <td style="border-top: 1px solid lightgray">' + response.customer_name + '</td>\n' +
+                '             </tr>\n' +
+                '        </thead>\n' +
+                '        <tbody id="customer_table_data">\n' +
+                '              <tr>\n' +
+                '                <td>Billing Address</td>\n' +
+                '                <td>' + response.billing_address + '</td>\n' +
+                '              </tr>\n' +
+                '              <tr>\n' +
+                '                 <td>Shipping Address</td>\n' +
+                '                 <td>' + response.shipping_address + '</td>\n' +
+                '               </tr>\n' +
+                '               <tr>\n' +
+                '                  <td>Contact Number</td>\n' +
+                '                  <td>' + response.contact +
+                '                  <input type="hidden" value="' + response.delivery_charge + '" id="old_delivery_charge">' +
+                '                  </td>\n' +
+                '               </tr>\n' +
+                '        </tbody>';
 
             return customer;
         }
@@ -521,13 +516,13 @@
         //summary details functions
         function summaryDetails(subtotal, discount, delivery, total) {
             return '<div class="border-bottom">\n' +
-                '        <p style="text-decoration: underline">Summary:</p>\n' +
-                '        <p>Subtotal: <span id="subtotal">' + subtotal + '</span> <span>tk</span></p>\n' +
-                '        <p>Discounts: <span>-</span> <span id="discount">' + discount + '</span> <span>tk</span></p>\n' +
-                '        <p>Delivery Fee: <span>+</span> <span id="delivery_charge">' + delivery + '</span> <span>tk</span></p>\n' +
+                '        <p class="text-muted text-uppercase">Order Summary</p>\n' +
+                '        <p class="ml-5 font-13">Subtotal: <span id="subtotal">' + subtotal + '</span> <span>BDT</span></p>\n' +
+                '        <p class="ml-5 font-13">Discounts: <span>-</span> <span id="discount">' + discount + '</span> <span>BDT</span></p>\n' +
+                '        <p class="ml-5 font-13">Delivery Fee: <span>+</span> <span id="delivery_charge">' + delivery + '</span> <span>BDT</span></p>\n' +
                 '   </div>\n' +
                 '   <div>\n' +
-                '       <p>Total: <span>' + total + '</span></p>\n' +
+                '       <p class="text-dark">Total: <span>' + total + '</span> BDT</p>\n' +
                 '   </div>';
         }
 

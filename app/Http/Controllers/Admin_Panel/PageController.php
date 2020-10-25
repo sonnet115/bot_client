@@ -309,6 +309,12 @@ class PageController extends Controller
                                             "type": "postback",
                                             "title": "Help",
                                             "payload": "TALK_TO_AGENT"
+                                        },
+                                        {
+                                            "type": "web_url",
+                                            "title": "Powered By Howkar Technology",
+                                            "url": "https://howkar.com/",
+                                            "webview_height_ratio": "full"
                                         }
                                     ]
                                 }
