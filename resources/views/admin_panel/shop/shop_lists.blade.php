@@ -196,7 +196,7 @@
                 $("#remove_persistent_menu_message").html('<p class="text-center text-green">Please wait ...</p>');
                 $.ajax({
                     type: "GET",
-                    url: "{{route('remove.persistent_menu')}}",
+                    url: "{{route('remove.pages')}}",
                     success: function (backend_response) {
                         let disconnect = '<div class="text-center">' +
                             '<button class="btn btn-danger" id="disconnect_btn" onclick="connectDisconnectPage()">Disconnect Page</button>' +

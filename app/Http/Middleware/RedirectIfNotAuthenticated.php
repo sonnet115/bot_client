@@ -26,6 +26,9 @@ class RedirectIfNotAuthenticated
         if (auth()->user()->profile_completed == 0) {
             return redirect(route('clients.profile'));
         }
+        if (auth()->user()->profile_completed == 1) {
+            return redirect(route('clients.profile'));
+        }
         return $next($request);
     }
 }

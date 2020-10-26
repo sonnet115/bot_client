@@ -4,7 +4,8 @@
     <!-- Container -->
     <div class="container mt-xl-20 mt-sm-30 mt-50 mt-lg-15">
         <!-- Product List starts -->
-        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-list-alt"> Delivery Charges List</i>
+        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-list-alt"> Delivery
+                Charges List</i>
         </h4>
         <div class="row">
             <div class="col-xl-12">
@@ -21,6 +22,9 @@
                                     <i class="fa fa-times-circle"></i> {{ Session::get('failed_message') }}
                                 </p>
                             @endif
+                            <a href="{{route('dc.add.view')}}" class="btn btn-primary btn-rounded">
+                                <i class="fa fa-plus-circle"> Add Delivery Charge</i>
+                            </a>
                             <div class="table-wrap">
                                 <table id="dc_list_table" class="table table-bordered w-100 display">
                                     <thead class="btn-gradient-info">
@@ -123,6 +127,7 @@
         .dataTables_filter label {
             text-align: left;
         }
+
         .pagination {
             display: block !important;
         }

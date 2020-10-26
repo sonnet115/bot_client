@@ -143,7 +143,7 @@
                                                         <i class="text-orange fa fa-warning"></i> Pending
                                                         <hr>
                                                         <i class="text-orange font-20">
-                                                            {{ceil(100*($total_counts['total_pending'])/($total_counts['total_orders']))}}%
+                                                            {{ceil(100*($total_counts['total_pending'])/($total_counts['total_orders'] === 0 ? 1 : $total_counts['total_orders']))}}%
                                                         </i>
                                                     </span>
                                                 </div>
@@ -152,7 +152,7 @@
                                                         <i class="text-green fa fa-flag-checkered "></i> Delivered
                                                          <hr>
                                                         <i class="text-green font-20">
-                                                              {{ceil(100*($total_counts['total_delivered'])/($total_counts['total_orders']))}}%
+                                                               {{ceil(100*($total_counts['total_delivered'])/($total_counts['total_orders'] === 0 ? 1 : $total_counts['total_orders']))}}%
                                                         </i>
                                                     </span>
                                                 </div>
@@ -161,7 +161,7 @@
                                                         <i class="text-red fa fa-check-circle"></i> Cancelled
                                                           <hr>
                                                         <i class="text-red font-20">
-                                                              {{(ceil(100*($total_counts['total_cancelled'])/$total_counts['total_orders']))}}%
+                                                              {{ceil(100*($total_counts['total_cancelled'])/($total_counts['total_orders'] === 0 ? 1 : $total_counts['total_orders']))}}%
                                                         </i>
                                                     </span>
                                                 </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin_Panel;
 
 use App\Billing;
+use App\DeliveryCharge;
 use App\Http\Controllers\Controller;
 use App\PaymentInfo;
 use App\Shop;
@@ -12,9 +13,94 @@ use Illuminate\Support\Facades\Log;
 
 class PageController extends Controller
 {
+    function storePagesForApproval(Request $request)
+    {
+        if ($request->facebook_api_response['authResponse'] == null) {
+            return response()->json('cancelled');
+        }
+
+        $long_lived_user_access_token = $this->getLongLivedUserAccessToken($request->facebook_api_response['authResponse']['accessToken'])->access_token;
+        $user_id = $request->facebook_api_response['authResponse']['userID'];
+        $connection_status = $request->facebook_api_response['status'];
+        $pages_details = json_decode($this->addPageToApp($long_lived_user_access_token, $user_id), true);
+        $permissions_list = $request->facebook_api_response['authResponse']['grantedScopes'];
+        $permission_list_array = explode(',', $permissions_list);
+
+        if ($this->checkPermissions($permission_list_array) != '' && count($permission_list_array) > 2) {
+            $this->updatePageAddedStatus($user_id, $long_lived_user_access_token, false);
+            $this->updatePageConnectionStatus($user_id, null, false);
+            return response()->json($this->checkPermissions($permission_list_array));
+        }
+
+        if ($connection_status === 'connected') {
+            //change all page connected status false
+            $this->updatePageConnectionStatus($user_id, null, false);
+
+            if (empty($pages_details['data'])) {
+                //change all page connected status false if no page is selected
+                $this->updatePageAddedStatus($user_id, $long_lived_user_access_token, false);
+                return response()->json('no_page_added');
+            } else {
+                //at least 1 page is selected
+                for ($i = 0; $i < sizeof($pages_details['data']); $i++) {
+                    $page_contact = null;
+                    $page_address = null;
+                    $page_username = null;
+                    $page_web_link = null;
+
+                    if (array_key_exists('phone', $pages_details['data'][$i])) {
+                        $page_contact = $pages_details['data'][$i]['phone'];
+                    }
+
+                    if (array_key_exists('single_line_address', $pages_details['data'][$i])) {
+                        $page_address = $pages_details['data'][$i]['single_line_address'];
+                    }
+
+                    if (array_key_exists('username', $pages_details['data'][$i])) {
+                        $page_username = $pages_details['data'][$i]['username'];
+                    }
+
+                    if (array_key_exists('website', $pages_details['data'][$i])) {
+                        $page_web_link = $pages_details['data'][$i]['website'];
+                    }
+
+                    $page = Shop::where('page_id', $pages_details['data'][$i]['id'])->first();
+
+                    if (!$page) {
+                        //page is not in our DB. So insert the page
+                        $shop = Shop::create([
+                            'page_name' => $pages_details['data'][$i]['name'],
+                            'page_id' => $pages_details['data'][$i]['id'],
+                            'page_access_token' => $pages_details['data'][$i]['access_token'],
+                            'page_owner_id' => $user_id,
+                            'page_contact' => $page_contact,
+                            'page_likes' => $pages_details['data'][$i]['fan_count'],
+                            'is_published' => $pages_details['data'][$i]['is_published'],
+                            'page_subscription_status' => 1,
+                            'is_webhooks_subscribed' => $pages_details['data'][$i]['is_webhooks_subscribed'],
+                            'page_username' => $page_username,
+                            'page_address' => $page_address,
+                            'page_web_link' => $page_web_link,
+                            'page_connected_status' => true,
+                        ]);
+                        $this->storeInitialDeliveryCharge($shop->id);
+                    } else {
+                        //page is already in database. So update page status
+                        $this->updatePageConnectionStatus(null, $pages_details['data'][$i]['id'], true);
+                    }
+
+                }
+                $this->updatePageAddedStatus($user_id, $long_lived_user_access_token, true);
+            }
+            return response()->json('success');
+        } else {
+            return response()->json("failed");
+        }
+    }
+
     function storePages(Request $request)
     {
-        if($request->facebook_api_response['authResponse']== null){
+        if ($request->facebook_api_response['authResponse'] == null) {
             return response()->json('cancelled');
         }
         $long_lived_user_access_token = $this->getLongLivedUserAccessToken($request->facebook_api_response['authResponse']['accessToken'])->access_token;
@@ -81,6 +167,7 @@ class PageController extends Controller
                             'page_web_link' => $page_web_link,
                             'page_connected_status' => true,
                         ]);
+                        $this->storeInitialDeliveryCharge($shop->id);
                     } else {
                         //page is already in database. So update page status
                         $this->updatePageConnectionStatus(null, $pages_details['data'][$i]['id'], true);
@@ -185,7 +272,8 @@ class PageController extends Controller
         return view("admin_panel.shop.shop_lists")->with("title", "Howkar Technology || Shops List");
     }
 
-    function viewShopListApproval(){
+    function viewShopListApproval()
+    {
         return view("admin_panel.shop.shops_approval")->with("title", "Howkar Technology || Shops Approval");
     }
 
@@ -216,7 +304,9 @@ class PageController extends Controller
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-        return json_decode(curl_exec($ch));
+        $response = json_decode(curl_exec($ch));
+        Log::channel('page_add')->info('user long lived token' . json_encode(curl_exec($ch)));
+        return $response;
     }
 
     public function addPageToApp($user_access_token, $user_id)
@@ -257,10 +347,16 @@ class PageController extends Controller
         return curl_exec($ch);
     }
 
-    public function removePersistentAndGetStartedMenu()
+    public function removePageFromBot()
     {
         $shops = Shop::where('page_owner_id', '=', auth()->user()->user_id)->where('page_connected_status', '=', 1)->get();
+        $this->removeWebhookFields($shops);
+        $this->removePersistentAndGetStartedMenu($shops);
+        return response()->json('success');
+    }
 
+    public function removePersistentAndGetStartedMenu($shops)
+    {
         $request_body = '{
                             "fields": [
                                 "persistent_menu",
@@ -278,6 +374,21 @@ class PageController extends Controller
             curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
             $response = curl_exec($ch);
             Log::channel('page_add')->info('delete_persistent_menu [' . $shop['page_id'] . ']:' . json_encode($response));
+        }
+        return response()->json('success');
+    }
+
+    public function removeWebhookFields($shops)
+    {
+        foreach ($shops as $shop) {
+            $page_access_token = $shop['page_access_token'];
+            $ch = curl_init('https://graph.facebook.com/v3.2/' . $shop->page_id . '/subscribed_apps?access_token=967186797063633|FeDiwEGXFOBmsTInUre0HPLI1yY');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HEADER, false);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
+            $response = curl_exec($ch);
+            Log::channel('page_add')->info('delete_webhook_field [' . $shop['page_id'] . ']:' . json_encode($response));
         }
         return response()->json('success');
     }
@@ -321,7 +432,7 @@ class PageController extends Controller
                             ]
                         }';
 
-        $ch = curl_init('https://graph.facebook.com/v6.0/me/messenger_profile?access_token=' . $page_access_token);
+        $ch = curl_init('https://graph.facebook.com/v8.0/me/messenger_profile?access_token=' . $page_access_token);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -345,5 +456,19 @@ class PageController extends Controller
         curl_setopt($ch, CURLOPT_POSTFIELDS, $request_body);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
         return curl_exec($ch);
+    }
+
+    public function storeInitialDeliveryCharge($page_id)
+    {
+        try {
+            $dc = new DeliveryCharge();
+            $dc->name = 'Inside Dhaka';
+            $dc->delivery_charge = '60';
+            $dc->shop_id = $page_id;
+            $dc->save();
+        } catch (\Exception $e) {
+            return false;
+        }
+        return true;
     }
 }

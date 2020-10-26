@@ -53,10 +53,10 @@ Route::group(['middleware' => 'page.not.added'], function () {
     Route::group(['prefix' => 'admin'], function () {
         //Routes for shops & billing
         Route::group(['prefix' => 'shop-approval'], function () {
-            Route::get("store-page", "Admin_Panel\PageController@storePages")->name('page.store.approval');
+            Route::get("store-page", "Admin_Panel\PageController@storePagesForApproval")->name('page.store.approval');
             Route::get("shop-list", "Admin_Panel\PageController@viewShopListApproval")->name('shop.list.view.approval');
             Route::get("get-list", "Admin_Panel\PageController@getShopsList")->name('shop.list.get.approval');
-            Route::get("remove-persistent-menu", "Admin_Panel\PageController@removePersistentAndGetStartedMenu")->name('remove.persistent_menu.approval');
+            Route::get("remove-pages", "Admin_Panel\PageController@removePageFromBot")->name('remove.pages.approval');
         });
     });
 });
@@ -133,7 +133,7 @@ Route::group(['middleware' => 'unauthenticated.user'], function () {
             Route::get("store-page", "Admin_Panel\PageController@storePages")->name('page.store');
             Route::get("shop-list", "Admin_Panel\PageController@viewShopList")->name('shop.list.view');
             Route::get("get-list", "Admin_Panel\PageController@getShopsList")->name('shop.list.get');
-            Route::get("remove-persistent-menu", "Admin_Panel\PageController@removePersistentAndGetStartedMenu")->name('remove.persistent_menu');
+            Route::get("remove-pages", "Admin_Panel\PageController@removePageFromBot")->name('remove.pages');
         });
 
 
