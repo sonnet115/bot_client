@@ -30,10 +30,16 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    'facebook' => [
+    /*'facebook' => [
         'client_id' => '967186797063633',
         'client_secret' => 'cf8809fcc502890072d63572b4d1f335',
         'redirect' => 'https://clients.howkar.com/callback/facebook',
+    ],*/
+
+    'facebook' => [
+        'client_id' => '1092841357718647',
+        'client_secret' => '13115cf1e8ea8b246b3eb74f05cd177a',
+        'redirect' => 'https://ec4a0cb423ea.ngrok.io/callback/facebook',
     ],
 
 ];

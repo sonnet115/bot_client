@@ -47,10 +47,12 @@
         .select2-selection__choice__remove {
             color: black !important;
         }
-        td{
+
+        td {
             font-size: 13px !important;
             color: black !important;
         }
+
         .pagination {
             display: block !important;
             margin-top: 10px !important;
@@ -252,11 +254,11 @@
                             class="nav flex-column collapse collapse-level-1 {{ Request::segment(2) == "delivery-charge" ? "show" : "" }}">
                             <li class="nav-item">
                                 <ul class="nav flex-column">
-{{--                                    <li class="nav-item {{\Request::route()->getName() == "dc.add.view" ? "active" : ""}}">--}}
-{{--                                        <a class="nav-link"--}}
-{{--                                           href="{{route('dc.add.view')}}"><i--}}
-{{--                                                class="fa fa-plus-square"></i>Add Delivery Charge</a>--}}
-{{--                                    </li>--}}
+                                  {{--  <li class="nav-item {{\Request::route()->getName() == "dc.add.view" ? "active" : ""}}">
+                                        <a class="nav-link"
+                                           href="{{route('dc.add.view')}}"><i
+                                                class="fa fa-plus-square"></i>Add Delivery Charge</a>
+                                    </li>--}}
                                     <li class="nav-item {{\Request::route()->getName() == "dc.list.view" ? "active" : ""}}">
                                         <a class="nav-link"
                                            href="{{route('dc.list.view')}}"><i

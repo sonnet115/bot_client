@@ -175,13 +175,13 @@ class PageController extends Controller
                     if ($this->checkSubscriptionStatus($pages_details['data'][$i]['id'])) {
                         $page_access_token = $pages_details['data'][$i]['access_token'];
                         $webhook_fields = json_decode($this->addFieldsToWebhook($page_access_token, $pages_details['data'][$i]['id']));
-                        $get_started_button = json_decode($this->addGetStartedButton($page_access_token));
+                        //$get_started_button = json_decode($this->addGetStartedButton($page_access_token));
                         $persistent_menu = json_decode($this->addPersistentMenu($page_access_token));
-                        $white_listed_domain = $this->addWhiteListedDomains($page_access_token);
+                        //$white_listed_domain = $this->addWhiteListedDomains($page_access_token);
 
-                        Log::channel('page_add')->info('whitelist_domain [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($white_listed_domain));
+//                        Log::channel('page_add')->info('whitelist_domain [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($white_listed_domain));
                         Log::channel('page_add')->info('persistent_menu [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($persistent_menu));
-                        Log::channel('page_add')->info('get_started_button [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($get_started_button));
+//                        Log::channel('page_add')->info('get_started_button [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($get_started_button));
                         Log::channel('page_add')->info('webhook_fields [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($webhook_fields) . PHP_EOL);
                     }
                 }
@@ -300,7 +300,8 @@ class PageController extends Controller
 
     public function getLongLivedUserAccessToken($short_lived_user_access_token)
     {
-        $ch = curl_init('https://graph.facebook.com/v3.2/oauth/access_token?grant_type=fb_exchange_token&client_id=967186797063633&client_secret=cf8809fcc502890072d63572b4d1f335&fb_exchange_token=' . $short_lived_user_access_token);
+        //$ch = curl_init('https://graph.facebook.com/v3.2/oauth/access_token?grant_type=fb_exchange_token&client_id=967186797063633&client_secret=cf8809fcc502890072d63572b4d1f335&fb_exchange_token=' . $short_lived_user_access_token);
+        $ch = curl_init('https://graph.facebook.com/v3.2/oauth/access_token?grant_type=fb_exchange_token&client_id=1092841357718647&client_secret=13115cf1e8ea8b246b3eb74f05cd177a&fb_exchange_token=' . $short_lived_user_access_token);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
@@ -350,7 +351,7 @@ class PageController extends Controller
     public function removePageFromBot()
     {
         $shops = Shop::where('page_owner_id', '=', auth()->user()->user_id)->where('page_connected_status', '=', 1)->get();
-        $this->removeWebhookFields($shops);
+        //$this->removeWebhookFields($shops);
         $this->removePersistentAndGetStartedMenu($shops);
         return response()->json('success');
     }
@@ -396,6 +397,12 @@ class PageController extends Controller
     public function addPersistentMenu($page_access_token)
     {
         $request_body = '{
+                            "whitelisted_domains": [
+                                "' . env('WHITELIST_DOMAIN') . '"
+                            ],
+                            "get_started": {
+                                "payload": "GET_STARTED"
+                            },
                             "persistent_menu": [
                                 {
                                     "locale": "default",

@@ -4,7 +4,8 @@
     <!-- Container -->
     <div class="container mt-xl-20 mt-sm-30 mt-15">
         <!-- Product List starts -->
-        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-list-alt"> Pages List</i></h4>
+        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-list-alt"> Pages
+                List</i></h4>
         <div class="row">
             <div class="col-xl-12">
                 <section class="hk-sec-wrapper">
@@ -116,8 +117,12 @@
 @endsection
 
 @section("shop-list-js")
-    <script
+    {{--<script
         src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v8.0&appId=967186797063633&autoLogAppEvents=1"
+        nonce="AhbIxnz8" async defer crossorigin="anonymous">
+    </script>--}}
+    <script
+        src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v8.0&appId=1092841357718647&autoLogAppEvents=1"
         nonce="AhbIxnz8" async defer crossorigin="anonymous">
     </script>
     <script src={{asset("assets/admin_panel/vendors/datatables.net/js/jquery.dataTables.min.js")}}></script>
@@ -237,7 +242,7 @@
                     }
                 });
             }, {
-                scope: 'pages_messaging, pages_manage_metadata, pages_show_list',
+                scope: 'pages_messaging, pages_manage_metadata, pages_show_list, pages_manage_engagement',
                 return_scopes: true
             });
         }
