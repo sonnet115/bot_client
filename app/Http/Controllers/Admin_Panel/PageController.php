@@ -171,6 +171,7 @@ class PageController extends Controller
                     } else {
                         //page is already in database. So update page status
                         $this->updatePageConnectionStatus(null, $pages_details['data'][$i]['id'], true);
+                        $this->updatePageAccessToken($pages_details['data'][$i]['id'], $pages_details['data'][$i]['access_token']);
                     }
                     if ($this->checkSubscriptionStatus($pages_details['data'][$i]['id'])) {
                         $page_access_token = $pages_details['data'][$i]['access_token'];
@@ -235,6 +236,15 @@ class PageController extends Controller
                         'page_connected_status' => $page_connection_status,
                     ]);
         }
+    }
+
+    private function updatePageAccessToken($page_id, $page_access_token)
+    {
+        Shop::where('page_id', $page_id)
+            ->update(
+                [
+                    'page_access_token' => $page_access_token,
+                ]);
     }
 
     function updatePageAddedStatus($user_id, $user_access_token, $page_added_status)
@@ -323,7 +333,7 @@ class PageController extends Controller
 
     public function addFieldsToWebhook($page_access_token, $page_id)
     {
-        $ch = curl_init('https://graph.facebook.com/v3.2/' . $page_id . '/subscribed_apps?subscribed_fields=messages,messaging_postbacks,messaging_optins&access_token=' . $page_access_token);
+        $ch = curl_init('https://graph.facebook.com/v3.2/' . $page_id . '/subscribed_apps?subscribed_fields=messages,messaging_postbacks,messaging_optins,feed&access_token=' . $page_access_token);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -478,4 +488,6 @@ class PageController extends Controller
         }
         return true;
     }
+
+
 }

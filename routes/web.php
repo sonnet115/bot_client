@@ -128,6 +128,12 @@ Route::group(['middleware' => 'unauthenticated.user'], function () {
             Route::get("get-dc", "Admin_Panel\DeliveryChargeController@getDeliveryCharges")->name('dc.get');
         });
 
+        //Routes for Bot
+        Route::group(['prefix' => 'bot'], function () {
+            Route::get("create-auto-reply-form", "Admin_Panel\AutoReplyController@viewCreateARForm")->name("auto.reply.create.view");
+            Route::post("get-page-posts", "Admin_Panel\AutoReplyController@getPagePosts")->name("get.page.posts");
+        });
+
         //Routes for shops & billing
         Route::group(['prefix' => 'shop-billing'], function () {
             Route::get("store-page", "Admin_Panel\PageController@storePages")->name('page.store');

@@ -269,6 +269,27 @@
                         </ul>
                     </li>
 
+                    <hr class="nav-separator">
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse"
+                           data-target="#bot">
+                            <i class="fa fa-user"></i></span>
+                            <span class="nav-link-text">Bot</span>
+                        </a>
+                        <ul id="bot"
+                            class="nav flex-column collapse collapse-level-1 {{ Request::segment(2) == "bot" ? "show" : "" }}">
+                            <li class="nav-item">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item {{\Request::route()->getName() == "auto.reply.create.view" ? "active" : ""}}">
+                                        <a class="nav-link"
+                                           href="{{route('auto.reply.create.view')}}"><i
+                                                class="fa fa-comments"></i>Auto Reply Comments</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+
                     {{-- manage shops--}}
                     <hr class="nav-separator">
                     <li class="nav-item {{\Request::route()->getName() == "shop.list.view" ? "active" : ""}}">
