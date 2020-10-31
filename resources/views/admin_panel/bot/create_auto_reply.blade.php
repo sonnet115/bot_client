@@ -28,9 +28,29 @@
                     <div class="row">
                         <div class="col-sm">
                             <form
-                                action="{{$auto_reply_details!==null ? route('category.update') : route('category.store')}}"
-                                method="post" id="discount_form">
+                                action="{{$auto_reply_details!==null ? route('auto.reply.update') : route('auto.reply.store')}}"
+                                method="post">
                                 @csrf
+
+                                <div class="form-group">
+                                    <label class="control-label mb-10">Auto Reply name<span
+                                            class="text-danger">*</span></label>
+                                    <span style="font-size: 12px"> [Max 50 characters]</span>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-edit"></i></span>
+                                        </div>
+                                        <input type="text" id="ar_name" name="ar_name"
+                                               placeholder="Enter Name" class="form-control"
+                                               value="{{$auto_reply_details!==null?$auto_reply_details->name:old('ar_name')}}"
+                                               required>
+                                    </div>
+                                    <label for="ar_name" class="error text-danger"></label>
+                                    @if($errors->has('ar_name'))
+                                        <p class="text-danger">{{ $errors->first('ar_name') }}</p>
+                                    @endif
+                                </div>
+
 
                                 <div class="form-group">
                                     <label class="control-label mb-10">Choose a shop<span
@@ -78,6 +98,21 @@
                                     @endif
                                 </div>
 
+                                <div class="form-group">
+                                    <label class="control-label mb-10">Choose Products<span
+                                            class="text-danger font-16">*</span></label>
+                                    <div class="input-group">
+                                        <select class="form-control" id="products_id" name="products_id[]"
+                                                multiple="multiple" required>
+                                            <option value="0" disabled>Select Products</option>
+                                        </select>
+                                    </div>
+                                    <label for="shop_id" class="error text-danger"></label>
+                                    @if($errors->has('post_id'))
+                                        <p class="text-danger font-14">{{ $errors->first('post_id') }}</p>
+                                    @endif
+                                </div>
+
                                 @if($auto_reply_details !== null)
                                     <input type="hidden" name="category_id"
                                            value="{{$auto_reply_details !== null ? $auto_reply_details->id : ""}}">
@@ -102,14 +137,16 @@
 @endsection
 
 @section('category-js')
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+    <script src="{{asset("assets/admin_panel/vendors/select2/dist/js/select2.full.min.js")}}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             $('#post_id').select2();
+            $('#products_id').select2();
+
             $("#shop_id").on('change', function () {
                 let shop_id = $(this).val();
-                console.log(shop_id);
                 $(".preloader-it").css('opacity', .7).show();
+
                 $.ajax({
                     url: "{{ route('get.page.posts') }}",
                     type: "POST",
@@ -120,18 +157,31 @@
                     success: function (result) {
                         $("#post_id").html("");
                         result = JSON.parse(result)
-                        console.log(result);
                         let posts = "";
                         for (let i = 0; i < result.data.length; i++) {
                             if (result.data[i].message != null) {
                                 posts += '<option value="' + result.data[i].id + '">' + result.data[i].message + '</option>';
                             }
                         }
-                        console.log(posts);
                         $("#post_id").html(posts);
                         $(".preloader-it").hide();
                     },
                     error: function (xhr, status, error) {
+                        $(".preloader-it").hide();
+                    }
+                });
+
+                $.ajax({
+                    url: "{{ route('get.shop.product') }}",
+                    type: "GET",
+                    data: {"shop_id": shop_id},
+                    success: function (result) {
+                        $("#products_id").html("");
+                        let products = "";
+                        for (let i = 0; i < result.length; i++) {
+                            products += '<option value="' + result[i].id + '">' + result[i].name + '</option>';
+                        }
+                        $("#products_id").html(products);
                         $(".preloader-it").hide();
                     }
                 });
@@ -163,10 +213,15 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        .select2-results__option{
+
+        .select2-results__option {
             overflow: hidden !important;
             text-overflow: ellipsis !important;
             white-space: nowrap !important;
+        }
+
+        .select2-selection {
+            height: 50px !important;
         }
     </style>
 @endsection
