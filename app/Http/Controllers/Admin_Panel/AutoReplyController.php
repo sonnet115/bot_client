@@ -15,7 +15,7 @@ class AutoReplyController extends Controller
 {
     public function viewCreateARForm()
     {
-        dd(AutoReply::with('auto_reply_products')->get());
+//        dd(AutoReply::with('auto_reply_products')->get());
         $shops = Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->get();
         $auto_reply_details = null;
         return view('admin_panel.bot.create_auto_reply')

@@ -488,6 +488,4 @@ class PageController extends Controller
         }
         return true;
     }
-
-
 }
