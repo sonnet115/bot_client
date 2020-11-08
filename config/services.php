@@ -39,7 +39,7 @@ return [
     'facebook' => [
         'client_id' => '1092841357718647',
         'client_secret' => '13115cf1e8ea8b246b3eb74f05cd177a',
-        'redirect' => 'https://0e302a434f4c.ngrok.io/callback/facebook',
+        'redirect' => 'https://eb1f65528cd3.ngrok.io/callback/facebook',
     ],
 
 ];

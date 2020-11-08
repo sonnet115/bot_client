@@ -28,7 +28,7 @@ class AutoReplyController extends Controller
     {
         $page = Shop::select('page_access_token', 'page_id')->where('id', $request->shop_id)->first();
 
-        $ch = curl_init('https://graph.facebook.com/v8.0/' . $page['page_id'] . '/feed?limit=10&access_token=' . $page['page_access_token']);
+        $ch = curl_init('https://graph.facebook.com/v8.0/' . $page['page_id'] . '/posts?limit=10&access_token=' . $page['page_access_token']);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
