@@ -120,8 +120,8 @@
 
                                 <div class="d-flex justify-content-center">
                                     <button type="submit" class="btn btn-primary btn-rounded">
-                                        <i class="fa fa-save"></i> {{$auto_reply_details!==null ? "Update" : "Save"}}
-                                        Category
+                                        <i class="fa fa-save"></i> {{$auto_reply_details!==null ? "Update" : "Create"}}
+                                        Auto Reply
                                     </button>
                                 </div>
                                 <br>
