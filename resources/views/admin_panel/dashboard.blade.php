@@ -19,47 +19,72 @@
                         <div class="col-lg-12">
                             <div class="hk-row">
                                 <div class="col-sm-3">
-                                    <div class="card card-sm">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-center mb-5">
-                                                <div>
+                                    <a href="{{route('shop.list.view')}}">
+                                        <div class="card card-sm">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-center mb-5">
+                                                    <div>
                                                 <span
                                                     class="d-block font-15 text-primary text-uppercase  font-weight-700">
                                                     Total Pages
                                                 </span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="text-center">
+                                                <div class="text-center">
                                                 <span class="d-block display-5 text-dark mb-5 font-weight-bold">
                                                     {{$total_counts['total_pages']}}
                                                 </span>
-                                                <a href="{{route('shop.list.view')}}" class="d-block"
-                                                   style="font-size: 14px">Learn more...</a>
+                                                    <a href="#" class="d-block" style="font-size: 14px">View Details</a>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 </div>
                                 <div class="col-sm-3">
-                                    <div class="card card-sm">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-center mb-5">
-                                                <div>
+                                    <a href="{{route('product.manage.view')}}">
+                                        <div class="card card-sm">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-center mb-5">
+                                                    <div>
                                                 <span
                                                     class="d-block font-15 text-warning text-uppercase font-weight-700">
                                                     Total Products
                                                 </span>
+                                                    </div>
+                                                    <br>
                                                 </div>
-                                                <br>
-                                            </div>
-                                            <div class="text-center">
+                                                <div class="text-center">
                                                 <span class="d-block display-5 text-dark mb-5 font-weight-bold">
                                                   {{$total_counts['total_products']}}
                                                 </span>
-                                                <a href="{{route('product.manage.view')}}" class="d-block"
-                                                   style="font-size: 14px">Learn more...</a>
+                                                    <a href="#" class="d-block" style="font-size: 14px">View Details</a>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </a>
+                                </div>
+                                <div class="col-sm-3">
+                                    <a href="{{route('order.manage.view')}}">
+                                        <div class="card card-sm">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-center mb-5">
+                                                    <div>
+                                                <span
+                                                    class="d-block font-15 text-danger text-uppercase font-weight-700">
+                                                    Total Orders
+                                                </span>
+                                                    </div>
+                                                </div>
+                                                <div class="text-center">
+                                                <span class="d-block display-5 text-dark mb-5 font-weight-bold">
+                                                       {{$total_counts['total_orders']}}
+                                                </span>
+                                                    <a href="#" class="d-block"
+                                                       style="font-size: 14px">View Details</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="card card-sm">
@@ -77,28 +102,7 @@
                                                       {{$total_counts['total_customers']}}
                                                 </span>
                                                 <a href="#" class="d-block"
-                                                   style="font-size: 14px">Learn more...</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="card card-sm">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-center mb-5">
-                                                <div>
-                                                <span
-                                                    class="d-block font-15 text-danger text-uppercase font-weight-700">
-                                                    Total Orders
-                                                </span>
-                                                </div>
-                                            </div>
-                                            <div class="text-center">
-                                                <span class="d-block display-5 text-dark mb-5 font-weight-bold">
-                                                       {{$total_counts['total_orders']}}
-                                                </span>
-                                                <a href="{{route('order.manage.view')}}" class="d-block"
-                                                   style="font-size: 14px">Learn more...</a>
+                                                   style="font-size: 14px">.</a>
                                             </div>
                                         </div>
                                     </div>
@@ -173,11 +177,11 @@
                         </div>
                     </div>
                 </div>
-                <!-- /Row -->
             </div>
-            <!-- /Container -->
+            <!-- /Row -->
         </div>
     </div>
+    <!-- /Container -->
 @endsection
 
 @section("dashboard-js")
@@ -188,7 +192,7 @@
 
 @section('dashboard-css')
     <style>
-        .hk-pg-wrapper .hk-pg-header{
+        .hk-pg-wrapper .hk-pg-header {
             margin-bottom: 0 !important;
         }
     </style>

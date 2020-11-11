@@ -11,32 +11,29 @@
     <link rel="icon" href="{{asset("assets/admin_panel/dist/img/favicon.ico")}}" type="image/x-icon">
 
     <!-- vector map CSS -->
-{{--    <link href={{asset("assets/admin_panel/vendors/vectormap/jquery-jvectormap-2.0.3.css")}} rel="stylesheet"--}}
-{{--          type="text/css"/>--}}
+    {{-- <link href={{asset("assets/admin_panel/vendors/vectormap/jquery-jvectormap-2.0.3.css")}} rel="stylesheet"
+   type="text/css"/>
+<link href={{asset("assets/admin_panel/vendors/apexcharts/dist/apexcharts.html")}} rel="stylesheet"
+   type="text/css"/>--}}
 
-{{--    <link href={{asset("assets/admin_panel/vendors/apexcharts/dist/apexcharts.html")}} rel="stylesheet"--}}
-{{--          type="text/css"/>--}}
+    <!-- Toggles CSS -->
+    {{--<link href={{asset("assets/admin_panel/vendors/jquery-toggles/css/toggles.css")}} rel="stylesheet"
+      type="text/css">--}}
 
-<!-- Toggles CSS -->
-{{--    <link href={{asset("assets/admin_panel/vendors/jquery-toggles/css/toggles.css")}} rel="stylesheet"--}}
-{{--          type="text/css">--}}
-
-<!-- Toaster CSS -->
-    {{--    <link--}}
-    {{--        href={{asset("assets/admin_panel/vendors/jquery-toast-plugin/dist/jquery.toast.min.css")}} rel="stylesheet"--}}
-    {{--        type="text/css">--}}
-
+    <!-- Toaster CSS -->
+   {{-- <link type="text/css"
+          href={{asset("assets/admin_panel/vendors/jquery-toast-plugin/dist/jquery.toast.min.css")}} rel="stylesheet">
     <link href={{asset("assets/admin_panel/vendors/bootstrap/dist/css/bootstrap.min.css")}} rel="stylesheet"
           type="text/css">
-    {{--    <link--}}
-    {{--        href={{asset("assets/admin_panel/vendors/owl.carousel/dist/assets/owl.carousel.min.css")}} rel="stylesheet"--}}
-    {{--        type="text/css">--}}
-    {{--    <link--}}
-    {{--        href={{asset("assets/admin_panel/vendors/owl.carousel/dist/assets/owl.theme.default.min.css")}} rel="stylesheet"--}}
-    {{--        type="text/css">--}}
+    <link
+        href={{asset("assets/admin_panel/vendors/owl.carousel/dist/assets/owl.carousel.min.css")}} rel="stylesheet"
+        type="text/css">
+    <link
+        href={{asset("assets/admin_panel/vendors/owl.carousel/dist/assets/owl.theme.default.min.css")}} rel="stylesheet"
+        type="text/css">--}}
 
 
-<!-- Custom CSS -->
+    <!-- Custom CSS -->
     <link href={{asset("assets/admin_panel/dist/css/style.css")}} rel="stylesheet" type="text/css">
     <link href={{asset("assets/admin_panel/dist/css/custom.css")}} rel="stylesheet" type="text/css">
     <style>
@@ -139,7 +136,7 @@
                     </li>
 
                     {{-- manage category--}}
-                    <hr class="nav-separator">
+                    {{--<hr class="nav-separator">
                     <li class="nav-item">
                         <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse"
                            data-target="#category_manager">
@@ -163,7 +160,7 @@
                                 </ul>
                             </li>
                         </ul>
-                    </li>
+                    </li>--}}
 
                     {{-- manage products--}}
                     <hr class="nav-separator">
@@ -171,12 +168,23 @@
                         <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse"
                            data-target="#product_manager">
                             <i class="fa fa-beer"></i></span>
-                            <span class="nav-link-text">Manage Products </span>
+                            <span class="nav-link-text">Products </span>
                         </a>
                         <ul id="product_manager"
-                            class="nav flex-column collapse collapse-level-1 {{ Request::segment(2) == "product" ? "show" : "" }}">
+                            class="nav flex-column collapse collapse-level-1 {{ Request::segment(2) == "product" || "category" ? "show" : "" }}">
                             <li class="nav-item">
                                 <ul class="nav flex-column">
+                                    <li class="nav-item {{\Request::route()->getName() == "category.add.view" ? "active" : ""}}">
+                                        <a class="nav-link"
+                                           href="{{route('category.add.view')}}"><i class="fa fa-plus-square"></i>Add
+                                            Category</a>
+                                    </li>
+                                    <li class="nav-item {{\Request::route()->getName() == "category.manage.view" ? "active" : ""}}">
+                                        <a class="nav-link"
+                                           href="{{route('category.manage.view')}}"><i class="fa fa-list-ul"></i>Category
+                                            Lists</a>
+                                    </li>
+
                                     <li class="nav-item {{\Request::route()->getName() == "product.add.view" ? "active" : ""}}">
                                         <a class="nav-link"
                                            href="{{route('product.add.view')}}"><i class="fa fa-plus-square"></i>Add
@@ -254,11 +262,11 @@
                             class="nav flex-column collapse collapse-level-1 {{ Request::segment(2) == "delivery-charge" ? "show" : "" }}">
                             <li class="nav-item">
                                 <ul class="nav flex-column">
-                                  {{--  <li class="nav-item {{\Request::route()->getName() == "dc.add.view" ? "active" : ""}}">
-                                        <a class="nav-link"
-                                           href="{{route('dc.add.view')}}"><i
-                                                class="fa fa-plus-square"></i>Add Delivery Charge</a>
-                                    </li>--}}
+                                    {{--  <li class="nav-item {{\Request::route()->getName() == "dc.add.view" ? "active" : ""}}">
+                                          <a class="nav-link"
+                                             href="{{route('dc.add.view')}}"><i
+                                                  class="fa fa-plus-square"></i>Add Delivery Charge</a>
+                                      </li>--}}
                                     <li class="nav-item {{\Request::route()->getName() == "dc.list.view" ? "active" : ""}}">
                                         <a class="nav-link"
                                            href="{{route('dc.list.view')}}"><i
