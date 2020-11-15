@@ -10,7 +10,6 @@
             </h2>
         </div>
         <!-- /Title -->
-
         <!-- Row -->
         <div class="row">
             <div class="col-xl-7">
@@ -42,7 +41,7 @@
                                         </div>
                                         <input type="text" id="ar_name" name="ar_name"
                                                placeholder="Enter Name" class="form-control"
-                                               value="{{$auto_reply_details!==null?$auto_reply_details->name:old('ar_name')}}"
+                                               value="{{$auto_reply_details !== null ? $auto_reply_details->name:old('ar_name')}}"
                                                required>
                                     </div>
                                     <label for="ar_name" class="error text-danger"></label>
@@ -60,14 +59,11 @@
                                             <span class="input-group-text"><i class="fa fa-list-alt"></i></span>
                                         </div>
                                         <select class="form-control" id="shop_id" name="shop_id" required>
-                                            <option value="0" disabled selected>Select shop</option>
+                                            <option value="0" disabled selected>Select Shop</option>
                                             @if($auto_reply_details !== null)
-                                                @foreach($shop_list as $shop)
-                                                    <option value="{{$shop->id}}"
-                                                        {{$shop->id == $auto_reply_details->shop_id ? "selected" : ""}}>
-                                                        {{$shop->page_name}}
-                                                    </option>
-                                                @endforeach
+                                                <option value="{{$auto_reply_details->shop->id}}" selected>
+                                                    {{$auto_reply_details->shop->page_name}}
+                                                </option>
                                             @else
                                                 @foreach($shop_list as $shop)
                                                     <option value="{{$shop->id}} ">
@@ -83,29 +79,42 @@
                                     @endif
                                 </div>
 
-                                <div class="form-group">
-                                    <label class="control-label mb-10">Choose a Post<span
-                                            class="text-danger font-16">*</span></label>
-                                    <div class="input-group">
-                                        <select class="form-control" id="post_id" name="post_id" required>
-                                            <option value="0" disabled selected>Select Post</option>
-
-                                        </select>
+                                @if($auto_reply_details === null)
+                                    <div class="form-group">
+                                        <label class="control-label mb-10">Choose a Post<span
+                                                class="text-danger font-16">*</span></label>
+                                        <div class="input-group">
+                                            <select class="form-control" id="post_id" name="post_id" required>
+                                                <option value="0" disabled selected>Select Post</option>
+                                            </select>
+                                        </div>
+                                        <label for="shop_id" class="error text-danger"></label>
+                                        @if($errors->has('post_id'))
+                                            <p class="text-danger font-14">{{ $errors->first('post_id') }}</p>
+                                        @endif
                                     </div>
-                                    <label for="shop_id" class="error text-danger"></label>
-                                    @if($errors->has('post_id'))
-                                        <p class="text-danger font-14">{{ $errors->first('post_id') }}</p>
-                                    @endif
-                                </div>
+                                @endif
 
                                 <div class="form-group">
                                     <label class="control-label mb-10">Choose Products<span
                                             class="text-danger font-16">*</span></label>
                                     <div class="input-group">
-                                        <select class="form-control" id="products_id" name="products_id[]"
-                                                multiple="multiple" required>
-                                            <option value="0" disabled>Select Products</option>
-                                        </select>
+                                        @if($auto_reply_details !== null)
+                                            <select class="form-control" id="products_id" name="products_id[]"
+                                                    multiple="multiple" required>
+                                                <option value="0" disabled>Select Products</option>
+                                                @foreach($products as $product)
+                                                    <option value="{{$product->id}}"
+                                                        {{$auto_reply_details->auto_reply_products->contains($product->id) == true ? "selected" : ""}}>
+                                                        {{$product->name}}</option>
+                                                @endforeach
+                                            </select>
+                                        @else
+                                            <select class="form-control" id="products_id" name="products_id[]"
+                                                    multiple="multiple" required>
+                                                <option value="0" disabled>Select Products</option>
+                                            </select>
+                                        @endif
                                     </div>
                                     <label for="shop_id" class="error text-danger"></label>
                                     @if($errors->has('post_id'))
@@ -114,7 +123,7 @@
                                 </div>
 
                                 @if($auto_reply_details !== null)
-                                    <input type="hidden" name="category_id"
+                                    <input type="hidden" name="auto_reply_id"
                                            value="{{$auto_reply_details !== null ? $auto_reply_details->id : ""}}">
                                 @endif
 
@@ -136,7 +145,7 @@
     <!-- /Container -->
 @endsection
 
-@section('category-js')
+@section('auto-reply-js')
     <script src="{{asset("assets/admin_panel/vendors/select2/dist/js/select2.full.min.js")}}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
@@ -190,7 +199,7 @@
     </script>
 @endsection
 
-@section('category-css')
+@section('auto-reply-css')
     <link href="{{asset("assets/admin_panel/vendors/select2/dist/css/select2.min.css")}}" rel="stylesheet"
           type="text/css"/>
     <style>

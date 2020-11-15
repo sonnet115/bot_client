@@ -133,8 +133,13 @@ Route::group(['middleware' => 'unauthenticated.user'], function () {
             Route::get("create-auto-reply-form", "Admin_Panel\AutoReplyController@viewCreateARForm")->name("auto.reply.create.view");
             Route::post("get-page-posts", "Admin_Panel\AutoReplyController@getPagePosts")->name("get.page.posts");
             Route::post("store-auto-reply", "Admin_Panel\AutoReplyController@storeAR")->name("auto.reply.store");
+            Route::post("update-auto-reply", "Admin_Panel\AutoReplyController@updateAR")->name("auto.reply.update");
+            Route::get("auto-reply-list", "Admin_Panel\AutoReplyController@viewARLists")->name("auto.reply.list");
+            Route::get("get-auto-reply-list", "Admin_Panel\AutoReplyController@getARLists")->name("auto.reply.get");
 
-            Route::post("add-bot-products", "Admin_Panel\ProductController@viewAddBotProducts")->name("bot.products.add.view");
+            Route::get("add-bot-products-form", "Admin_Panel\ProductController@viewAddBotProducts")->name("bot.products.add.view");
+            Route::get("get-bot-products", "Admin_Panel\ProductController@getBotProducts")->name("get.bot.products");
+            Route::post("update-bot-products", "Admin_Panel\ProductController@updateBotProducts")->name("bot.products.update");
         });
 
         //Routes for shops & billing

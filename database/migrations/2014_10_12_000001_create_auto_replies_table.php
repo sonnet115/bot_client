@@ -18,6 +18,7 @@ class CreateAutoRepliesTable extends Migration
             $table->string('name', 50)->nullable();
             $table->string('post_id')->nullable();
             $table->smallInteger('shop_id');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

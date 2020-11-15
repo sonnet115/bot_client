@@ -14,4 +14,9 @@ class AutoReply extends Model
     {
         return $this->belongsToMany(Product::class, AutoReplyProduct::class, 'ar_id', 'pid');
     }
+
+    public function shop()
+    {
+        return $this->hasOne(Shop::class, 'id', 'shop_id');
+    }
 }

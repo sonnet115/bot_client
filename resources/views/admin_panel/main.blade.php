@@ -69,7 +69,10 @@
     @yield("shop-list-css")
     @yield("profile-css")
     @yield("dc-css")
+    @yield('auto-reply-css')
+    @yield('bot-product-css')
     @yield("custom_css")
+
 </head>
 
 <body>
@@ -148,12 +151,17 @@
                                     <li class="nav-item {{\Request::route()->getName() == "auto.reply.create.view" ? "active" : ""}}">
                                         <a class="nav-link"
                                            href="{{route('auto.reply.create.view')}}"><i
-                                                class="fa fa-comments"></i>Auto Reply Comments</a>
+                                                class="fa fa-comments"></i>Auto Reply</a>
+                                    </li>
+                                    <li class="nav-item {{\Request::route()->getName() == "auto.reply.list" ? "active" : ""}}">
+                                        <a class="nav-link"
+                                           href="{{route('auto.reply.list')}}"><i
+                                                class="fa fa-list"></i>Auto Reply Lists</a>
                                     </li>
                                     <li class="nav-item {{\Request::route()->getName() == "bot.products.add.view" ? "active" : ""}}">
                                         <a class="nav-link"
                                            href="{{route('bot.products.add.view')}}"><i
-                                                class="fa fa-comments"></i>Bot Products</a>
+                                                class="fa fa-chain"></i>Bot Products</a>
                                     </li>
                                 </ul>
                             </li>
@@ -380,5 +388,7 @@
 @yield('shop-list-js')
 @yield('dc-js')
 @yield('billing-js')
+@yield('auto-reply-js')
+@yield('bot-product-js')
 </body>
 </html>

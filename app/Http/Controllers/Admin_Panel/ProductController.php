@@ -243,8 +243,48 @@ class ProductController extends Controller
         }
     }
 
-    public function viewAddBotProducts(){
+    public function viewAddBotProducts()
+    {
+        $bot_products = null;
+        $shops = Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->get();
+        return view('admin_panel.bot.add_bot_product')
+            ->with("title", "Howkar Technology || Add Bot Product")
+            ->with('shop_list', $shops)
+            ->with('bot_products', $bot_products);
+    }
 
+    public function getBotProducts(Request $request)
+    {
+        $shop_id = $request->shop_id;
+        if ($shop_id != 0) {
+            try {
+                $products = Product::select('id', 'name', 'show_in_bot')->where('shop_id', $shop_id)->get();
+                return response()->json($products);
+            } catch (\Exception $e) {
+                return response()->json(null);
+            }
+        } else {
+            return response()->json(null);
+        }
+    }
+
+    public function updateBotProducts(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            Product::where('shop_id', $request->shop_id)
+                ->update(['show_in_bot' => 0]);
+
+            Product::whereIn('id', $request->products_id)
+                ->update(['show_in_bot' => 1]);
+            Session::flash('success_message', 'Messenger Bot Products Updated Successfully');
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Session::flash('failed_message', 'Something went wrong. Try again!');
+        }
+
+        return redirect(route('bot.products.add.view'));
     }
 
 }
