@@ -241,6 +241,9 @@ class ProductController extends Controller
             $productImage->image_url = $shop_name . '/' . $image_name;
             $productImage->save();
         }
+    }
+
+    public function viewAddBotProducts(){
 
     }
 

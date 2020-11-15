@@ -418,7 +418,7 @@
                         product_status.html("<span class='badge badge-pill badge-primary'>Processing</span>");
                     }
                     if ((response.product_status) === 2) {
-                        product_status.html("<span class='badge badge-pill badge-warning'>Dispatched</span>");
+                        product_status.html("<span class='badge badge-pill badge-warning'>Shipping</span>");
                     }
                     if ((response.product_status) === 3) {
                         product_status.html("<span class='badge badge-pill badge-success'>Delivered</span>");
@@ -455,7 +455,7 @@
                 product_status_show = '<span class="badge badge-pill badge-primary">Processing</span>';
             }
             if (product_status === 2) {
-                product_status_show = '<span class="badge badge-pill badge-warning">Dispatched</span>';
+                product_status_show = '<span class="badge badge-pill badge-warning">Shipping</span>';
             }
             if (product_status === 3) {
                 product_status_show = '<span class="badge badge-pill badge-success">Delivered</span>';

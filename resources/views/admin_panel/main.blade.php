@@ -11,17 +11,17 @@
     <link rel="icon" href="{{asset("assets/admin_panel/dist/img/favicon.ico")}}" type="image/x-icon">
 
     <!-- vector map CSS -->
-    {{-- <link href={{asset("assets/admin_panel/vendors/vectormap/jquery-jvectormap-2.0.3.css")}} rel="stylesheet"
-   type="text/css"/>
-<link href={{asset("assets/admin_panel/vendors/apexcharts/dist/apexcharts.html")}} rel="stylesheet"
-   type="text/css"/>--}}
+    <link href={{asset("assets/admin_panel/vendors/vectormap/jquery-jvectormap-2.0.3.css")}} rel="stylesheet"
+          type="text/css"/>
+    <link href={{asset("assets/admin_panel/vendors/apexcharts/dist/apexcharts.html")}} rel="stylesheet"
+          type="text/css"/>
 
     <!-- Toggles CSS -->
-    {{--<link href={{asset("assets/admin_panel/vendors/jquery-toggles/css/toggles.css")}} rel="stylesheet"
-      type="text/css">--}}
+    <link href={{asset("assets/admin_panel/vendors/jquery-toggles/css/toggles.css")}} rel="stylesheet"
+          type="text/css">
 
     <!-- Toaster CSS -->
-   {{-- <link type="text/css"
+    <link type="text/css"
           href={{asset("assets/admin_panel/vendors/jquery-toast-plugin/dist/jquery.toast.min.css")}} rel="stylesheet">
     <link href={{asset("assets/admin_panel/vendors/bootstrap/dist/css/bootstrap.min.css")}} rel="stylesheet"
           type="text/css">
@@ -30,7 +30,7 @@
         type="text/css">
     <link
         href={{asset("assets/admin_panel/vendors/owl.carousel/dist/assets/owl.theme.default.min.css")}} rel="stylesheet"
-        type="text/css">--}}
+        type="text/css">
 
 
     <!-- Custom CSS -->
@@ -134,33 +134,31 @@
                             <span class="nav-link-text">Dashboard</span>
                         </a>
                     </li>
-
-                    {{-- manage category--}}
-                    {{--<hr class="nav-separator">
+                    <hr class="nav-separator">
                     <li class="nav-item">
                         <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse"
-                           data-target="#category_manager">
-                            <i class="fa fa-chain"></i></span>
-                            <span class="nav-link-text">Manage Category </span>
+                           data-target="#bot">
+                            <i class="fa fa-user"></i></span>
+                            <span class="nav-link-text">Bot</span>
                         </a>
-                        <ul id="category_manager"
-                            class="nav flex-column collapse collapse-level-1 {{ Request::segment(2) == "category" ? "show" : "" }}">
+                        <ul id="bot"
+                            class="nav flex-column collapse collapse-level-1 {{ Request::segment(2) == "bot" ? "show" : "" }}">
                             <li class="nav-item">
                                 <ul class="nav flex-column">
-                                    <li class="nav-item {{\Request::route()->getName() == "category.add.view" ? "active" : ""}}">
+                                    <li class="nav-item {{\Request::route()->getName() == "auto.reply.create.view" ? "active" : ""}}">
                                         <a class="nav-link"
-                                           href="{{route('category.add.view')}}"><i class="fa fa-plus-square"></i>Add
-                                            Category</a>
+                                           href="{{route('auto.reply.create.view')}}"><i
+                                                class="fa fa-comments"></i>Auto Reply Comments</a>
                                     </li>
-                                    <li class="nav-item {{\Request::route()->getName() == "category.manage.view" ? "active" : ""}}">
+                                    <li class="nav-item {{\Request::route()->getName() == "bot.products.add.view" ? "active" : ""}}">
                                         <a class="nav-link"
-                                           href="{{route('category.manage.view')}}"><i class="fa fa-list-ul"></i>Category
-                                            Lists</a>
+                                           href="{{route('bot.products.add.view')}}"><i
+                                                class="fa fa-comments"></i>Bot Products</a>
                                     </li>
                                 </ul>
                             </li>
                         </ul>
-                    </li>--}}
+                    </li>
 
                     {{-- manage products--}}
                     <hr class="nav-separator">
@@ -171,7 +169,7 @@
                             <span class="nav-link-text">Products </span>
                         </a>
                         <ul id="product_manager"
-                            class="nav flex-column collapse collapse-level-1 {{ Request::segment(2) == "product" || "category" ? "show" : "" }}">
+                            class="nav flex-column collapse collapse-level-1 {{ Request::segment(2) == "product" || Request::segment(2) == "category" ? "show" : "" }}">
                             <li class="nav-item">
                                 <ul class="nav flex-column">
                                     <li class="nav-item {{\Request::route()->getName() == "category.add.view" ? "active" : ""}}">
@@ -206,7 +204,7 @@
                         <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse"
                            data-target="#discount_manager">
                             <i class="fa fa-gift"></i></span>
-                            <span class="nav-link-text">Manage discounts</span>
+                            <span class="nav-link-text">Discounts</span>
                         </a>
                         <ul id="discount_manager"
                             class="nav flex-column collapse collapse-level-1 {{ Request::segment(2) == "discount" ? "show" : "" }}">
@@ -233,7 +231,7 @@
                         <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse"
                            data-target="#order_manager">
                             <i class="fa fa-cart-plus"></i></span>
-                            <span class="nav-link-text">Manage Orders</span>
+                            <span class="nav-link-text">Orders</span>
                         </a>
                         <ul id="order_manager"
                             class="nav flex-column collapse collapse-level-1 {{ Request::segment(2) == "order" ? "show" : "" }}">
@@ -255,7 +253,7 @@
                     <li class="nav-item">
                         <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse"
                            data-target="#order_dc">
-                            <i class="fa fa-bicycle"></i></span>
+                            <i class="fa fa-toggle-off"></i></span>
                             <span class="nav-link-text">Delivery Charges</span>
                         </a>
                         <ul id="order_dc"
@@ -271,27 +269,6 @@
                                         <a class="nav-link"
                                            href="{{route('dc.list.view')}}"><i
                                                 class="fa fa-list-ul"></i>Delivery Charges List</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <hr class="nav-separator">
-                    <li class="nav-item">
-                        <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse"
-                           data-target="#bot">
-                            <i class="fa fa-user"></i></span>
-                            <span class="nav-link-text">Bot</span>
-                        </a>
-                        <ul id="bot"
-                            class="nav flex-column collapse collapse-level-1 {{ Request::segment(2) == "bot" ? "show" : "" }}">
-                            <li class="nav-item">
-                                <ul class="nav flex-column">
-                                    <li class="nav-item {{\Request::route()->getName() == "auto.reply.create.view" ? "active" : ""}}">
-                                        <a class="nav-link"
-                                           href="{{route('auto.reply.create.view')}}"><i
-                                                class="fa fa-comments"></i>Auto Reply Comments</a>
                                     </li>
                                 </ul>
                             </li>
