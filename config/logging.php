@@ -35,9 +35,9 @@ return [
     */
 
     'channels' => [
-        'page_add' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/your_file_name.log'),
+        'page_connect' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/page_connect.log'),
         ],
 
         'stack' => [
