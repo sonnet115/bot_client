@@ -436,12 +436,6 @@ class PageController extends Controller
                                             "title": "Help",
                                             "payload": "TALK_TO_AGENT"
                                         },
-                                        {
-                                            "type": "web_url",
-                                            "title": "Powered By Howkar Technology",
-                                            "url": "https://howkar.com/",
-                                            "webview_height_ratio": "full"
-                                        }
                                     ]
                                 }
                             ]
@@ -453,6 +447,7 @@ class PageController extends Controller
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $request_body);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
+        Log::channel('page_connect')->info('persistent_menu :' . json_encode($request_body));
         return curl_exec($ch);
     }
 
