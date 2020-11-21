@@ -263,7 +263,7 @@
                     },
                     {
                         'render': function (data, type, row) {
-                            let details_button = '<div class="dropdown">' +
+                            let status_button = '<div class="dropdown">' +
                                 '<select class="form-control order_status font-11" name="order_status">\n' +
                                 '  <option selected disabled>Change</option>\n' +
                                 '  <option value="0">Pending</option>\n' +
@@ -274,7 +274,7 @@
                                 '</select>' +
                                 '<input type="hidden" value="' + row.id + '" class="order_id">' +
                                 '</div>';
-                            return details_button;
+                            return status_button;
                         },
                     },
                 ],

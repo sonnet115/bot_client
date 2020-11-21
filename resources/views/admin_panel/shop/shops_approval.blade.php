@@ -229,13 +229,13 @@
 {{--<!-- Init JavaScript -->--}}
 <script src={{asset("assets/admin_panel/dist/js/init.js")}}></script>
 
-<script
+{{--<script
         src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v8.0&appId=967186797063633&autoLogAppEvents=1"
         nonce="AhbIxnz8" async defer crossorigin="anonymous">
-    </script>
-{{--<script
+    </script>--}}
+<script
     src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v8.0&appId=1092841357718647&autoLogAppEvents=1"
-    nonce="AhbIxnz8" async defer crossorigin="anonymous">--}}
+    nonce="AhbIxnz8" async defer crossorigin="anonymous">
 </script>
 <script src={{asset("assets/admin_panel/vendors/datatables.net/js/jquery.dataTables.min.js")}}></script>
 <script src={{asset("assets/admin_panel/vendors/datatables.net-bs4/js/dataTables.bootstrap4.min.js")}}></script>
