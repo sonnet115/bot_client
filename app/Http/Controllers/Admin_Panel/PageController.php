@@ -15,6 +15,10 @@ class PageController extends Controller
 {
     function storePagesForApproval(Request $request)
     {
+        if($request->facebook_api_response['status'] == "unknown"){
+            return response()->json('cancelled');
+        }
+
         if ($request->facebook_api_response['authResponse'] == null) {
             return response()->json('cancelled');
         }
@@ -86,6 +90,7 @@ class PageController extends Controller
                         $this->storeInitialDeliveryCharge($shop->id);
                     } else {
                         //page is already in database. So update page status
+                        $this->updatePageAccessToken($pages_details['data'][$i]['id'], $pages_details['data'][$i]['access_token']);
                         $this->updatePageConnectionStatus(null, $pages_details['data'][$i]['id'], true);
                     }
 

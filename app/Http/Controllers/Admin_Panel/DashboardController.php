@@ -85,6 +85,8 @@ class DashboardController extends Controller
             $user->profile_completed = 1;
             $user->save();
 
+            RequestedPage::where('user_id', '=', $user->id)->delete();
+
             for ($i = 0; $i < sizeof($request->pages); $i++) {
                 $requested_pages = new RequestedPage();
                 $requested_pages->page_id = $request->pages[$i];
@@ -110,13 +112,13 @@ class DashboardController extends Controller
 
     function printCat($categories)
     {
-//        foreach ($categories as $cat) {
-//            echo $cat->name . '<br>';
-//            if (count($cat->subCategory) > 0) {
-//                echo '<br>';
-//                $this->printCat($cat->subCategory);
-//            }
-//        }
+        /*foreach ($categories as $cat) {
+            echo $cat->name . '<br>';
+            if (count($cat->subCategory) > 0) {
+                echo '<br>';
+                $this->printCat($cat->subCategory);
+            }
+        }*/
         echo $this->getCategoryTree();
     }
 
