@@ -1,30 +1,55 @@
 <html>
 <head>
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Site Title</title>
+
+    <link href={{asset("assets/admin_panel/vendors/bootstrap/dist/css/bootstrap.min.css")}} rel="stylesheet"
+          type="text/css">
+    <link href={{asset("assets/admin_panel/dist/css/style.css")}} rel="stylesheet" type="text/css">
+    <style>
+        body {
+            /* The image used */
+            background-image: url({{asset("images/bg.jpg")}});
+
+            /* Full height */
+            height: 100%;
+
+            /* Center and scale the image nicely */
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+
 </head>
 <body>
 <div class="container">
     <div class="row justify-content-center align-items-center" style="height:100vh">
         <div class="col-12 col-sm-12 col-md-9 col-lg-5">
-            <div class="card">
+            <div class="card shadow">
                 <div class="card-body text-center">
                     <div class="text-center">
-{{--                        <img src="{{asset('images/logo.png')}}" style="max-width: 100px">--}}
+                        <img src="{{asset('images/logo.png')}}" style="max-width: 100px">
                     </div>
-                    <p class="text-center text-muted" style="font-size: 20px">Welcome</p>
+                    <p class="text-center text-muted" style="font-size: 20px">Welcome to Messenger Bot</p>
                     <hr>
                     <a href="{{ url('/auth/redirect/facebook') }}" class="btn btn-primary mb-3"><i
-                            class="fa fa-facebook"></i>Continue</a>
-                    <p class="text-center text-muted" style="font-size: 11px">by clicking you accept
-                        <a href="https://howkar.com/privacy" target="_blank">terms of service</a>
+                            class="fa fa-facebook-official"></i> Continue with Facebook</a>
+                    <p class="text-center text-muted" style="font-size: 14px">by continuing you accept
+                        <a href="https://howkar.com/privacy" target="_blank" style="text-decoration: underline">terms of
+                            service</a>
                     </p>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- jQuery -->
+<script src={{asset("assets/admin_panel/vendors/jquery/dist/jquery.min.js")}}></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src={{asset("assets/admin_panel/vendors/popper.js/dist/umd/popper.min.js")}}></script>
+<script src={{asset("assets/admin_panel/vendors/bootstrap/dist/js/bootstrap.min.js")}}></script>
 </body>
 </html>
