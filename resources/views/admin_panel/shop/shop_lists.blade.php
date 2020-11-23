@@ -242,18 +242,18 @@
                     }
                 });
             }, {
-                scope: 'pages_messaging, pages_manage_metadata, pages_show_list, pages_manage_engagement',
+                scope: 'pages_messaging, pages_manage_metadata, pages_show_list',
                 return_scopes: true
             });
         }
 
         function message(backend_response) {
             if (backend_response === 'success') {
-                return '<p class="text-center text-success font-15"><i class="fa fa-check"></i> Completed</p>' +
+                return '<p class="text-center text-success" style="font-size: 2rem"><i class="fa fa-check"></i> Completed</p>' +
                     '   <hr>' +
                     '   <div class="row">\n' +
                     '       <div class="col-12 text-right">\n' +
-                    '            <button class="btn btn-sm btn-success" data-dismiss="modal">\n' +
+                    '            <button class="btn btn-sm btn-danger" data-dismiss="modal">\n' +
                     '                     <i class="fa fa-check-circle"></i> Close\n' +
                     '            </button>\n' +
                     '       </div>\n' +

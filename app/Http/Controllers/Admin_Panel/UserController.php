@@ -68,6 +68,9 @@ class UserController extends Controller
 
     public function callback($provider)
     {
+        if (isset($_GET['error'])) {
+            return redirect(route('home'));
+        }
         $getInfo = Socialite::driver($provider)->user();
         $user = $this->createUser($getInfo, $provider);
         auth()->login($user);

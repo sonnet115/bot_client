@@ -50,7 +50,6 @@
                                     @endif
                                 </div>
 
-
                                 <div class="form-group">
                                     <label class="control-label mb-10">Choose a shop<span
                                             class="text-danger font-16">*</span></label>
@@ -121,6 +120,30 @@
                                         <p class="text-danger font-14">{{ $errors->first('post_id') }}</p>
                                     @endif
                                 </div>
+
+                                @if($auto_reply_details!==null)
+                                    <div class="form-group">
+                                        <label class="control-label mb-10">Select Status<span
+                                                class="text-danger">*</span></label>
+                                        <div class="d-flex flex-row justify-content-between">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-chain"></i></span>
+                                            </div>
+
+                                            <select class="form-control" name="status" id="status">
+                                                <option value="1" {{$auto_reply_details->status == 1 ? 'selected': ''}}>
+                                                    Enabled
+                                                </option>
+                                                <option value="0" {{$auto_reply_details->status == 0 ? 'selected': ''}}>
+                                                    Disabled
+                                                </option>
+                                            </select>
+                                        </div>
+                                        @if($errors->has('status'))
+                                            <p class="text-danger">{{ $errors->first('status') }}</p>
+                                        @endif
+                                    </div>
+                                @endif
 
                                 @if($auto_reply_details !== null)
                                     <input type="hidden" name="auto_reply_id"

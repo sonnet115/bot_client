@@ -1,27 +1,5 @@
 @extends("admin_panel.main")
 
-@section('discount-css')
-    <link href="{{asset("assets/admin_panel/vendors/select2/dist/css/select2.min.css")}}" rel="stylesheet"
-          type="text/css"/>
-    <link href={{asset("assets/admin_panel/vendors/daterangepicker/daterangepicker.css")}} rel="stylesheet"
-          type="text/css"/>
-    <style>
-        .select2-container .select2-selection--single {
-            height: 40px !important;
-            border-top-left-radius: 0px;
-            border-bottom-left-radius: 0px;
-        }
-
-        .select2-selection__arrow {
-            top: 6px !important;
-        }
-
-        .select2-selection__choice__display {
-            color: #f40600 !important;
-        }
-    </style>
-@endsection
-
 @section("main_content")
     <!-- Container -->
     <div class="container mt-xl-30 mt-sm-30 mt-15">
@@ -162,6 +140,7 @@
                                     @endif
                                 </div>
 
+
                                 <div class="form-group">
                                     <label class="control-label mb-10">Discounts Percentages<span
                                             class="text-danger">*</span><span
@@ -180,6 +159,29 @@
                                         <p class="text-danger">{{ $errors->first('discount_percentage') }}</p>
                                     @endif
                                 </div>
+                                @if($discount_details!==null)
+                                    <div class="form-group">
+                                        <label class="control-label mb-10">Select Status<span
+                                                class="text-danger">*</span></label>
+                                        <div class="d-flex flex-row justify-content-between">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa fa-search"></i></span>
+                                            </div>
+
+                                            <select class="js-example-basic-multiple" name="state" id="state">
+                                                <option value="1" {{$discount_details->state == 1 ? 'selected': ''}}>
+                                                    Active
+                                                </option>
+                                                <option value="0" {{$discount_details->state == 0 ? 'selected': ''}}>
+                                                    Inactive
+                                                </option>
+                                            </select>
+                                        </div>
+                                        @if($errors->has('state'))
+                                            <p class="text-danger">{{ $errors->first('state') }}</p>
+                                        @endif
+                                    </div>
+                                @endif
 
                                 @if($discount_details !== null)
                                     <input type="hidden" name="discount_id"
@@ -350,4 +352,26 @@
 
     </script>
 
+@endsection
+
+@section('discount-css')
+    <link href="{{asset("assets/admin_panel/vendors/select2/dist/css/select2.min.css")}}" rel="stylesheet"
+          type="text/css"/>
+    <link href={{asset("assets/admin_panel/vendors/daterangepicker/daterangepicker.css")}} rel="stylesheet"
+          type="text/css"/>
+    <style>
+        .select2-container .select2-selection--single {
+            height: 40px !important;
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
+        }
+
+        .select2-selection__arrow {
+            top: 6px !important;
+        }
+
+        .select2-selection__choice__display {
+            color: #f40600 !important;
+        }
+    </style>
 @endsection

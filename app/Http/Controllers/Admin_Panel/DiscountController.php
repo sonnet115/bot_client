@@ -122,6 +122,7 @@ class DiscountController extends Controller
             'discount_to' => 'required',
             'product_id' => 'required',
             'shop_id' => 'required',
+            'state' => 'required',
             'discount_percentage' => 'required|numeric|min:1|max:100',
         ]);
 
@@ -137,7 +138,9 @@ class DiscountController extends Controller
             $discount->pid = $request->product_id;
             $discount->dis_percentage = $request->discount_percentage;
             $discount->shop_id = $request->shop_id;
+            $discount->state = $request->state;
             $discount->save();
+
             Session::flash('success_message', 'Discount Updated Successfully');
         } catch (\Exception $e) {
             Session::flash('error_message', 'Something went wrong. Please Try again!');

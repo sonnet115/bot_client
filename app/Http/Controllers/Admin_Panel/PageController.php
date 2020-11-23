@@ -105,6 +105,10 @@ class PageController extends Controller
 
     function storePages(Request $request)
     {
+        if($request->facebook_api_response['status'] == "unknown"){
+            return response()->json('cancelled');
+        }
+
         if ($request->facebook_api_response['authResponse'] == null) {
             return response()->json('cancelled');
         }

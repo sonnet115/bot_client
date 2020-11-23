@@ -131,6 +131,10 @@ class ProductController extends Controller
             $product->where('shop_id', '=', request('shop_id'));
         }
 
+        if (request()->has('category_id') && request('category_id') != null) {
+            $product->where('category_id', '=', request('category_id'));
+        }
+
         $this->shops = Shop::select('id')->where('page_owner_id', auth()->user()->user_id)->get();
         $shops_id = array();
         foreach ($this->shops as $key => $value) {
@@ -285,6 +289,22 @@ class ProductController extends Controller
         }
 
         return redirect(route('bot.products.add.view'));
+    }
+
+    public function getShopCategory(Request $request)
+    {
+        $shop_id = $request->shop_id;
+
+        if ($shop_id != 0) {
+            try {
+                $products = Category::select('id', 'name')->where('shop_id', $shop_id)->get();
+                return response()->json($products);
+            } catch (\Exception $e) {
+                return response()->json(null);
+            }
+        } else {
+            return response()->json(null);
+        }
     }
 
 }

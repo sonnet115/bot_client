@@ -88,6 +88,7 @@ Route::group(['middleware' => 'unauthenticated.user'], function () {
             Route::get("manage-form", "Admin_Panel\ProductController@viewUpdateProduct")->name("product.manage.view");
             Route::post("update-product", "Admin_Panel\ProductController@updateProduct")->name("product.update");
             Route::get("get-products", "Admin_Panel\ProductController@getProduct")->name("product.get");
+            Route::post("get-category", "Admin_Panel\ProductController@getShopCategory")->name("get.shop.category");
         });
 
         //Routes for Users
@@ -116,7 +117,6 @@ Route::group(['middleware' => 'unauthenticated.user'], function () {
             Route::get("get-order-details", "Admin_Panel\OrderController@getOrdersDetails")->name("order.details.get");
             Route::get("get-order-status", "Admin_Panel\OrderController@getProductStatus")->name("order.status.get");
             Route::get("change-order-status", "Admin_Panel\OrderController@changeOrderStatus")->name("order.status.change");
-            Route::get("get-click", "Admin_Panel\OrderController@realtion");
         });
 
         //Routes for delivery charges

@@ -11,6 +11,7 @@ class Product extends Model
     public function discounts()
     {
         return $this->hasOne(Discount::class, 'pid', 'id')
+            ->where('state', '=', 1)
             ->where('dis_from', '<=', date("Y-m-d"))
             ->where('dis_to', '>=', date("Y-m-d"));
     }
@@ -20,11 +21,13 @@ class Product extends Model
         return $this->hasMany(ProductImage::class, 'pid', 'id');
     }
 
-    public function shop(){
+    public function shop()
+    {
         return $this->hasOne(Shop::class, 'id', 'shop_id');
     }
 
-    public function category(){
+    public function category()
+    {
         return $this->hasOne(Category::class, 'id', 'category_id');
     }
 }

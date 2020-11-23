@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Discount extends Model
 {
-    protected $fillable = ['name', 'from', 'to', 'pid', 'dis_percentage', 'max_customers'];
+    protected $fillable = ['name', 'from', 'to', 'pid', 'dis_percentage', 'max_customers', 'state'];
 
     function product(){
         return $this->belongsTo(Product::class, 'pid');

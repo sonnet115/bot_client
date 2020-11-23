@@ -74,6 +74,7 @@ class AutoReplyController extends Controller
             $auto_reply->name = $request->ar_name;
             $auto_reply->post_id = $request->post_id;
             $auto_reply->shop_id = $request->shop_id;
+            $auto_reply->status = 1;
             $auto_reply->save();
 
 
@@ -132,6 +133,7 @@ class AutoReplyController extends Controller
             'ar_name' => 'required',
             'shop_id' => 'required',
             'products_id' => 'required',
+            'status' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -145,6 +147,7 @@ class AutoReplyController extends Controller
             $auto_reply = AutoReply::find($request->auto_reply_id);
             $auto_reply->name = $request->ar_name;
             $auto_reply->shop_id = $request->shop_id;
+            $auto_reply->status = $request->status;
             $auto_reply->save();
 
             for ($i = 0; $i < sizeof($request->products_id); $i++) {
@@ -161,6 +164,6 @@ class AutoReplyController extends Controller
             Session::flash('failed_message', 'Something went wrong. Try again!');
         }
 
-        return redirect(route('auto.reply.create.view'));
+        return redirect(route('auto.reply.list'));
     }
 }

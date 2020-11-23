@@ -109,8 +109,8 @@
                     {
                         'render': function (data, type, row) {
                             let color = row.status === 1 ? "success" : "danger";
-                            let text = row.status === 1 ? "Active" : "Inactive";
-                            if (row.status === 1) {
+                            let text = row.status === 1 ? "Enabled" : "Disabled";
+                            if (row.shop.page_connected_status === 1) {
                                 return '<span class="badge badge-pill badge-' + color + ' pr-15 pl-15">' + text + '</span>';
                             } else {
                                 return '<span class="badge badge-pill badge-danger pr-15 pl-15">Page Disconnected</span>';

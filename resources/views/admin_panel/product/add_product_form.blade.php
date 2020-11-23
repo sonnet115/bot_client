@@ -160,7 +160,7 @@
                                             <span class="input-group-text"><i class="icon-shuffle"></i></span>
                                         </div>
                                         <select class="form-control" id="category_ids" name="category_ids" required>
-                                            <option selected value={{null}}>Select Category</option>
+                                            <option selected disabled>Select Category</option>
                                             @if($product_details !== null)
                                                 @foreach($categories as $category)
                                                     <option value="{{$category->id}}"
@@ -168,12 +168,12 @@
                                                         {{$category->name}}
                                                     </option>
                                                 @endforeach
-                                            @else
-                                                @foreach($categories as $category)
-                                                    <option value="{{$category->id}}">
-                                                        {{$category->name}}
-                                                    </option>
-                                                @endforeach
+                                                {{--@else
+                                                    @foreach($categories as $category)
+                                                        <option value="{{$category->id}}">
+                                                            {{$category->name}}
+                                                        </option>
+                                                    @endforeach--}}
                                             @endif
                                         </select>
                                     </div>
@@ -348,6 +348,26 @@
 
             $(".image_files").on('change', function () {
                 displayImage($(this));
+            });
+
+            $("#shop_id").on('change', function () {
+                $(".preloader-it").css('opacity', .5).show();
+
+                let shop_id = $(this).val();
+                $.ajax({
+                    url: "{{ route('get.shop.category') }}",
+                    type: "POST",
+                    data: {"shop_id": shop_id},
+                    success: function (result) {
+                        $("#category_ids").html("");
+                        let categories = "";
+                        for (let i = 0; i < result.length; i++) {
+                            categories += '<option value="' + result[i].id + '">' + result[i].name + '</option>';
+                        }
+                        $("#category_ids").html(categories);
+                        $(".preloader-it").hide();
+                    }
+                });
             });
 
             $(".remove_image_btn").on("click", function () {

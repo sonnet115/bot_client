@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class AutoReply extends Model
 {
     protected $fillable = [
-        'name', 'post_id', 'shop_id'
+        'name', 'post_id', 'shop_id', 'status'
     ];
 
     public function auto_reply_products()

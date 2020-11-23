@@ -196,7 +196,7 @@
                 </div>
                 <div class="modal-body">
                     <p class="text-center text-danger">
-                        <i class="fa fa-warning text-warning"></i> This will disconnect your page from out bot
+                        <i class="fa fa-warning text-warning"></i> This will disconnect your page from our bot
                     </p>
                     <p class="font-21 text-center">Are you sure?</p>
 
@@ -300,7 +300,11 @@
         });
 
         $("#confirm-disconnect").on("click", function () {
-            $("#remove_persistent_menu_message").html('<p class="text-center text-green">Please wait ...</p>');
+            let disconnect = '<div class="text-center">' +
+                '<button class="btn btn-danger" id="disconnect_btn" onclick="connectDisconnectPage()">Disconnect Page</button>' +
+                '</div>'
+            $("#remove_persistent_menu_message").html(disconnect);
+            /*$("#remove_persistent_menu_message").html('<p class="text-center text-green">Please wait ...</p>');
             $.ajax({
                 type: "GET",
                 url: "{{route('remove.pages.approval')}}",
@@ -311,7 +315,7 @@
                     $("#remove_persistent_menu_message").html(disconnect);
                     console.log(backend_response);
                 }
-            });
+            });*/
         });
     });
 
@@ -351,11 +355,11 @@
 
     function message(backend_response) {
         if (backend_response === 'success') {
-            return '<p class="text-center text-success font-15"><i class="fa fa-check"></i> Completed</p>' +
+            return '<p class="text-center text-success" style="font-size: 2rem"><i class="fa fa-check"></i> Completed</p>' +
                 '   <hr>' +
                 '   <div class="row">\n' +
                 '       <div class="col-12 text-right">\n' +
-                '            <button class="btn btn-sm btn-success" data-dismiss="modal">\n' +
+                '            <button class="btn btn-sm btn-danger" data-dismiss="modal">\n' +
                 '                     <i class="fa fa-check-circle"></i> Close\n' +
                 '            </button>\n' +
                 '       </div>\n' +
@@ -415,7 +419,7 @@
                 '       </div>\n' +
                 '  </div>'
         } else {
-            return '<p class="text-center text-success" style="margin-bottom: 15px"><i class="fa fa-times"></i> Could not complete your request. Please try again!</p>' +
+            return '<p class="text-center text-danger" style="margin-bottom: 15px"><i class="fa fa-times"></i> Could not complete your request. Please try again!</p>' +
                 '     <div class="row">\n' +
                 '          <div class="col-6 text-left">\n' +
                 '               <button class="btn btn-sm btn-success" onclick="connectDisconnectPage()">Try Again</button>\n' +

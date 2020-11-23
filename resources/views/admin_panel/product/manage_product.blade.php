@@ -4,46 +4,59 @@
     <!-- Container -->
     <div class="container mt-xl-20 mt-sm-30 mt-50 mt-lg-15">
         <!-- filter starts-->
-        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-filter">&nbsp;Filter Products</i>
+        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-filter">&nbsp;Filter
+                Products</i>
         </h4>
         <p style="font-size: 20px">Stock</p>
         <div class="d-flex flex-wrap">
             <!--stock filter starts-->
             <div class="form-group p2">
                 <div class="controls">
-                    <input class="form-control" type="text" name="stock_from" value=""/>
+                    <input class="form-control" type="text" placeholder="Start Range" name="stock_from" value=""/>
                 </div>
             </div>
-            <div class="form-group p-2">
+            {{--<div class="form-group p-2">
                 <p class="text-center font-15">To</p>
-            </div>
-            <div class="form-group p2">
+            </div>--}}
+            <div class="form-group pl-2">
                 <div class="controls">
-                    <input class="form-control" type="text" name="stock_to" id="stock_to" value=""/>
+                    <input class="form-control" type="text" placeholder="End Range" name="stock_to" id="stock_to"
+                           value=""/>
                 </div>
             </div>
             <!--stock filter ends-->
 
             <!-- state starts-->
             <div class="form-group pl-2">
+                <p style="font-size: 20px;margin-top: -30px">Status</p>
                 <select class="form-control" name="status">
-                    <option value="" selected>Select a status</option>
+                    <option value="" selected>All</option>
                     <option value="1">Active</option>
                     <option value="0">Inactive</option>
                 </select>
             </div>
             <!--state ends-->
 
-            <!-- state starts-->
+            <!-- page starts-->
             <div class="form-group pl-2">
-                <select class="form-control" name="shop_id">
-                    <option value="" selected>Select a shop</option>
+                <p style="font-size: 20px;margin-top: -30px">Page</p>
+                <select class="form-control" id="shop_id" name="shop_id">
+                    <option value="" selected>All</option>
                     @foreach($shops as $shop)
                         <option value="{{$shop->id}}">{{$shop->page_name}}</option>
                     @endforeach
                 </select>
             </div>
-            <!--state ends-->
+            <!--page ends-->
+
+            <!-- category starts-->
+            <div class="form-group pl-2">
+                <p style="font-size: 20px;margin-top: -30px">Category</p>
+                <select class="form-control" id="category_id" name="category_id">
+
+                </select>
+            </div>
+            <!--category ends-->
 
             <!--button-->
             <div class="text-left pl-4">
@@ -56,7 +69,8 @@
         <!-- filter ends-->
 
         <!-- Product List starts -->
-        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-list-alt"> Product List</i></h4>
+        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-list-alt"> Product
+                List</i></h4>
         <div class="row">
             <div class="col-xl-12">
                 <section class="hk-sec-wrapper">
@@ -141,6 +155,7 @@
                         d.stock_to = $("input[name=stock_to]").val();
                         d.status = $('select[name=status] option:selected').val();
                         d.shop_id = $('select[name=shop_id] option:selected').val();
+                        d.category_id = $('select[name=category_id] option:selected').val();
                     }
                 },
 
@@ -189,6 +204,26 @@
                 "drawCallback": function () {
                     $('.dt-buttons > .btn').addClass('btn-outline-light btn-sm');
                 },
+            });
+
+            $("#shop_id").on('change', function () {
+                $(".preloader-it").css('opacity', .5).show();
+
+                let shop_id = $(this).val();
+                $.ajax({
+                    url: "{{ route('get.shop.category') }}",
+                    type: "POST",
+                    data: {"shop_id": shop_id},
+                    success: function (result) {
+                        $("#category_id").html("");
+                        let categories = "<option selected value=''>All</option>";
+                        for (let i = 0; i < result.length; i++) {
+                            categories += '<option value="' + result[i].id + '">' + result[i].name + '</option>';
+                        }
+                        $("#category_id").html(categories);
+                        $(".preloader-it").hide();
+                    }
+                });
             });
         });
         $('#btnFiterSubmitSearch').click(function () {
