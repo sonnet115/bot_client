@@ -17,7 +17,6 @@ class CreatePaymentInfoTable extends Migration
             $table->bigIncrements('id');
             $table->smallInteger('page_id')->nullable();
             $table->string('page_name')->nullable();
-            $table->string('month', 20)->nullable();
             $table->string('trx_id', 100)->nullable();
             $table->timestamps();
         });

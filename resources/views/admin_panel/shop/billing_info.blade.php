@@ -50,35 +50,35 @@
                 <!-- Modal body -->
                 <div class="modal-body">
                     <div class="row" id="payment_steps">
-                        {{--                        <div class="col-12 col-lg-8">--}}
-                        {{--                            <b style="color: #2b383e;font-size: 17px;text-decoration: underline">Payment Steps:</b>--}}
-                        {{--                            <br>--}}
-                        {{--                            <ol style="padding: 10px 30px">--}}
-                        {{--                                <li>Go to bKash Mobile Menu by dialing *247#</li>--}}
-                        {{--                                <li>Choose “Send Money”</li>--}}
-                        {{--                                <li>Enter 01608435599</li>--}}
-                        {{--                                <li>Enter amount ' + amount + ' BDT</li>--}}
-                        {{--                                <li>Enter reference Sept1</li>--}}
-                        {{--                                <li>Now enter your bKash Mobile Menu PIN to confirm</li>--}}
-                        {{--                            </ol>--}}
-                        {{--                        </div>--}}
+                        {{--<div class="col-12 col-lg-8">
+                            <b style="color: #2b383e;font-size: 17px;text-decoration: underline">Payment Steps:</b>
+                            <br>
+                            <ol style="padding: 10px 30px">
+                                <li>Go to bKash Mobile Menu by dialing *247#</li>
+                                <li>Choose “Send Money”</li>
+                                <li>Enter 01608435599</li>
+                                <li>Enter amount ' + amount + ' BDT</li>
+                                <li>Enter reference Sept1</li>
+                                <li>Now enter your bKash Mobile Menu PIN to confirm</li>
+                            </ol>
+                        </div>
 
-                        {{--                        <div class="col-12 col-lg-8">--}}
-                        {{--                            <b style="color: #2b383e;font-size: 19px;text-decoration: underline">After Payment</b>--}}
-                        {{--                            <br>--}}
+                        <div class="col-12 col-lg-8">
+                            <b style="color: #2b383e;font-size: 19px;text-decoration: underline">After Payment</b>
+                            <br>
 
-                        {{--                            <p>Shop Name</p>--}}
-                        {{--                            <input class="form-control" placeholder="Shop Name" name="shop_name">--}}
-                        {{--                            <p id="month">Month Name</p>--}}
-                        {{--                            <input class="form-control" placeholder="Pay for which month" name="month" id="month">--}}
-                        {{--                            <p id="trx_id">Transaction ID</p>--}}
-                        {{--                            <input class="form-control" placeholder="bKash Transaction ID" name="trx_id">--}}
-                        {{--                            <hr>--}}
-                        {{--                            <div class="text-center">--}}
-                        {{--                                <button class="btn btn-sm btn-success confirmPaymentButton">Complete Payment</button>--}}
-                        {{--                            </div>--}}
+                            <p>Shop Name</p>
+                            <input placeholder="Shop Name" name="shop_name" readonly class="form-control-plaintext">
+                            <p id="month">Month Name</p>
+                            <input class="form-control" placeholder="Pay for which month" name="month" id="month">
+                            <p id="trx_id">Transaction ID</p>
+                            <input class="form-control" placeholder="bKash Transaction ID" name="trx_id">
+                            <hr>
+                            <div class="text-center">
+                                <button class="btn btn-sm btn-success confirmPaymentButton">Complete Payment</button>
+                            </div>
 
-                        {{--                        </div>--}}
+                        </div>--}}
                     </div>
                 </div>
 
@@ -120,8 +120,21 @@
                     {data: 'page_name', name: 'page_name'},
                     {
                         'render': function (data, type, row) {
-                            let color = row.page_subscription_status === 1 ? "success" : "danger";
-                            let text = row.page_subscription_status === 1 ? "Paid" : "Not Paid";
+                            let color = "";
+                            let text = "";
+                            if (row.page_subscription_status === 1) { //1 = trial
+                                color = "warning";
+                                text = "Trial";
+                            } else if (row.page_subscription_status === 2) {
+                                color = "info"
+                                text = "Due"
+                            } else if (row.page_subscription_status === 3) {
+                                color = "Success"
+                                text = "Paid"
+                            } else {
+                                color = "danger"
+                                text = "Not Paid"
+                            }
                             return '<span  style="min-width: 103px" class="badge badge-pill badge-' + color + ' pr-15 pl-15">' + text + '</span>';
                         },
                     },
@@ -135,6 +148,7 @@
                             let text = "Pay Now";
                             let button = '<input type="hidden" value="' + row.billing[0].payable_amount + '" class="payable_amount">' +
                                 '<input type="hidden" value="' + row.page_name + '" class="page_name">' +
+                                '<input type="hidden" value="' + row.id + '" class="page_id">' +
                                 '<button style="min-width: 101px;border:1px solid" class="payment-details shadow btn btn-sm pr-15 pl-15 btn-outline-' + color + '">' + text + '</button>';
                             return button;
                         },
@@ -149,13 +163,14 @@
         $(document).on("click", ".payment-details", function () {
             let payable_amount = $(this).parent().find('.payable_amount').val();
             let page_name = $(this).parent().find('.page_name').val();
-            paymentSteps(payable_amount, page_name);
+            let page_id = $(this).parent().find('.page_id').val();
+            paymentSteps(payable_amount, page_name, page_id);
             $('#myModal').modal('toggle');
         });
 
         $(document).on("click", ".confirm-payment-button", function () {
             let shop_name = $('input[name=shop_name]').val();
-            let month = $('input[name=month]').val();
+            let page_id = $('input[name=page_id]').val();
             let trx_id = $('input[name=trx_id]').val();
             let message = $('.message');
 
@@ -164,7 +179,7 @@
                 url: "{{route('payment.info.store')}}",
                 data: {
                     page_name: shop_name,
-                    month: month,
+                    page_id: page_id,
                     trx_id: trx_id,
                 },
                 success: function (response) {
@@ -172,12 +187,12 @@
                     message.html(response);
                     setTimeout(function () {
                         $("#myModal").modal('toggle');
-                    }, 2000);
+                    }, 5000);
                 }
             });
         });
 
-        function paymentSteps(amount, page_name) {
+        function paymentSteps(payable_amount, page_name, page_id) {
             let html = '    <div class="col-12">\n' +
                 '                            <b style="color: #2b383e;font-size: 17px;text-decoration: underline">Payment Steps:</b>\n' +
                 '                            <br>\n' +
@@ -185,7 +200,7 @@
                 '                                <li>Go to bKash Mobile Menu by dialing *247#</li>\n' +
                 '                                <li>Choose “Send Money”</li>\n' +
                 '                                <li>Enter 01608435599</li>\n' +
-                '                                <li>Enter amount ' + amount + ' BDT</li>\n' +
+                '                                <li>Enter amount ' + payable_amount + ' BDT</li>\n' +
                 '                                <li>Enter reference 1</li>\n' +
                 '                                <li>Now enter your bKash Mobile Menu PIN to confirm</li>\n' +
                 '                            </ol>\n' +
@@ -194,9 +209,8 @@
                 '                            <b style="color: #2b383e;font-size: 19px;text-decoration: underline">After Payment</b>\n' +
                 '                            <br>\n' +
                 '                            <p>Shop Name</p>\n' +
-                '                            <input class="form-control" value="' + page_name + '" placeholder="Shop Name" name="shop_name">\n' +
-                '                            <p id="month">Month Name</p>\n' +
-                '                            <input class="form-control" placeholder="Pay for which month" name="month" id="month">\n' +
+                '                            <input readonly class="form-control" value="' + page_name + '" placeholder="Shop Name" name="shop_name">\n' +
+                '                            <input type="text" name="page_id" value="' + page_id + '">\n' +
                 '                            <p id="trx_id">Transaction ID</p>\n' +
                 '                            <input class="form-control" placeholder="bKash Transaction ID" name="trx_id">\n' +
                 '                            <hr>\n' +

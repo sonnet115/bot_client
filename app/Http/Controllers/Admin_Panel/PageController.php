@@ -9,13 +9,14 @@ use App\PaymentInfo;
 use App\Shop;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PageController extends Controller
 {
     function storePagesForApproval(Request $request)
     {
-        if($request->facebook_api_response['status'] == "unknown"){
+        if ($request->facebook_api_response['status'] == "unknown") {
             return response()->json('cancelled');
         }
 
@@ -105,96 +106,109 @@ class PageController extends Controller
 
     function storePages(Request $request)
     {
-        if($request->facebook_api_response['status'] == "unknown"){
+        if ($request->facebook_api_response['status'] == "unknown") {
             return response()->json('cancelled');
         }
 
         if ($request->facebook_api_response['authResponse'] == null) {
             return response()->json('cancelled');
         }
+
         $long_lived_user_access_token = $this->getLongLivedUserAccessToken($request->facebook_api_response['authResponse']['accessToken'])->access_token;
         $user_id = $request->facebook_api_response['authResponse']['userID'];
         $connection_status = $request->facebook_api_response['status'];
         $pages_details = json_decode($this->addPageToApp($long_lived_user_access_token, $user_id), true);
         $permissions_list = $request->facebook_api_response['authResponse']['grantedScopes'];
         $permission_list_array = explode(',', $permissions_list);
-
-        if ($this->checkPermissions($permission_list_array) != '' && count($permission_list_array) > 2) {
-            $this->updatePageAddedStatus($user_id, $long_lived_user_access_token, false);
-            $this->updatePageConnectionStatus($user_id, null, false);
-            return response()->json($this->checkPermissions($permission_list_array));
-        }
-
-        if ($connection_status === 'connected') {
-            //change all page connected status false
-            $this->updatePageConnectionStatus($user_id, null, false);
-
-            if (empty($pages_details['data'])) {
-                //change all page connected status false if no page is selected
+        DB::beginTransaction();
+        try {
+            if ($this->checkPermissions($permission_list_array) != '' && count($permission_list_array) > 2) {
                 $this->updatePageAddedStatus($user_id, $long_lived_user_access_token, false);
-                return response()->json('no_page_added');
-            } else {
-                //at least 1 page is selected
-                for ($i = 0; $i < sizeof($pages_details['data']); $i++) {
-                    $page_contact = null;
-                    $page_address = null;
-                    $page_username = null;
-                    $page_web_link = null;
-
-                    if (array_key_exists('phone', $pages_details['data'][$i])) {
-                        $page_contact = $pages_details['data'][$i]['phone'];
-                    }
-
-                    if (array_key_exists('single_line_address', $pages_details['data'][$i])) {
-                        $page_address = $pages_details['data'][$i]['single_line_address'];
-                    }
-
-                    if (array_key_exists('username', $pages_details['data'][$i])) {
-                        $page_username = $pages_details['data'][$i]['username'];
-                    }
-
-                    if (array_key_exists('website', $pages_details['data'][$i])) {
-                        $page_web_link = $pages_details['data'][$i]['website'];
-                    }
-
-                    $page = Shop::where('page_id', $pages_details['data'][$i]['id'])->first();
-
-                    if (!$page) {
-                        //page is not in our DB. So insert the page
-                        $shop = Shop::create([
-                            'page_name' => $pages_details['data'][$i]['name'],
-                            'page_id' => $pages_details['data'][$i]['id'],
-                            'page_access_token' => $pages_details['data'][$i]['access_token'],
-                            'page_owner_id' => $user_id,
-                            'page_contact' => $page_contact,
-                            'page_likes' => $pages_details['data'][$i]['fan_count'],
-                            'is_published' => $pages_details['data'][$i]['is_published'],
-                            'page_subscription_status' => 1,
-                            'is_webhooks_subscribed' => $pages_details['data'][$i]['is_webhooks_subscribed'],
-                            'page_username' => $page_username,
-                            'page_address' => $page_address,
-                            'page_web_link' => $page_web_link,
-                            'page_connected_status' => true,
-                        ]);
-                        $this->storeInitialDeliveryCharge($shop->id);
-                    } else {
-                        //page is already in database. So update page status
-                        $this->updatePageConnectionStatus(null, $pages_details['data'][$i]['id'], true);
-                        $this->updatePageAccessToken($pages_details['data'][$i]['id'], $pages_details['data'][$i]['access_token']);
-                    }
-                    if ($this->checkSubscriptionStatus($pages_details['data'][$i]['id'])) {
-                        $page_access_token = $pages_details['data'][$i]['access_token'];
-                        $webhook_fields = json_decode($this->addFieldsToWebhook($page_access_token, $pages_details['data'][$i]['id']));
-                        $persistent_menu = json_decode($this->addPersistentMenu($page_access_token));
-
-                        Log::channel('page_connect')->info('persistent_menu [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($persistent_menu));
-                        Log::channel('page_connect')->info('webhook_fields [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($webhook_fields) . PHP_EOL);
-                    }
-                }
-                $this->updatePageAddedStatus($user_id, $long_lived_user_access_token, true);
+                $this->updatePageConnectionStatus($user_id, null, false);
+                return response()->json($this->checkPermissions($permission_list_array));
             }
-            return response()->json('success');
-        } else {
+
+            if ($connection_status === 'connected') {
+                //change all page connected status false
+                $this->updatePageConnectionStatus($user_id, null, false);
+
+                if (empty($pages_details['data'])) {
+                    //change all page connected status false if no page is selected
+                    $this->updatePageAddedStatus($user_id, $long_lived_user_access_token, false);
+                    return response()->json('no_page_added');
+                } else {
+                    //at least 1 page is selected
+                    for ($i = 0; $i < sizeof($pages_details['data']); $i++) {
+                        $page_contact = null;
+                        $page_address = null;
+                        $page_username = null;
+                        $page_web_link = null;
+
+                        if (array_key_exists('phone', $pages_details['data'][$i])) {
+                            $page_contact = $pages_details['data'][$i]['phone'];
+                        }
+
+                        if (array_key_exists('single_line_address', $pages_details['data'][$i])) {
+                            $page_address = $pages_details['data'][$i]['single_line_address'];
+                        }
+
+                        if (array_key_exists('username', $pages_details['data'][$i])) {
+                            $page_username = $pages_details['data'][$i]['username'];
+                        }
+
+                        if (array_key_exists('website', $pages_details['data'][$i])) {
+                            $page_web_link = $pages_details['data'][$i]['website'];
+                        }
+
+                        $page = Shop::where('page_id', $pages_details['data'][$i]['id'])->first();
+
+                        if (!$page) {
+                            //page is not in our DB. So insert the page
+                            $shop = Shop::create([
+                                'page_name' => $pages_details['data'][$i]['name'],
+                                'page_id' => $pages_details['data'][$i]['id'],
+                                'page_access_token' => $pages_details['data'][$i]['access_token'],
+                                'page_owner_id' => $user_id,
+                                'page_contact' => $page_contact,
+                                'page_likes' => $pages_details['data'][$i]['fan_count'],
+                                'is_published' => $pages_details['data'][$i]['is_published'],
+                                'page_subscription_status' => 2,  //all new pages subs status will be 2[Due...3days for paying bill]
+                                'is_webhooks_subscribed' => $pages_details['data'][$i]['is_webhooks_subscribed'],
+                                'page_username' => $page_username,
+                                'page_address' => $page_address,
+                                'page_web_link' => $page_web_link,
+                                'page_connected_status' => true,
+                            ]);
+                            $this->storeInitialDeliveryCharge($shop->id);
+                            $this->insertPageBillingInfoForNewPage($shop->id);
+                        } else {
+                            //page is already in database. So update page status
+                            if ($this->checkSubscriptionStatus($pages_details['data'][$i]['id']) == 0) {
+                                $this->updatePageBillingInfo($page->id);
+                                $this->updatePageSubscriptionStatus($pages_details['data'][$i]['id'], 2);
+                            } else {
+                                $this->updatePageConnectionStatus(null, $pages_details['data'][$i]['id'], true);
+                            }
+                            $this->updatePageAccessToken($pages_details['data'][$i]['id'], $pages_details['data'][$i]['access_token']);
+                        }
+                        if ($this->checkSubscriptionStatus($pages_details['data'][$i]['id']) == 1 || $this->checkSubscriptionStatus($pages_details['data'][$i]['id']) == 2) {
+                            $page_access_token = $pages_details['data'][$i]['access_token'];
+                            $webhook_fields = json_decode($this->addFieldsToWebhook($page_access_token, $pages_details['data'][$i]['id']));
+                            $persistent_menu = json_decode($this->addPersistentMenu($page_access_token));
+
+                            Log::channel('page_connect')->info('persistent_menu [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($persistent_menu));
+                            Log::channel('page_connect')->info('webhook_fields [' . $pages_details['data'][$i]['id'] . ']:' . json_encode($webhook_fields) . PHP_EOL);
+                        }
+                    }
+                    $this->updatePageAddedStatus($user_id, $long_lived_user_access_token, true);
+                }
+                DB::commit();
+                return response()->json('success');
+            } else {
+                return response()->json("failed");
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json("failed");
         }
     }
@@ -216,12 +230,7 @@ class PageController extends Controller
 
     function checkSubscriptionStatus($page_id)
     {
-        $status = Shop::where('page_id', $page_id)->where('page_subscription_status', '=', 1)->first();
-        if ($status) {
-            return true;
-        } else {
-            return false;
-        }
+        return Shop::select('page_subscription_status')->where('page_id', $page_id)->first()->page_subscription_status;
     }
 
     function updatePageConnectionStatus($user_id, $page_id, $page_connection_status)
@@ -243,6 +252,28 @@ class PageController extends Controller
         }
     }
 
+    function updatePageSubscriptionStatus($page_id, $status)
+    {
+        Shop::where('page_id', $page_id)
+            ->update(
+                [
+                    'page_subscription_status' => $status,
+                ]);
+    }
+
+    function updatePageBillingInfo($page_id)
+    {
+        $payable_amount = $this->calculatePayableAmount($page_id);
+        Billing::where('page_id', $page_id)
+            ->update(
+                [
+                    'prev_billing_date' => date("Y-m-d"),
+                    'next_billing_date' => date('Y-m-d', strtotime('+30 days', strtotime(date('Y-m-d')))),
+                    'paid_amount' => 0,
+                    'payable_amount' => $payable_amount
+                ]);
+    }
+
     private function updatePageAccessToken($page_id, $page_access_token)
     {
         Shop::where('page_id', $page_id)
@@ -260,6 +291,18 @@ class PageController extends Controller
                     'long_lived_user_token' => $user_access_token,
                     'page_added' => $page_added_status
                 ]);
+    }
+
+    function insertPageBillingInfoForNewPage($page_id)
+    {
+        $payable_amount = $this->calculatePayableAmount($page_id);
+        Billing::create([
+            'page_id' => $page_id,
+            'prev_billing_date' => date("Y-m-d"),
+            'next_billing_date' => date('Y-m-d', strtotime('+30 days', strtotime(date('Y-m-d')))),
+            'paid_amount' => 0,
+            'payable_amount' => $payable_amount
+        ]);
     }
 
     function startTrailPeriod($page_id)
@@ -299,8 +342,8 @@ class PageController extends Controller
 
     function getBillingInfo()
     {
-        //return datatables(Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->with('billing'))->toJson();
-        return datatables(array())->toJson();
+        return datatables(Shop::where('page_owner_id', auth()->user()->user_id)->with('billing'))->toJson();
+        //return datatables(array())->toJson();
     }
 
     function getShopsList()
@@ -311,7 +354,7 @@ class PageController extends Controller
     function storePaymentInfo(Request $request)
     {
         PaymentInfo::create($request->all());
-        return response()->json('Success');
+        return response()->json('Thanks. We will confirm your payment soon.');
     }
 
     public function getLongLivedUserAccessToken($short_lived_user_access_token)

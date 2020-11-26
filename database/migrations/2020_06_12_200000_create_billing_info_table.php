@@ -20,7 +20,6 @@ class CreateBillingInfoTable extends Migration
             $table->date('next_billing_date')->nullable();
             $table->double('paid_amount')->nullable();
             $table->double('payable_amount')->nullable();
-            $table->boolean('trial_status')->nullable();
             $table->timestamps();
         });
     }

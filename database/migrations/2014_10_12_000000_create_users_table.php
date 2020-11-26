@@ -24,6 +24,7 @@ class CreateUsersTable extends Migration
             $table->boolean('page_added')->default(0);
             $table->boolean('profile_completed')->default(0);
             $table->text('long_lived_user_token')->nullable();
+            $table->boolean('trial_status')->default(0);
             $table->timestamps();
         });
     }
