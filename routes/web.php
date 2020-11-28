@@ -150,7 +150,6 @@ Route::group(['middleware' => 'unauthenticated.user'], function () {
             Route::get("remove-pages", "Admin_Panel\PageController@removePageFromBot")->name('remove.pages');
         });
 
-
         Route::group(['prefix' => 'shop-billing'], function () {
             Route::get("billing-info", "Admin_Panel\PageController@viewBillingInfo")->name('billing.info');
             Route::post("get-billing-info", "Admin_Panel\PageController@getBillingInfo")->name('billing.info.get');

@@ -185,12 +185,13 @@ class PageController extends Controller
                             //page is already in database. So update page status
                             if ($this->checkSubscriptionStatus($pages_details['data'][$i]['id']) == 0) {
                                 $this->updatePageBillingInfo($page->id);
-                                $this->updatePageSubscriptionStatus($pages_details['data'][$i]['id'], 2);
+                                $this->updatePageSubscriptionStatus($pages_details['data'][$i]['id'], 3); //3 means sey pay kore nai...
                             } else {
                                 $this->updatePageConnectionStatus(null, $pages_details['data'][$i]['id'], true);
                             }
                             $this->updatePageAccessToken($pages_details['data'][$i]['id'], $pages_details['data'][$i]['access_token']);
                         }
+
                         if ($this->checkSubscriptionStatus($pages_details['data'][$i]['id']) == 1 || $this->checkSubscriptionStatus($pages_details['data'][$i]['id']) == 2) {
                             $page_access_token = $pages_details['data'][$i]['access_token'];
                             $webhook_fields = json_decode($this->addFieldsToWebhook($page_access_token, $pages_details['data'][$i]['id']));
