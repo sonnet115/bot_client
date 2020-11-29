@@ -210,7 +210,7 @@
                 '                            <br>\n' +
                 '                            <p>Shop Name</p>\n' +
                 '                            <input readonly class="form-control" value="' + page_name + '" placeholder="Shop Name" name="shop_name">\n' +
-                '                            <input type="text" name="page_id" value="' + page_id + '">\n' +
+                '                            <input type="hidden" name="page_id" value="' + page_id + '">\n' +
                 '                            <p id="trx_id">Transaction ID</p>\n' +
                 '                            <input class="form-control" placeholder="bKash Transaction ID" name="trx_id">\n' +
                 '                            <hr>\n' +
