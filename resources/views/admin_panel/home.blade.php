@@ -31,13 +31,13 @@
                     <div class="text-center">
                         <img src="{{asset('images/logo.png')}}" style="max-width: 100px">
                     </div>
-                    <p class="text-center text-muted" style="font-size: 20px">Welcome to Messenger Bot</p>
+                    <p class="text-center text-muted" style="font-size: 20px">Welcome to Messenger Automation</p>
                     <hr>
                     <a href="{{ url('/auth/redirect/facebook') }}" class="btn btn-primary mb-3"><i
                             class="fa fa-facebook-official"></i> Continue with Facebook</a>
-                    <p class="text-center text-muted" style="font-size: 14px">by continuing you accept
-                        <a href="https://howkar.com/privacy" target="_blank" style="text-decoration: underline">terms of
-                            service</a>
+                    <p class="text-center text-muted" style="font-size: 15px">By continuing you accept
+                        <a href="https://howkar.com/privacy" target="_blank" style="text-decoration: underline">terms &
+                            conditions</a> of our service
                     </p>
                 </div>
             </div>

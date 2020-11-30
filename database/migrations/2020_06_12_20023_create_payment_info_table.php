@@ -18,6 +18,7 @@ class CreatePaymentInfoTable extends Migration
             $table->smallInteger('page_id')->nullable();
             $table->string('page_name')->nullable();
             $table->string('trx_id', 100)->nullable();
+            $table->boolean('served')->default(0);
             $table->timestamps();
         });
     }
