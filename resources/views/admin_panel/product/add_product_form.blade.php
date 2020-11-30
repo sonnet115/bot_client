@@ -129,7 +129,7 @@
                                             <span class="input-group-text"><i class="icon-shuffle"></i></span>
                                         </div>
                                         <select class="form-control" id="shop_id" name="shop_id_name" required>
-                                            <option disabled>Select shop</option>
+                                            <option disabled selected>Select shop</option>
                                             @if($product_details !== null)
                                                 @foreach($shop_list as $shop)
                                                     <option value="{{$shop->id."_".$shop->page_name}}"
