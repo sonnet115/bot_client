@@ -12,4 +12,9 @@ class Billing extends Model
         'page_id', 'prev_billing_date', 'next_billing_date', 'paid_amount', 'payable_amount'
     ];
 
+    function shop()
+    {
+        return $this->belongsTo(Shop::class, 'page_id', 'id');
+    }
+
 }

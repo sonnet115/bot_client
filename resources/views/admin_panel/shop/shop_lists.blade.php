@@ -168,8 +168,8 @@
                     {data: 'page_likes', name: 'page_likes'},
                     {
                         'render': function (data, type, row) {
-                            let color = row.page_connected_status === 1 ? "success" : "danger";
-                            let text = row.page_connected_status === 1 ? "Connected" : "Disconnected";
+                            let color = row.page_connected_status == 1 ? "success" : "danger";
+                            let text = row.page_connected_status == 1 ? "Connected" : "Disconnected";
                             return '<span  style="min-width: 103px" class="badge badge-pill badge-' + color + ' pr-15 pl-15">' + text + '</span>';
                         },
                     },
@@ -177,7 +177,7 @@
                         'render': function (data, type, row) {
                             let btn = '';
 
-                            if (row.page_connected_status === 1) {
+                            if (row.page_connected_status == 1) {
                                 btn = '<button style="min-width: 101px;border:1px solid" onclick="showConfirmation()" class="shadow btn btn-sm pr-15 pl-15 btn-outline-danger">Disconnect</button>';
                             } else {
                                 btn = '<button style="min-width: 101px;border:1px solid" onclick="connectDisconnectPage()" class="shadow btn btn-sm pr-15 pl-15 btn-outline-success">Connect</button>';

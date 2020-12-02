@@ -81,7 +81,7 @@ class PageController extends Controller
                             'page_contact' => $page_contact,
                             'page_likes' => $pages_details['data'][$i]['fan_count'],
                             'is_published' => $pages_details['data'][$i]['is_published'],
-                            'page_subscription_status' => 1,
+                            'page_subscription_status' => 0,
                             'is_webhooks_subscribed' => $pages_details['data'][$i]['is_webhooks_subscribed'],
                             'page_username' => $page_username,
                             'page_address' => $page_address,
@@ -185,14 +185,14 @@ class PageController extends Controller
                             //page is already in database. So update page status
                             if ($this->checkSubscriptionStatus($pages_details['data'][$i]['id']) == 0) {
                                 $this->updatePageBillingInfo($page->id);
-                                $this->updatePageSubscriptionStatus($pages_details['data'][$i]['id'], 4); //3 means sey pay kore nai...
+                                $this->updatePageSubscriptionStatus($pages_details['data'][$i]['id'], 4); //4 means sey pay kore nai...
                             } else {
                                 $this->updatePageConnectionStatus(null, $pages_details['data'][$i]['id'], true);
                             }
                             $this->updatePageAccessToken($pages_details['data'][$i]['id'], $pages_details['data'][$i]['access_token']);
                         }
 
-                        if ($this->checkSubscriptionStatus($pages_details['data'][$i]['id']) == 1 || $this->checkSubscriptionStatus($pages_details['data'][$i]['id']) == 2 || $this->checkSubscriptionStatus($pages_details['data'][$i]['id']) == 4) {
+                        if ($this->checkSubscriptionStatus($pages_details['data'][$i]['id']) == 1 || $this->checkSubscriptionStatus($pages_details['data'][$i]['id']) == 2 || $this->checkSubscriptionStatus($pages_details['data'][$i]['id']) == 3) {
                             $page_access_token = $pages_details['data'][$i]['access_token'];
                             $webhook_fields = json_decode($this->addFieldsToWebhook($page_access_token, $pages_details['data'][$i]['id']));
                             $persistent_menu = json_decode($this->addPersistentMenu($page_access_token));
@@ -265,17 +265,19 @@ class PageController extends Controller
     function updatePageBillingInfo($page_id)
     {
         $payable_amount = $this->calculatePayableAmount($page_id);
-        Billing::where('page_id', $page_id)
-            ->update(
-                [
-                    'prev_billing_date' => date("Y-m-d"),
-                    'next_billing_date' => date('Y-m-d', strtotime('+30 days', strtotime(date('Y-m-d')))),
-                    'paid_amount' => 0,
-                    'payable_amount' => $payable_amount
-                ]);
+        $billing = Billing::where('page_id', $page_id)->first();
+        if ($billing) {
+            $billing->prev_billing_date = date("Y-m-d");
+            $billing->next_billing_date = date('Y-m-d', strtotime('+30 days', strtotime(date('Y-m-d'))));
+            $billing->paid_amount = 0;
+            $billing->payable_amount = $payable_amount;
+            $billing->save();
+        } else {
+            $this->insertPageBillingInfoForNewPage($page_id);
+        }
     }
 
-    private function updatePageAccessToken($page_id, $page_access_token)
+    function updatePageAccessToken($page_id, $page_access_token)
     {
         Shop::where('page_id', $page_id)
             ->update(
@@ -343,7 +345,7 @@ class PageController extends Controller
 
     function getBillingInfo()
     {
-        return datatables(Shop::where('page_owner_id', auth()->user()->user_id)->with('billing'))->toJson();
+        return datatables(Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', '=', 1)->with('billing'))->toJson();
         //return datatables(array())->toJson();
     }
 
@@ -360,8 +362,8 @@ class PageController extends Controller
 
     public function getLongLivedUserAccessToken($short_lived_user_access_token)
     {
-        //$ch = curl_init('https://graph.facebook.com/v3.2/oauth/access_token?grant_type=fb_exchange_token&client_id=967186797063633&client_secret=cf8809fcc502890072d63572b4d1f335&fb_exchange_token=' . $short_lived_user_access_token);
-        $ch = curl_init('https://graph.facebook.com/v3.2/oauth/access_token?grant_type=fb_exchange_token&client_id=1092841357718647&client_secret=13115cf1e8ea8b246b3eb74f05cd177a&fb_exchange_token=' . $short_lived_user_access_token);
+        $ch = curl_init('https://graph.facebook.com/v3.2/oauth/access_token?grant_type=fb_exchange_token&client_id=967186797063633&client_secret=cf8809fcc502890072d63572b4d1f335&fb_exchange_token=' . $short_lived_user_access_token);
+        //$ch = curl_init('https://graph.facebook.com/v3.2/oauth/access_token?grant_type=fb_exchange_token&client_id=1092841357718647&client_secret=13115cf1e8ea8b246b3eb74f05cd177a&fb_exchange_token=' . $short_lived_user_access_token);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
@@ -443,8 +445,8 @@ class PageController extends Controller
     {
         foreach ($shops as $shop) {
             $page_access_token = $shop['page_access_token'];
-            //$ch = curl_init('https://graph.facebook.com/v3.2/' . $shop->page_id . '/subscribed_apps?access_token=967186797063633|FeDiwEGXFOBmsTInUre0HPLI1yY');
-            $ch = curl_init('https://graph.facebook.com/v3.2/' . $shop->page_id . '/subscribed_apps?access_token=1092841357718647|FeDiwEGXFOBmsTInUre0HPLI1yY');
+            $ch = curl_init('https://graph.facebook.com/v3.2/' . $shop->page_id . '/subscribed_apps?access_token=967186797063633|FeDiwEGXFOBmsTInUre0HPLI1yY');
+            //$ch = curl_init('https://graph.facebook.com/v3.2/' . $shop->page_id . '/subscribed_apps?access_token=1092841357718647|FeDiwEGXFOBmsTInUre0HPLI1yY');
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_HEADER, false);
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");

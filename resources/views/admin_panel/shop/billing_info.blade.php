@@ -122,14 +122,14 @@
                         'render': function (data, type, row) {
                             let color = "";
                             let text = "";
-                            if (row.page_subscription_status === 1) { //1 = trial
+                            if (row.page_subscription_status == 1) { //1 = trial
                                 color = "warning";
                                 text = "Trial";
-                            } else if (row.page_subscription_status === 2) {
+                            } else if (row.page_subscription_status == 2) {
                                 color = "info"
                                 text = "Due"
-                            } else if (row.page_subscription_status === 3) {
-                                color = "Success"
+                            } else if (row.page_subscription_status == 3) {
+                                color = "success"
                                 text = "Paid"
                             } else {
                                 color = "danger"
@@ -146,10 +146,13 @@
                         'render': function (data, type, row) {
                             let color = "success";
                             let text = "Pay Now";
-                            let button = '<input type="hidden" value="' + row.billing[0].payable_amount + '" class="payable_amount">' +
-                                '<input type="hidden" value="' + row.page_name + '" class="page_name">' +
-                                '<input type="hidden" value="' + row.id + '" class="page_id">' +
-                                '<button style="min-width: 101px;border:1px solid" class="payment-details shadow btn btn-sm pr-15 pl-15 btn-outline-' + color + '">' + text + '</button>';
+                            let button = "N/A";
+                            if (row.billing.length > 0) {
+                                button = '<input type="hidden" value="' + row.billing[0].payable_amount + '" class="payable_amount">' +
+                                    '<input type="hidden" value="' + row.page_name + '" class="page_name">' +
+                                    '<input type="hidden" value="' + row.id + '" class="page_id">' +
+                                    '<button style="min-width: 101px;border:1px solid" class="payment-details shadow btn btn-sm pr-15 pl-15 btn-outline-' + color + '">' + text + '</button>';
+                            }
                             return button;
                         },
                     }
