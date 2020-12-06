@@ -229,14 +229,17 @@
 {{--<!-- Init JavaScript -->--}}
 <script src={{asset("assets/admin_panel/dist/js/init.js")}}></script>
 
-{{--<script
+@if (env('APP_ENV') == 'production')
+    <script
         src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v8.0&appId=967186797063633&autoLogAppEvents=1"
         nonce="AhbIxnz8" async defer crossorigin="anonymous">
-    </script>--}}
-<script
-    src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v8.0&appId=1092841357718647&autoLogAppEvents=1"
-    nonce="AhbIxnz8" async defer crossorigin="anonymous">
-</script>
+    </script>
+@else
+    <script
+        src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v8.0&appId=1092841357718647&autoLogAppEvents=1"
+        nonce="AhbIxnz8" async defer crossorigin="anonymous">
+    </script>
+@endif
 <script src={{asset("assets/admin_panel/vendors/datatables.net/js/jquery.dataTables.min.js")}}></script>
 <script src={{asset("assets/admin_panel/vendors/datatables.net-bs4/js/dataTables.bootstrap4.min.js")}}></script>
 <script
@@ -348,7 +351,7 @@
                 }
             });
         }, {
-            scope: 'pages_messaging, pages_manage_metadata, pages_show_list',
+            scope: 'pages_messaging, pages_manage_metadata, pages_show_list, pages_read_engagement',
             return_scopes: true
         });
     }

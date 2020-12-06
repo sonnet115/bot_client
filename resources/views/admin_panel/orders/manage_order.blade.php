@@ -35,7 +35,7 @@
                     <option value="" selected>All Status</option>
                     <option value="0">Pending</option>
                     <option value="1">Processing</option>
-                    <option value="2">Dispatched</option>
+                    <option value="2">Shipping</option>
                     <option value="3">Delivered</option>
                     <option value="4">Cancelled</option>
                 </select>
@@ -66,7 +66,8 @@
         <!-- filter ends-->
 
         <!-- Order List starts -->
-        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-list-alt"> Orders List</i></h4>
+        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-list-alt"> Orders
+                List</i></h4>
         <div class="row">
             <div class="col-xl-12">
                 <section class="hk-sec-wrapper">
@@ -235,15 +236,15 @@
                     },
                     {
                         'render': function (data, type, row) {
-                            if (row.order_status === 0) {
+                            if (row.order_status == 0) {
                                 return '<p class="status_text"><span class=" badge badge-info rounded-10 pl-4 pr-4">Pending</span></p>';
-                            } else if (row.order_status === 1) {
+                            } else if (row.order_status == 1) {
                                 return '<p class="status_text"><span class="badge badge-primary rounded-10 pl-4 pr-4">Processing</span></p>';
-                            } else if (row.order_status === 2) {
-                                return '<p class="status_text"><span class="badge badge-warning rounded-10 pl-4 pr-4">Dispatched</span></p>';
-                            } else if (row.order_status === 3) {
+                            } else if (row.order_status == 2) {
+                                return '<p class="status_text"><span class="badge badge-warning rounded-10 pl-4 pr-4">Shipping</span></p>';
+                            } else if (row.order_status == 3) {
                                 return '<p class="status_text"><span class="badge badge-success rounded-10 pl-4 pr-4">Delivered</span></p>';
-                            } else if (row.order_status === 4) {
+                            } else if (row.order_status == 4) {
                                 return '<p class="status_text"><span class="badge badge-danger rounded-10 pl-4 pr-4">Cancelled</span></p>';
                             }
                         }
@@ -268,7 +269,7 @@
                                 '  <option selected disabled>Change</option>\n' +
                                 '  <option value="0">Pending</option>\n' +
                                 '  <option value="1">Processing</option>\n' +
-                                '  <option value="2">Dispatched</option>\n' +
+                                '  <option value="2">Shipping</option>\n' +
                                 '  <option value="3">Delivered</option>\n' +
                                 '  <option value="4">Cancelled</option>\n' +
                                 '</select>' +
@@ -306,7 +307,7 @@
                         } else if (order_status == 1) {
                             v = '<span class="badge badge-primary rounded-10 pl-4 pr-4">Processing</span>';
                         } else if (order_status == 2) {
-                            v = '<span class="badge badge-warning rounded-10 pl-4 pr-4">Dispatched</span>';
+                            v = '<span class="badge badge-warning rounded-10 pl-4 pr-4">Shipping</span>';
                         } else if (order_status == 3) {
                             v = '<span class="badge badge-success rounded-10 pl-4 pr-4">Delivered</span>';
                         } else if (order_status == 4) {
@@ -355,10 +356,10 @@
                         let delivery_charge = 0;
 
                         if (subtotal) {
-                            delivery_charge = response.delivery_charge;
+                            delivery_charge = parseFloat(response.delivery_charge);
                         }
 
-                        let total_price = (subtotal - total_discount) + delivery_charge;
+                        let total_price = (parseFloat(subtotal) - parseFloat(total_discount)) + parseFloat(delivery_charge);
 
                         let summary_elem = summaryDetails(subtotal, total_discount, delivery_charge, total_price);
                         $('#summary_details').html(summary_elem);
@@ -411,31 +412,31 @@
                 success: function (response) {
                     let product_status = product_status_parent.find('.product_status_td');
 
-                    if ((response.product_status) === 0) {
+                    if ((response.product_status) == 0) {
                         product_status.html("<span class='badge badge-pill badge-info'>Pending</span>");
                     }
-                    if ((response.product_status) === 1) {
+                    if ((response.product_status) == 1) {
                         product_status.html("<span class='badge badge-pill badge-primary'>Processing</span>");
                     }
-                    if ((response.product_status) === 2) {
+                    if ((response.product_status) == 2) {
                         product_status.html("<span class='badge badge-pill badge-warning'>Shipping</span>");
                     }
-                    if ((response.product_status) === 3) {
+                    if ((response.product_status) == 3) {
                         product_status.html("<span class='badge badge-pill badge-success'>Delivered</span>");
                     }
-                    if ((response.product_status) === 4) {
+                    if ((response.product_status) == 4) {
                         product_status.html("<span class='badge badge-pill badge-danger'>Cancelled</span>");
                     }
 
                     if (old_product_status !== new_product_status) {
                         // adjustOnchangeTotalPrice(response);
-                        if (new_product_status === "0" || new_product_status !== "1" || new_product_status !== "2" || new_product_status !== "3") {
-                            if (old_product_status === "4") {
+                        if (new_product_status == "0" || new_product_status != "1" || new_product_status != "2" || new_product_status != "3") {
+                            if (old_product_status == "4") {
                                 adjustOnchangeTotalPrice(response);
                             }
                         }
 
-                        if (new_product_status === "4") {
+                        if (new_product_status == "4") {
                             adjustOnchangeTotalPrice(response);
                         }
                     }
@@ -448,19 +449,19 @@
             let product_status_show = "";
             let product_status = response.ordered_products[i].pivot.product_status;
 
-            if (product_status === 0) {
+            if (product_status == 0) {
                 product_status_show = '<span class="badge badge-pill badge-info">Pending</span>';
             }
-            if (product_status === 1) {
+            if (product_status == 1) {
                 product_status_show = '<span class="badge badge-pill badge-primary">Processing</span>';
             }
-            if (product_status === 2) {
+            if (product_status == 2) {
                 product_status_show = '<span class="badge badge-pill badge-warning">Shipping</span>';
             }
-            if (product_status === 3) {
+            if (product_status == 3) {
                 product_status_show = '<span class="badge badge-pill badge-success">Delivered</span>';
             }
-            if (product_status === 4) {
+            if (product_status == 4) {
                 product_status_show = '<span class="badge badge-pill badge-danger">Cancelled</span>';
             }
 
@@ -475,7 +476,7 @@
                 '               <option value="" selected>Choose Status</option>\n' +
                 '               <option value="0">Pending</option>\n' +
                 '               <option value="1">Processing</option>\n' +
-                '               <option value="2">Dispatched</option>\n' +
+                '               <option value="2">Shipping</option>\n' +
                 '               <option value="3">Delivered</option>\n' +
                 '               <option value="4">Cancelled</option>\n' +
                 '           </select>' +
@@ -534,8 +535,9 @@
                     let quantity = response.ordered_products[i].pivot.quantity;
                     let price = response.ordered_products[i].pivot.price;
                     let discount = response.ordered_products[i].pivot.discount;
-                    total_discount = total_discount + discount;
-                    total_price = total_price + (price * quantity);
+
+                    total_discount = parseFloat(total_discount) + parseFloat(discount);
+                    total_price = parseFloat(total_price) + (parseFloat(price) * parseFloat(quantity));
                 }
             }
             return {total_price: total_price, total_discount: total_discount};
@@ -559,7 +561,7 @@
             adjusted_subtotal = old_subtotal;
             adjusted_discount = old_discount;
 
-            if (response.product_status === 4) {
+            if (response.product_status == 4) {
                 adjusted_discount = adjusted_discount - (new_quantity * new_discount);
                 adjusted_subtotal = adjusted_subtotal - (new_quantity * new_price);
             } else {

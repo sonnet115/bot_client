@@ -291,11 +291,11 @@
                                 class="fa fa-building-o"></i>My Pages</a>
                     </li>
                     <hr class="nav-separator">
-                    <li class="nav-item {{\Request::route()->getName() == "billing.info" ? "active" : ""}}">
+                    {{--<li class="nav-item {{\Request::route()->getName() == "billing.info" ? "active" : ""}}">
                         <a class="nav-link"
                            href="{{route('billing.info')}}"><i
                                 class="fa fa-money"></i>Billing</a>
-                    </li>
+                    </li>--}}
                 </ul>
             </div>
         </div>

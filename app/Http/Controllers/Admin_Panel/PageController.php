@@ -362,8 +362,11 @@ class PageController extends Controller
 
     public function getLongLivedUserAccessToken($short_lived_user_access_token)
     {
-        $ch = curl_init('https://graph.facebook.com/v3.2/oauth/access_token?grant_type=fb_exchange_token&client_id=967186797063633&client_secret=cf8809fcc502890072d63572b4d1f335&fb_exchange_token=' . $short_lived_user_access_token);
-        //$ch = curl_init('https://graph.facebook.com/v3.2/oauth/access_token?grant_type=fb_exchange_token&client_id=1092841357718647&client_secret=13115cf1e8ea8b246b3eb74f05cd177a&fb_exchange_token=' . $short_lived_user_access_token);
+        if (env('APP_ENV') == 'production') {
+            $ch = curl_init('https://graph.facebook.com/v3.2/oauth/access_token?grant_type=fb_exchange_token&client_id=967186797063633&client_secret=cf8809fcc502890072d63572b4d1f335&fb_exchange_token=' . $short_lived_user_access_token);
+        } else {
+            $ch = curl_init('https://graph.facebook.com/v3.2/oauth/access_token?grant_type=fb_exchange_token&client_id=1092841357718647&client_secret=13115cf1e8ea8b246b3eb74f05cd177a&fb_exchange_token=' . $short_lived_user_access_token);
+        }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
@@ -445,8 +448,11 @@ class PageController extends Controller
     {
         foreach ($shops as $shop) {
             $page_access_token = $shop['page_access_token'];
-            $ch = curl_init('https://graph.facebook.com/v3.2/' . $shop->page_id . '/subscribed_apps?access_token=967186797063633|FeDiwEGXFOBmsTInUre0HPLI1yY');
-            //$ch = curl_init('https://graph.facebook.com/v3.2/' . $shop->page_id . '/subscribed_apps?access_token=1092841357718647|FeDiwEGXFOBmsTInUre0HPLI1yY');
+            if (env('APP_ENV') == 'production') {
+                $ch = curl_init('https://graph.facebook.com/v3.2/' . $shop->page_id . '/subscribed_apps?access_token=967186797063633|FeDiwEGXFOBmsTInUre0HPLI1yY');
+            } else {
+                $ch = curl_init('https://graph.facebook.com/v3.2/' . $shop->page_id . '/subscribed_apps?access_token=1092841357718647|FeDiwEGXFOBmsTInUre0HPLI1yY');
+            }
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_HEADER, false);
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
