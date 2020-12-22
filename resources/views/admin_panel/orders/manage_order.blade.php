@@ -118,15 +118,16 @@
                                 <table class="table table-responsive table-striped table-bordered">
                                     <thead>
                                     <tr>
-                                        <th class="font-weight-bold">Name</th>
-                                        <th class="font-weight-bold">Price</th>
-                                        <th class="font-weight-bold">Quantity</th>
-                                        <th class="font-weight-bold">Discounts</th>
-                                        <th class="font-weight-bold">Status</th>
-                                        <th class="font-weight-bold">Action</th>
+                                        <th class="font-weight-bold text-center">Name</th>
+                                        <th class="font-weight-bold text-center">Code</th>
+                                        <th class="font-weight-bold text-center">Price</th>
+                                        <th class="font-weight-bold text-center">Quantity</th>
+                                        <th class="font-weight-bold text-center">Discounts</th>
+                                        <th class="font-weight-bold text-center">Status</th>
+                                        <th class="font-weight-bold text-center">Action</th>
                                     </tr>
                                     </thead>
-                                    <tbody id="product_table_data">
+                                    <tbody id="product_table_data" style="font-size: 12px">
 
                                     </tbody>
                                 </table>
@@ -324,10 +325,12 @@
                 $('#customer_table_data td').remove();
                 $('#total_price').html("");
                 $('#total_discount').html("");
+
                 let order_id = $(this).parent().find('.order_id').val();
                 let order_code = $(this).parent().find('.order_code_display').val();
                 let view_details_button = $(this);
                 view_details_button.prop('disabled', true);
+
                 $("#order_code_display").html(order_code);
                 $.ajax({
                     type: "GET",
@@ -467,6 +470,7 @@
 
             return '<tr style="font-size: 15px">\n' +
                 '        <td>' + response.ordered_products[i].name + '</td>\n' +
+                '        <td>' + response.ordered_products[i].code + '</td>\n' +
                 '        <td>' + response.ordered_products[i].price + '</td>\n' +
                 '        <td>' + response.ordered_products[i].pivot.quantity + '<span>Sets</span></td>\n' +
                 '        <td>' + response.ordered_products[i].pivot.discount + '</td>\n' +

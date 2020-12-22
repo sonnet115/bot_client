@@ -53,7 +53,10 @@
             <div class="form-group pl-2">
                 <p style="font-size: 20px;margin-top: -30px">Category</p>
                 <select class="form-control" id="category_id" name="category_id">
-
+                    <option value="" selected>All</option>
+                    @foreach($categories as $category)
+                        <option value="{{$category->id}}">{{$category->name}}</option>
+                    @endforeach
                 </select>
             </div>
             <!--category ends-->
