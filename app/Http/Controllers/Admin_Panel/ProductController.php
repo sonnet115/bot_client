@@ -9,6 +9,7 @@ use App\ProductImage;
 use App\Shop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
@@ -276,6 +277,15 @@ class ProductController extends Controller
     {
         DB::beginTransaction();
         try {
+            $products = Product::where('shop_id', $request->shop_id)->where('show_in_bot', 1)->get();
+
+            if (count($products) == 0) {//no product added yet. so we add webhook and webhook fields
+                $shop = Shop::find($request->shop_id);
+
+                $this->addFieldsToWebhook($shop->page_access_token, $shop->page_id);
+                $this->addPersistentMenu($shop->page_access_token);
+            }
+
             Product::where('shop_id', $request->shop_id)
                 ->update(['show_in_bot' => 0]);
 
@@ -307,4 +317,65 @@ class ProductController extends Controller
         }
     }
 
+    public function addFieldsToWebhook($page_access_token, $page_id)
+    {
+        $ch = curl_init('https://graph.facebook.com/v3.2/' . $page_id . '/subscribed_apps?subscribed_fields=messages,messaging_postbacks,messaging_optins,feed&access_token=' . $page_access_token);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
+        $response = curl_exec($ch);
+        Log::channel('page_connect')->info('add_webhook [' . $page_id . ']:' . json_encode($response));
+        return $response;
+    }
+
+    public function addPersistentMenu($page_access_token)
+    {
+        $request_body = '{
+                            "whitelisted_domains": [
+                                 "' . env('WHITELIST_DOMAIN') . '"
+                            ],
+                            "get_started": {
+                                "payload": "GET_STARTED"
+                            },
+                            "persistent_menu": [
+                                {
+                                    "locale": "default",
+                                    "composer_input_disabled": false,
+                                    "call_to_actions": [
+                                        {
+                                            "type": "postback",
+                                            "title": "Products",
+                                            "payload": "PRODUCT_SEARCH"
+                                        },
+                                        {
+                                            "type": "postback",
+                                            "title": "View Cart",
+                                            "payload": "VIEW_CART"
+                                        },
+                                        {
+                                            "type": "postback",
+                                            "title": "Track Orders",
+                                            "payload": "TRACK_ORDER"
+                                        },
+                                        {
+                                            "type": "postback",
+                                            "title": "Help",
+                                            "payload": "TALK_TO_AGENT"
+                                        },
+                                    ]
+                                }
+                            ]
+                        }';
+
+        $ch = curl_init('https://graph.facebook.com/v8.0/me/messenger_profile?access_token=' . $page_access_token);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $request_body);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
+        $response = curl_exec($ch);
+        Log::channel('page_connect')->info('add_persistent_menu :' . json_encode($response));
+        return $response;
+    }
 }
