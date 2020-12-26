@@ -5,8 +5,8 @@
     <div class="container mt-xl-30 mt-sm-30 mt-50 mt-lg-15">
         <!-- Title -->
         <div class="hk-pg-header align-items-top">
-            <h2 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i
-                    class="fa fa-plus"> Select Bot Products</i>
+            <h2 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase">
+                <i class="fa fa-plus"> Select Bot Products </i>
             </h2>
         </div>
         <!-- /Title -->
@@ -17,7 +17,7 @@
                 <p class="text-danger" style="font-size: 20px">
                     Note:
                     <span class="text-primary" style="font-size: 17px">
-                        আপনি আপনার যে যে পণ্য গুলো বট এ এড করতে চান সেই পণ্য গুলো এখানে সিলেক্ট করুন 
+                        আপনি আপনার যে যে পণ্য গুলো বট এ এড করতে চান সেই পণ্য গুলো এখানে সিলেক্ট করুন
                     </span>
                 </p>
                 <section class="hk-sec-wrapper" style="padding-bottom: 0">

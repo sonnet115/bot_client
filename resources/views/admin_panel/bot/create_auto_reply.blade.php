@@ -8,7 +8,6 @@
             <h2 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i
                     class="fa fa-plus"> {{$auto_reply_details!==null ? "Update Auto Reply" : "Create Auto Reply"}}</i>
             </h2>
-
         </div>
         <!-- /Title -->
         <!-- Row -->

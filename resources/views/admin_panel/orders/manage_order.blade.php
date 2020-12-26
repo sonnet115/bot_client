@@ -535,7 +535,7 @@
             let total_price = 0;
             let total_discount = 0;
             for (let i = 0; i < response.ordered_products.length; i++) {
-                if (response.ordered_products[i].pivot.product_status !== 4) {
+                if (response.ordered_products[i].pivot.product_status != 4) {
                     let quantity = response.ordered_products[i].pivot.quantity;
                     let price = response.ordered_products[i].pivot.price;
                     let discount = response.ordered_products[i].pivot.discount;
