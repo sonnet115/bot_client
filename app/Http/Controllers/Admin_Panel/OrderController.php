@@ -5,9 +5,10 @@ namespace App\Http\Controllers\Admin_Panel;
 use App\Http\Controllers\Controller;
 use App\Order;
 use App\OrderedProducts;
+use App\Product;
+use App\Shop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Shop;
 
 class OrderController extends Controller
 {
@@ -94,5 +95,43 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             return response()->json('Update Failed', 400);
         }
+    }
+
+    public function getOrderedProductsView()
+    {
+        $shops = Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->get();
+        return view('admin_panel.orders.ordered_products')
+            ->with("title", " Howkar Technology || Manage Ordered Products")
+            ->with('shops', $shops);
+    }
+
+    public function getOrderedProducts(Product $product)
+    {
+        $status = 0;
+        $product = $product->newQuery();
+
+        if (request()->has('status') && request('status') != null) {
+            $status = request('status');
+        }
+
+        if (request()->has('shop_id') && request('shop_id') != null) {
+            $product->where('shop_id', '=', request('shop_id'));
+        }
+
+        //only logged users orders
+        $shops = Shop::select('id')->where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->get();
+        $shops_id = array();
+        foreach ($shops as $key => $value) {
+            array_push($shops_id, $value['id']);
+        }
+        $product->whereIn('shop_id', $shops_id);
+
+        return datatables($product->with(['orderedProducts' => function ($query) use ($status) {
+            $query->where('product_status', $status);
+        }]))->toJson();
+
+        /*dd(Product::with(['orderedProducts' => function ($query) use ($status) {
+            $query->where('product_status', $status);
+        }])->get());*/
     }
 }

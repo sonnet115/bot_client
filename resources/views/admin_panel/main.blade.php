@@ -58,6 +58,10 @@
         .paginate_button {
             padding: 0 !important;
         }
+
+        .hk-pg-wrapper {
+            padding: 30px 0 60px !important;
+        }
     </style>
     @yield("dashboard-css")
     @yield("category-css")
@@ -90,7 +94,7 @@
             <span class="feather-icon"><i data-feather="menu"></i></span>
         </a>
         <a class="navbar-brand font-weight-900 text-white" style="font-size: 30px !important;"
-           href="{{route("dashboard")}}">Howkar Technology
+           href="{{route("dashboard")}}">Howkar Tech.
         </a>
         <ul class="navbar-nav hk-navbar-content">
             <li class="nav-item dropdown dropdown-authentication">
@@ -151,17 +155,17 @@
                                     <li class="nav-item {{\Request::route()->getName() == "auto.reply.create.view" ? "active" : ""}}">
                                         <a class="nav-link"
                                            href="{{route('auto.reply.create.view')}}"><i
-                                                class="fa fa-comments"></i>Auto Reply</a>
+                                                class="fa fa-comments"></i>Post Automation</a>
                                     </li>
                                     <li class="nav-item {{\Request::route()->getName() == "auto.reply.list" ? "active" : ""}}">
                                         <a class="nav-link"
                                            href="{{route('auto.reply.list')}}"><i
-                                                class="fa fa-list"></i>Auto Reply Lists</a>
+                                                class="fa fa-list"></i>Post Automation History</a>
                                     </li>
                                     <li class="nav-item {{\Request::route()->getName() == "bot.products.add.view" ? "active" : ""}}">
                                         <a class="nav-link"
                                            href="{{route('bot.products.add.view')}}"><i
-                                                class="fa fa-chain"></i>Bot Products</a>
+                                                class="fa fa-chain"></i>Messenger Automation</a>
                                     </li>
                                 </ul>
                             </li>
@@ -251,6 +255,12 @@
                                                 class="fa fa-list-ul"></i>Order list</a>
                                     </li>
 
+                                    <li class="nav-item {{\Request::route()->getName() == "ordered.products.view" ? "active" : ""}}">
+                                        <a class="nav-link"
+                                           href="{{route('ordered.products.view')}}"><i
+                                                class="fa fa-dribbble"></i>Ordered Products</a>
+                                    </li>
+
                                 </ul>
                             </li>
                         </ul>
@@ -329,7 +339,6 @@
         <!-- /Footer -->
     </div>
     <!-- /Main Content -->
-
 </div>
 <!-- /HK Wrapper -->
 

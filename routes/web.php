@@ -117,6 +117,8 @@ Route::group(['middleware' => 'unauthenticated.user'], function () {
             Route::get("get-order-details", "Admin_Panel\OrderController@getOrdersDetails")->name("order.details.get");
             Route::get("get-order-status", "Admin_Panel\OrderController@getProductStatus")->name("order.status.get");
             Route::get("change-order-status", "Admin_Panel\OrderController@changeOrderStatus")->name("order.status.change");
+            Route::get("get-ordered-products-view", "Admin_Panel\OrderController@getOrderedProductsView")->name("ordered.products.view");
+            Route::get("get-ordered-products", "Admin_Panel\OrderController@getOrderedProducts")->name("ordered.products.get");
         });
 
         //Routes for delivery charges

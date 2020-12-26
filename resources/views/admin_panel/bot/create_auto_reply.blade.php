@@ -8,11 +8,18 @@
             <h2 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i
                     class="fa fa-plus"> {{$auto_reply_details!==null ? "Update Auto Reply" : "Create Auto Reply"}}</i>
             </h2>
+
         </div>
         <!-- /Title -->
         <!-- Row -->
         <div class="row">
             <div class="col-xl-7">
+                <p class="text-danger" style="font-size: 20px">
+                    Note:
+                    <span class="text-primary" style="font-size: 17px">
+                        আপনি যদি আপনার কোন পোস্ট এর কমেন্টস গুলোর উত্তর স্বয়ংক্রিয় ভাবে দিতে চান তাহলে এই ফীচার টি  ব্যাবহার করুন
+                    </span>
+                </p>
                 <section class="hk-sec-wrapper" style="padding-bottom: 0">
                     @if(Session::has('success_message'))
                         <p class="text-center alert {{ Session::get('alert-class', 'alert-success') }}">
