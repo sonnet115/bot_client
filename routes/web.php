@@ -81,6 +81,15 @@ Route::group(['middleware' => 'unauthenticated.user'], function () {
             Route::get("get-category", "Admin_Panel\CategoryController@getCategory")->name("category.get");
         });
 
+        //Routes for Variant
+        Route::group(['prefix' => 'variant'], function () {
+            Route::get("add-form", "Admin_Panel\VariantController@viewAddVariantForm")->name("variant.add.view");
+            Route::post("store-variant", "Admin_Panel\VariantController@storeVariant")->name("variant.store");
+            Route::get("manage-form", "Admin_Panel\VariantController@viewUpdateVariant")->name("variant.manage.view");
+            Route::post("update-variant", "Admin_PanelVariantController@updateVariant")->name("variant.update");
+            Route::get("get-variant", "Admin_Panel\VariantController@getVariant")->name("variant.get");
+        });
+
         //Routes for Products
         Route::group(['prefix' => 'product'], function () {
             Route::get("add-form", "Admin_Panel\ProductController@viewAddProductForm")->name("product.add.view");

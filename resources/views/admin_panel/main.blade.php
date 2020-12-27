@@ -60,7 +60,7 @@
         }
 
         .hk-pg-wrapper {
-            padding: 30px 0 60px !important;
+            padding: 50px 0 60px !important;
         }
     </style>
     @yield("dashboard-css")
@@ -114,11 +114,6 @@
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" data-dropdown-in="flipInX" data-dropdown-out="flipOutX">
-                    {{--                    <a class="dropdown-item" href="#">--}}
-                    {{--                        <i class="dropdown-icon zmdi zmdi-portable-wifi-changes"></i>--}}
-                    {{--                        <span>Change Password</span>--}}
-                    {{--                    </a>--}}
-                    {{--                    <div class="dropdown-divider"></div>--}}
                     <a class="dropdown-item" href="{{route('logout')}}">
                         <i class="dropdown-icon zmdi zmdi-power"></i>
                         <span>Log out</span></a>
@@ -181,7 +176,7 @@
                             <span class="nav-link-text">Products </span>
                         </a>
                         <ul id="product_manager"
-                            class="nav flex-column collapse collapse-level-1 {{ Request::segment(2) == "product" || Request::segment(2) == "category" ? "show" : "" }}">
+                            class="nav flex-column collapse collapse-level-1 {{ Request::segment(2) == "product" || Request::segment(2) == "category" ||  Request::segment(2) == "variant" ? "show" : "" }}">
                             <li class="nav-item">
                                 <ul class="nav flex-column">
                                     <li class="nav-item {{\Request::route()->getName() == "category.add.view" ? "active" : ""}}">
@@ -203,6 +198,18 @@
                                     <li class="nav-item {{\Request::route()->getName() == "product.manage.view" ? "active" : ""}}">
                                         <a class="nav-link"
                                            href="{{route('product.manage.view')}}"><i class="fa fa-list-ul"></i>Product
+                                            Lists</a>
+                                    </li>
+
+                                    <li class="nav-item {{\Request::route()->getName() == "variant.add.view" ? "active" : ""}}">
+                                        <a class="nav-link"
+                                           href="{{route('variant.add.view')}}"><i class="fa fa-plus-square"></i>Add
+                                            Variants</a>
+                                    </li>
+
+                                    <li class="nav-item {{\Request::route()->getName() == "variant.manage.view" ? "active" : ""}}">
+                                        <a class="nav-link"
+                                           href="{{route('variant.manage.view')}}"><i class="fa fa-list-ul"></i>Variants
                                             Lists</a>
                                     </li>
                                 </ul>
