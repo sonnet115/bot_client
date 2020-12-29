@@ -85,8 +85,8 @@ Route::group(['middleware' => 'unauthenticated.user'], function () {
         Route::group(['prefix' => 'variant'], function () {
             Route::get("add-form", "Admin_Panel\VariantController@viewAddVariantForm")->name("variant.add.view");
             Route::post("store-variant", "Admin_Panel\VariantController@storeVariant")->name("variant.store");
-            Route::get("manage-form", "Admin_Panel\VariantController@viewUpdateVariant")->name("variant.manage.view");
-            Route::post("update-variant", "Admin_PanelVariantController@updateVariant")->name("variant.update");
+            Route::get("manage-form", "Admin_Panel\VariantController@variantLists")->name("variant.manage.view");
+            Route::post("update-variant", "Admin_Panel\VariantController@updateVariant")->name("variant.update");
             Route::get("get-variant", "Admin_Panel\VariantController@getVariant")->name("variant.get");
         });
 

@@ -3,32 +3,6 @@
 @section("main_content")
     <!-- Container -->
     <div class="container mt-xl-20 mt-sm-30 mt-50 mt-lg-15">
-        <!-- filter starts-->
-        <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-filter">&nbsp;Filter
-                Category</i>
-        </h4>
-        <div class="d-flex flex-wrap">
-            <!-- shop starts-->
-            <div class="form-group pl-2">
-                <select class="form-control" name="shop_id">
-                    <option value="" selected>Select a shop</option>
-                    @foreach($shops as $shop)
-                        <option value="{{$shop->id}}">{{$shop->page_name}}</option>
-                    @endforeach
-                </select>
-            </div>
-            <!--state ends-->
-
-            <!--button-->
-            <div class="text-left pl-4">
-                <button type="text" id="btnFiterSubmitSearch" class="btn btn-primary"><i
-                        class="fa fa-filter">&nbsp;</i>Filter
-                </button>
-            </div>
-            <!--button ends-->
-        </div>
-        <!-- filter ends-->
-
         <!-- Product List starts -->
         <h4 class="hk-pg-title font-weight-700 mb-10 text-muted text-uppercase"><i class="fa fa-list-alt"> Categories
                 List</i>
@@ -52,8 +26,8 @@
                                 <table id="cat_list_table" class="table table-bordered w-100 display">
                                     <thead class="btn-gradient-info">
                                     <tr>
-                                        <th class="text-center text-white" data-priority="1">Category Name</th>
-                                        <th class="text-center text-white">Page Name</th>
+                                        <th class="text-center text-white" data-priority="1">Variant Name</th>
+                                        <th class="text-center text-white">Property</th>
                                         <th class="text-center text-white" data-priority="1">Action</th>
                                     </tr>
                                     </thead>
@@ -89,30 +63,36 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: "{{ route('category.get') }}",
-                    data: function (d) {
-                        d.shop_id = $('select[name=shop_id] option:selected').val();
-                    }
+                    url: "{{ route('variant.get') }}",
                 },
 
                 "columnDefs": [
                     {
                         "className": "dt-center",
-                        "targets": [1, 2]
+                        "targets": [0, 1, 2]
                     }
                 ],
                 columns: [
                     {data: 'name', name: 'name'},
-                    {data: 'shop.page_name', name: 'shop.page_name'},
                     {
                         'render': function (data, type, row) {
-                            if (row.shop.page_connected_status === 1) {
-                                return '<a style="min-width: 101px;border:1px solid" class="shadow btn btn-sm pr-15 pl-15 btn-outline-dark" ' +
-                                    '   href="/admin/category/add-form?mode=update&catid=' + row.id + '">' +
-                                    '   Update</a>';
-                            } else {
-                                return '<a href="/admin/shop-billing/shop-list" style="min-width: 101px;border:1px solid" class="shadow btn btn-sm pr-15 pl-15 btn-outline-success">Connect</a>';
+                            for (let i = 0; i < row.variant_properties.length; i++) {
+
                             }
+                            return '<span>' + row.variant_properties.map(function (elem) {
+                                if (elem.description != null) {
+                                    return elem.property_name + ' (' + elem.description + ')';
+                                } else {
+                                    return elem.property_name;
+                                }
+                            }).join(", ") + '</span>';
+                        },
+                    },
+                    {
+                        'render': function (data, type, row) {
+                            return '<a style="min-width: 101px;border:1px solid" class="shadow btn btn-sm pr-15 pl-15 btn-outline-dark" ' +
+                                '   href="/admin/variant/add-form?mode=update&vid=' + row.id + '">' +
+                                '   Update</a>';
                         },
                     }
                 ],

@@ -27,7 +27,9 @@
                     @endif
                     <div class="row">
                         <div class="col-sm">
-                            <form action="{{route('variant.store')}}" method="post">
+                            <form
+                                action=" {{$variant_details != null ? route('variant.update') : route('variant.store')}}"
+                                method="post">
                                 @csrf
                                 <div class="form-group">
                                     <label class="control-label mb-10">Variant Name<span
@@ -39,7 +41,8 @@
                                         </div>
                                         <input type="text" id="variant_name" name="variant_name"
                                                placeholder="Enter Variant Name" class="form-control"
-                                               value="{{old('variant_name')}}" required>
+                                               value="{{$variant_details == null ? old('variant_name') : $variant_details->name}}"
+                                               required>
                                     </div>
                                     <label for="category" class="error text-danger"></label>
                                     @if($errors->has('variant_name'))
@@ -49,32 +52,8 @@
                                 <p class="text-center text-uppercase text-primary font-weight-bold font-16">Variant
                                     Properties</p>
                                 <hr>
-                                <div class="row">
-                                    <div class="col-4">
-                                        <div class="form-group">
-                                            <label class="control-label mb-10">Prop. Name<span
-                                                    class="text-danger">*</span></label>
-                                            <div class="input-group">
-                                                <input type="text" name="prop_name[]"
-                                                       placeholder="Example: XL, L, Red, Black..." class="form-control"
-                                                       required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label class="control-label mb-10">Description</label>
-                                            <div class="input-group">
-                                                <input type="text" name="prop_desc[]"
-                                                       placeholder="Example: 20cm, 40cm...." class="form-control">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div id="variant_prop_container">
-                                    {{--<div class="row">
+                                @if($variant_details == null)
+                                    <div class="row">
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label class="control-label mb-10">Prop. Name<span
@@ -93,25 +72,59 @@
                                                 <label class="control-label mb-10">Description</label>
                                                 <div class="input-group">
                                                     <input type="text" name="prop_desc[]"
-                                                           placeholder="Example: 20cm, 40cm...." class="form-control"
-                                                           required>
+                                                           placeholder="Example: 20cm, 40cm...." class="form-control">
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                @endif
 
-                                        <div class="col-2">
-                                            <div class="form-group">
-                                                <div class="input-group">
-                                                    <a href="javascript:void(0)" style="margin-top: 36px"
-                                                       class="btn btn-sm btn-outline-danger">
-                                                        <i class="fa fa-times "></i>
-                                                    </a>
+                                <div id="variant_prop_container">
+                                    @if($variant_details != null)
+                                        @foreach($variant_details->variantProperties as $property)
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <div class="form-group">
+                                                        <label class="control-label mb-10">Prop. Name<span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="input-group">
+                                                            <input type="text" name="prop_name[]"
+                                                                   placeholder="Example: XL, L, Red, Black..."
+                                                                   class="form-control" required
+                                                                   value="{{$property->property_name}}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label mb-10">Description</label>
+                                                        <div class="input-group">
+                                                            <input type="text" name="prop_desc[]"
+                                                                   placeholder="Example: 20cm, 40cm...."
+                                                                   class="form-control"
+                                                                   value="{{$property->description}}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-2">
+                                                    <div class="form-group">
+                                                        <div class="input-group">
+                                                            <a href="javascript:void(0)" style="margin-top: 36px"
+                                                               class="btn btn-sm btn-outline-danger remove_field">
+                                                                <i class="fa fa-times "></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>--}}
+                                        @endforeach
+                                    @endif
                                 </div>
-
+                                @if($variant_details != null)
+                                    <input type="text" value="{{$variant_details->id}}" name="variant_id">
+                                @endif
                                 <div class="text-right">
                                     <a id="add_more_field" href="javascript:void(0)"
                                        class="btn btn-outline-primary btn-rounded btn-sm text-right">Add More Field</a>
@@ -120,7 +133,8 @@
                                 <hr>
                                 <div class="d-flex justify-content-center">
                                     <button type="submit" class="btn btn-primary btn-rounded">
-                                        <i class="fa fa-save"></i> Create Variant
+                                        <i class="fa fa-save"></i> {{$variant_details != null ? 'Update' : 'Create'}}
+                                        Variant
                                     </button>
                                 </div>
                                 <br>
