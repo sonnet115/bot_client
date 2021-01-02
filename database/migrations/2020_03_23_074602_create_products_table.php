@@ -23,7 +23,9 @@ class CreateProductsTable extends Migration
             $table->smallInteger('shop_id');
             $table->boolean('show_in_bot')->default(true);
             $table->tinyInteger('state')->default(1);
-            $table->integer('category_id')->default(null)->nullable();
+            $table->integer('category_id')->nullable();
+            $table->string('variant_combination_ids', 100)->nullable();
+            $table->integer('parent_product_id')->nullable();
             $table->timestamps();
         });
     }

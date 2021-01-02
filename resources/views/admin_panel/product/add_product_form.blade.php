@@ -176,14 +176,51 @@
                                                     @endforeach--}}
                                             @endif
                                         </select>
-                                    </div>
+                                     </div>
                                     <label for="category_ids" class="error text-danger"></label>
                                     @if($errors->has('category_ids'))
                                         <p class="text-danger font-14">{{ $errors->first('category_ids') }}</p>
                                     @endif
                                 </div>
 
-                                <label class="control-label mb-10">Product Images<span
+                                <div class="form-check mb-25">
+                                    <label class="form-check-label">
+                                        <input style="width:25px; height: 25px" type="checkbox"
+                                               class="form-check-input mt-0" id="specification_checkbox">
+                                        <span class="font-18 text-primary text-uppercase font-weight-900 ml-4">Product Specification</span>
+                                    </label>
+                                </div>
+
+                                <div id="specification_container">
+                                    @foreach($variants as $variant)
+                                        <div class="form-group">
+                                            <label class="control-label mb-10">{{$variant->name}}<span
+                                                    class="text-danger font-16">*</span></label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="icon-shuffle"></i></span>
+                                                </div>
+                                                <select class="form-control" required name="variant_{{$variant->id}}">
+                                                    <option disabled selected>Select {{$variant->name}}</option>
+                                                    @foreach($variant->variantProperties as $property)
+                                                        @if($property->description != null)
+                                                            <option
+                                                                value="{{$property->id}}">{{$property->property_name}}
+                                                                ({{$property->description}})
+                                                            </option>
+                                                        @else
+                                                            <option
+                                                                value="{{$property->id}}">{{$property->property_name}}</option>
+                                                        @endif
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <label for="" class="error text-danger"></label>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                {{--<label class="control-label mb-10">Product Images<span
                                         class="text-danger font-16">*</span></label>
                                 <span class="text-muted font-12">[Max 1 MB | Upload at least 1 image]</span>
                                 <div class="row">
@@ -222,7 +259,7 @@
                                             <p class="text-danger font-14 mb-3">{{ $errors->first('product_image_2') }}</p>
                                         @endif
                                     </div>
-                                </div>
+                                </div>--}}
 
                                 @if ($product_details !== null)
                                     <div class="form-group">
@@ -283,6 +320,16 @@
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
     <script>
         $(document).ready(function () {
+            $("#specification_checkbox").on('click', function () {
+                if (this.checked) {
+                    $("#specification_container").show(500);
+                } else {
+                    $("#specification_container").hide(500);
+                }
+            });
+
+            $("#specification_container").hide();
+
             $('#product_state').select2();
 
             jQuery.validator.setDefaults({

@@ -6,7 +6,9 @@ use App\Category;
 use App\Http\Controllers\Controller;
 use App\Product;
 use App\ProductImage;
+use App\ProductVariant;
 use App\Shop;
+use App\Variant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -19,6 +21,11 @@ class ProductController extends Controller
 
     public function viewAddProductForm()
     {
+        /*$dd = Product::with(['variants' => function($query){
+            $query->groupBy('id');
+        }])->get();
+
+        dd($dd);*/
         if (request()->get('mode')) {
             $pid = request()->get('pid');
             $product_details = Product::where('id', $pid)->with('images')->with('shop')->first();
@@ -41,14 +48,18 @@ class ProductController extends Controller
         }
         $categories = Category::whereIn('shop_id', $shops_id)->get();
 
+        $variant = Variant::where('user_id', auth()->user()->id)->with('variantProperties')->orderBy('id')->get();
+
         return view('admin_panel.product.add_product_form')
             ->with("title", "Howkar Technology | Add Product")
             ->with('product_details', $product_details)
             ->with('categories', $categories)
+            ->with('variants', $variant)
             ->with('shop_list', $shops);
     }
 
-    public function storeProduct(Request $request)
+
+    public function storeProductBk(Request $request)
     {
         //product validation
         $validator = Validator::make($request->all(), [
@@ -63,6 +74,53 @@ class ProductController extends Controller
             'product_image_1.*' => 'mimes:jpeg,png,jpg',
             'product_image_2' => 'file|max:1024',
             'product_image_2.*' => 'mimes:jpeg,png,jpg',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        DB::beginTransaction();
+        try {
+            $shop_name = str_replace(' ', '_', explode('_', $request->shop_id_name)[1]);
+            //product save
+            $product = new Product();
+            $product->name = $request->product_name;
+            $product->code = $request->product_code;
+            $product->stock = $request->product_stock;
+            $product->uom = $request->product_uom;
+            $product->price = $request->product_price;
+            $product->category_id = $request->category_ids;
+            $product->shop_id = explode('_', $request->shop_id_name)[0];
+            $product->save();
+            $product_id = $product->id;
+
+            //product image save
+            $this->storeProductImage($request, $product_id, 'product_image_1', 1, $shop_name);
+            $this->storeProductImage($request, $product_id, 'product_image_2', 2, $shop_name);
+
+            DB::commit();
+            Session::flash('success_message', 'Product Saved Successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Session::flash('error_message', 'Something went wrong! Please Try again');
+        }
+
+        return redirect(route('product.add.view'));
+    }
+
+    public function storeProduct(Request $request)
+    {
+        //product validation
+        $validator = Validator::make($request->all(), [
+            'product_name' => 'required|max:30',
+            'product_code' => 'required|unique:products,code|max:15',
+            'product_stock' => 'required|integer|max:100000',
+            'product_uom' => 'required|string|max:10',
+            'product_price' => 'required|numeric|between:0,500000',
+            'shop_id_name' => 'required',
+            'category_ids' => 'required',
         ]);
 
         if ($validator->fails()) {

@@ -35,4 +35,10 @@ class Product extends Model
     {
         return $this->hasMany(OrderedProducts::class, 'pid', 'id');
     }
+
+    public function variants()
+    {
+        return $this->belongsToMany(Variant::class, ProductVariant::class, 'product_id', 'variant_id')
+            ->distinct()->withPivot('variant_property_ids')->with('variantPropertiesName');
+    }
 }

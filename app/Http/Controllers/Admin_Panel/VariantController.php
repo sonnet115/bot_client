@@ -85,8 +85,14 @@ class VariantController extends Controller
     {
         $variant_name = $request->variant_name;
         $variant_id = $request->variant_id;
-        $properties = $request->prop_name;
-        $desc = $request->prop_desc;
+
+        $new_properties = $request->prop_name;
+        $new_desc = $request->prop_desc;
+
+        $old_properties = $request->prop_name_old;
+        $old_desc = $request->prop_desc_old;
+
+        $old_properties_id = $request->prop_id_old;
 
         DB::beginTransaction();
         try {
@@ -94,14 +100,21 @@ class VariantController extends Controller
             $variant->name = $variant_name;
             $variant->save();
 
-            VariantProperty::where('vid', $variant_id)->delete();
+            if ($new_properties != null) {
+                for ($i = 0; $i < sizeof($new_properties); $i++) {
+                    VariantProperty::create([
+                        'vid' => $variant->id,
+                        'property_name' => $new_properties[$i],
+                        'description' => $new_desc[$i],
+                    ]);
+                }
+            }
 
-            for ($i = 0; $i < sizeof($properties); $i++) {
-                VariantProperty::create([
-                    'vid' => $variant->id,
-                    'property_name' => $properties[$i],
-                    'description' => $desc[$i],
-                ]);
+            for ($i = 0; $i < sizeof($old_properties); $i++) {
+                $variant_property = VariantProperty::find($old_properties_id[$i]);
+                $variant_property->property_name = $old_properties[$i];
+                $variant_property->description = $old_desc[$i];
+                $variant_property->save();
             }
 
             DB::commit();

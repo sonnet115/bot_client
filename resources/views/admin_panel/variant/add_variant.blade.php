@@ -88,7 +88,7 @@
                                                         <label class="control-label mb-10">Prop. Name<span
                                                                 class="text-danger">*</span></label>
                                                         <div class="input-group">
-                                                            <input type="text" name="prop_name[]"
+                                                            <input type="text" name="prop_name_old[]"
                                                                    placeholder="Example: XL, L, Red, Black..."
                                                                    class="form-control" required
                                                                    value="{{$property->property_name}}">
@@ -96,11 +96,13 @@
                                                     </div>
                                                 </div>
 
+                                                <input type="hidden" name="prop_id_old[]" value="{{$property->id}}">
+
                                                 <div class="col-6">
                                                     <div class="form-group">
                                                         <label class="control-label mb-10">Description</label>
                                                         <div class="input-group">
-                                                            <input type="text" name="prop_desc[]"
+                                                            <input type="text" name="prop_desc_old[]"
                                                                    placeholder="Example: 20cm, 40cm...."
                                                                    class="form-control"
                                                                    value="{{$property->description}}">
@@ -108,7 +110,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-2">
+                                                {{--<div class="col-2">
                                                     <div class="form-group">
                                                         <div class="input-group">
                                                             <a href="javascript:void(0)" style="margin-top: 36px"
@@ -117,13 +119,13 @@
                                                             </a>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div>--}}
                                             </div>
                                         @endforeach
                                     @endif
                                 </div>
                                 @if($variant_details != null)
-                                    <input type="text" value="{{$variant_details->id}}" name="variant_id">
+                                    <input type="hidden" value="{{$variant_details->id}}" name="variant_id">
                                 @endif
                                 <div class="text-right">
                                     <a id="add_more_field" href="javascript:void(0)"

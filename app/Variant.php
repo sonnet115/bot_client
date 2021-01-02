@@ -12,4 +12,9 @@ class Variant extends Model
     {
         return $this->hasMany(VariantProperty::class, 'vid', 'id');
     }
+
+    function variantPropertiesName()
+    {
+        return $this->belongsToMany(VariantProperty::class,ProductVariant::class, 'variant_id', 'variant_property_ids');
+    }
 }
