@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductVariant extends Model
 {
-    public function propertyName()
-    {
-        return $this->belongsToMany(VariantProperty::class, ProductVariantName::class, 'pvid', 'vpid');
-    }
+    protected $fillable = ['variant_id', 'variant_property_ids', 'product_id'];
+
 }

@@ -200,7 +200,7 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="icon-shuffle"></i></span>
                                                 </div>
-                                                <select class="form-control" required name="variant_{{$variant->id}}">
+                                                <select class="form-control" required name="{{$variant->id}}">
                                                     <option disabled selected>Select {{$variant->name}}</option>
                                                     @foreach($variant->variantProperties as $property)
                                                         @if($property->description != null)
@@ -332,7 +332,7 @@
 
             $('#product_state').select2();
 
-            jQuery.validator.setDefaults({
+            /*jQuery.validator.setDefaults({
                 debug: true,
                 success: "valid"
             });
@@ -391,7 +391,7 @@
                 submitHandler: function (form) {
                     form.submit();
                 },
-            });
+            });*/
 
             $(".image_files").on('change', function () {
                 displayImage($(this));

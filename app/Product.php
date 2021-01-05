@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable = ['name', 'code', 'stock', 'uom', 'price', 'category_id'];
+    protected $fillable = ['name', 'code', 'stock', 'uom', 'price', 'category_id', 'variant_combination_ids', 'parent_product_id'];
 
     public function discounts()
     {
@@ -39,6 +39,6 @@ class Product extends Model
     public function variants()
     {
         return $this->belongsToMany(Variant::class, ProductVariant::class, 'product_id', 'variant_id')
-            ->distinct()->withPivot('variant_property_ids')->with('variantPropertiesName');
+            ->with('variantPropertiesName')->distinct();
     }
 }
