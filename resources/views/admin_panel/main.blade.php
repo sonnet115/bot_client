@@ -190,10 +190,31 @@
                                             Lists</a>
                                     </li>
 
-                                    <li class="nav-item {{\Request::route()->getName() == "product.add.view" ? "active" : ""}}">
-                                        <a class="nav-link"
-                                           href="{{route('product.add.view')}}"><i class="fa fa-plus-square"></i>Add
-                                            Product</a>
+                                    <li class="nav-item {{\Request::route()->getName() == "new.product.add.view" || \Request::route()->getName() ==  "variation.product.add.view" ? "active" : ""}}">
+                                        <a class="nav-link collapsed" href="javascript:void(0);" data-toggle="collapse"
+                                           data-target="#add_product">
+                                            <i class="fa fa-plus-square"></i></span>
+                                            <span class="nav-link-text">Add Products </span>
+                                        </a>
+                                        <ul id="add_product" class="nav flex-column collapse collapse-level-2  {{ Request::segment(3) == "add" ? "show" : "" }}">
+                                            <li class="nav-item">
+                                                <ul class="nav flex-column">
+                                                    <li class="nav-item {{\Request::route()->getName() == "new.product.add.view" ? "active" : ""}}">
+                                                        <a class="nav-link" href="{{route('new.product.add.view')}}"><i
+                                                                class="fa fa-plus-circle"></i>New</a>
+                                                    </li>
+
+                                                    <li class="nav-item {{\Request::route()->getName() == "variation.product.add.view" ? "active" : ""}}">
+                                                        <a class="nav-link"
+                                                           href="{{route('variation.product.add.view')}}"><i
+                                                                class="fa fa-plus-circle"></i>Variation</a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                        {{--  <a class="nav-link"
+                                             href="{{route('product.add.view')}}"><i class="fa fa-plus-square"></i>Add
+                                              Product</a>--}}
                                     </li>
                                     <li class="nav-item {{\Request::route()->getName() == "product.manage.view" ? "active" : ""}}">
                                         <a class="nav-link"

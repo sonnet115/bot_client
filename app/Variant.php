@@ -16,6 +16,6 @@ class Variant extends Model
     function variantPropertiesName()
     {
         return $this->belongsToMany(VariantProperty::class,ProductVariant::class, 'variant_id', 'variant_property_ids')
-            ->where('product_variants.product_id','=','');
+            ->withPivot('product_id');
     }
 }

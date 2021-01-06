@@ -23,7 +23,7 @@ class Product extends Model
 
     public function shop()
     {
-        return $this->hasOne(Shop::class, 'id', 'shop_id');
+        return $this->belongsTo(Shop::class, 'shop_id', 'id');
     }
 
     public function category()
@@ -39,6 +39,11 @@ class Product extends Model
     public function variants()
     {
         return $this->belongsToMany(Variant::class, ProductVariant::class, 'product_id', 'variant_id')
-            ->with('variantPropertiesName')->distinct();
+            ->with('variantPropertiesName');
+    }
+
+    public function childProducts()
+    {
+        return $this->hasMany(self::class, 'parent_product_id', 'id');
     }
 }

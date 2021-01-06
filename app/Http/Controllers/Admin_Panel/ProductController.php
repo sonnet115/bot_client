@@ -19,15 +19,18 @@ class ProductController extends Controller
 {
     private $shops;
 
-    public function viewAddProductForm()
+    public function viewAddNewProductForm()
     {
         DB::enableQueryLog();
-        $dd = Product::with(['variants' => function ($query) {
+        $dd = Product::where('parent_product_id', '=', null)->with(['variants' => function ($query) {
+            $query->groupBy('variant_id', 'product_id');
+        }])->with('childProducts')->get();
 
-        }])->get();
+        $ch = Product::with('childProducts')->get();
         $query = DB::getQueryLog();
+
 //        dd($dd);
-        dd($query);
+
         if (request()->get('mode')) {
             $pid = request()->get('pid');
             $product_details = Product::where('id', $pid)->with('images')->with('shop')->first();
@@ -61,6 +64,50 @@ class ProductController extends Controller
             ->with('shop_list', $shops);
     }
 
+    public function viewAddProductVariantForm()
+    {
+        $shops = Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->get();
+        $shops_id = array();
+        foreach ($shops as $key => $value) {
+            array_push($shops_id, $value['id']);
+        }
+
+        if (request()->get('mode')) {
+            $pid = request()->get('pid');
+            $product_details = Product::where('id', $pid)->with('images')->with('shop')->first();
+            if ($product_details->shop->page_connected_status != 1) {
+                return redirect(route('product.manage.view'));
+            }
+
+            if ($product_details->shop->page_owner_id !== auth()->user()->user_id) {
+                return redirect(route('product.manage.view'));
+            }
+            $products = null;
+
+        } else {
+            $products = Product::whereIn('shop_id', $shops_id)->where('parent_product_id', null)->with('shop')->get();
+            $product_details = null;
+        }
+
+        $categories = Category::whereIn('shop_id', $shops_id)->get();
+
+        $variant = Variant::where('user_id', auth()->user()->id)->with('variantProperties')->orderBy('id')->get();
+
+        return view('admin_panel.product.add_product_variant_form')
+            ->with("title", "Howkar Technology | Add Product Variant")
+            ->with('product_details', $product_details)
+            ->with('products', $products)
+            ->with('categories', $categories)
+            ->with('variants', $variant)
+            ->with('shop_list', $shops);
+    }
+
+    public function getProductDetails()
+    {
+        $pid = request()->get('pid');
+        $product_details = Product::where('id', $pid)->with('images')->with('shop')->with('category')->first();
+        return response()->json($product_details);
+    }
 
     public function storeProductBk(Request $request)
     {
@@ -115,8 +162,6 @@ class ProductController extends Controller
 
     public function storeProduct(Request $request)
     {
-        $variants = Variant::select('id')->where('user_id', auth()->user()->id)->get();
-
         //dd($request->all());
 
         //product validation
@@ -134,6 +179,7 @@ class ProductController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+        $variants = Variant::select('id')->where('user_id', auth()->user()->id)->get();
         $variant_ids = array();
 
         foreach ($variants as $variant) {
@@ -149,7 +195,28 @@ class ProductController extends Controller
         DB::beginTransaction();
         try {
             $shop_name = str_replace(' ', '_', explode('_', $request->shop_id_name)[1]);
-            //product save
+            $product = new Product();
+            $product->name = $request->product_name;
+            $product->code = $request->product_code;
+            $product->stock = $request->product_stock;
+            $product->uom = $request->product_uom;
+            $product->price = $request->product_price;
+            $product->category_id = $request->category_ids;
+            $product->shop_id = explode('_', $request->shop_id_name)[0];
+            $product->save();
+            $product_id = $product->id;
+
+            foreach ($variants as $variant) {
+                $selected_variant_property = $request->input($variant->id);
+                if ($selected_variant_property != '') {
+                    $products_variants = new ProductVariant();
+                    $products_variants->variant_id = $variant->id;
+                    $products_variants->variant_property_ids = $selected_variant_property;
+                    $products_variants->product_id = $product_id;
+                    $products_variants->save();
+                }
+            }
+
             $parent_product_id = null;
             $product = new Product();
             $product->name = $request->product_name;
@@ -160,7 +227,7 @@ class ProductController extends Controller
             $product->category_id = $request->category_ids;
             $product->shop_id = explode('_', $request->shop_id_name)[0];
             $product->variant_combination_ids = $variant_combination_ids;
-            $product->parent_product_id = $request->parent_product_id;
+            $product->parent_product_id = $product_id;
             $product->save();
             $product_id = $product->id;
 
