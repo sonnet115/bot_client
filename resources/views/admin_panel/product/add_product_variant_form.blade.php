@@ -28,7 +28,7 @@
                     <div class="row">
                         <div class="col-sm">
                             <form
-                                action="{{$product_details !== null ? route('product.update') : route('product.store')}}"
+                                action="{{$product_details != null ? route('product.update') : route('product.store')}}"
                                 method="post" novalidate enctype="multipart/form-data" id="order_form">
                                 @csrf
                                 <div class="form-group">
@@ -47,7 +47,8 @@
                                                 @endforeach
                                             @else
                                                 @foreach($products as $product)
-                                                    <option value="{{$product->id}} ">
+                                                    <option value="{{$product->id.'_'.$product->name}}"
+                                                        {{old('product_name') == $product->id ? "selected" : ""}}>
                                                         {{$product->name}} ({{$product->shop->page_name}})
                                                     </option>
                                                 @endforeach
@@ -137,13 +138,13 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="icon-shuffle"></i></span>
                                         </div>
-                                        <input type="text" id="shop_id" name="shop_id_name"
+                                        <input type="text" id="shop_name" name="shop_name"
                                                placeholder="Enter Product Price" class="form-control"
-                                               value="{{ $product_details !== null ? $product_details->price : old('product_price')}}">
+                                               value="{{ $product_details !== null ? $product_details->price : old('shop_name')}}">
                                     </div>
                                     <label for="product_price" class="error text-danger"></label>
-                                    @if($errors->has('shop_id_name'))
-                                        <p class="text-danger font-14">{{ $errors->first('shop_id_name') }}</p>
+                                    @if($errors->has('shop_name'))
+                                        <p class="text-danger font-14">{{ $errors->first('shop_name') }}</p>
                                     @endif
                                 </div>
 
@@ -154,13 +155,13 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="icon-shuffle"></i></span>
                                         </div>
-                                        <input type="text" id="category_ids" name="category_ids"
+                                        <input type="text" id="category_name" name="category_name"
                                                placeholder="Enter Product Price" class="form-control"
-                                               value="{{ $product_details !== null ? $product_details->price : old('product_price')}}">
+                                               value="{{ $product_details !== null ? $product_details->price : old('category_name')}}">
                                     </div>
                                     <label for="category_ids" class="error text-danger"></label>
-                                    @if($errors->has('category_ids'))
-                                        <p class="text-danger font-14">{{ $errors->first('category_ids') }}</p>
+                                    @if($errors->has('category_name'))
+                                        <p class="text-danger font-14">{{ $errors->first('category_name') }}</p>
                                     @endif
                                 </div>
 
@@ -261,6 +262,10 @@
                                 <input type="hidden" name="old_product_code"
                                        value="{{$product_details !== null ? $product_details->code : ""}}">
 
+                                <input type="text" name="shop_id_name" id="shop_id_name">
+                                <input type="text" name="category_ids" id="category_ids">
+                                <input type="text" name="parent_id" id="parent_id">
+
                                 <input type="hidden" name="image_1_id"
                                        value="{{$product_details !== null ? $product_details->images[0]->id : ""}}">
 
@@ -294,21 +299,24 @@
     <script>
         $(document).ready(function () {
             $("#product_name").on('change', function () {
-                let pid = $(this).val();
+                let pid = $(this).val().split("_");
                 $(".preloader-it").css('opacity', .5).show();
 
                 $.ajax({
                     url: "{{ route('get.product.details') }}",
                     type: "POST",
-                    data: {"pid": pid},
+                    data: {"pid": pid[0]},
                     success: function (result) {
                         console.log(result);
                         $("#product_code").val(result.code);
+                        $("#parent_id").val(pid[0]);
                         $("#product_stock").val(result.stock);
                         $("#product_uom").val(result.uom);
                         $("#product_price").val(result.price);
-                        $("#shop_id").val(result.shop.page_name);
-                        $("#category_ids").val(result.category.name);
+                        $("#shop_name").val(result.shop.page_name);
+                        $("#shop_id_name").val(result.shop.id + '_' + result.shop.page_name);
+                        $("#category_ids").val(result.category.id);
+                        $("#category_name").val(result.category.name);
                         $(".preloader-it").hide();
                     }
                 });

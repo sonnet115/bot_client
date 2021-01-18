@@ -21,15 +21,15 @@ class ProductController extends Controller
 
     public function viewAddNewProductForm()
     {
-        DB::enableQueryLog();
+        //DB::enableQueryLog();
         $dd = Product::where('parent_product_id', '=', null)->with(['variants' => function ($query) {
             $query->groupBy('variant_id', 'product_id');
         }])->with('childProducts')->get();
 
         $ch = Product::with('childProducts')->get();
-        $query = DB::getQueryLog();
+        //$query = DB::getQueryLog();
 
-//        dd($dd);
+         dd($dd);
 
         if (request()->get('mode')) {
             $pid = request()->get('pid');
@@ -162,7 +162,7 @@ class ProductController extends Controller
 
     public function storeProduct(Request $request)
     {
-        //dd($request->all());
+//        dd($request->all());
 
         //product validation
         $validator = Validator::make($request->all(), [
@@ -191,20 +191,32 @@ class ProductController extends Controller
         }
         $variant_combination_ids = implode('_', $variant_ids);
 
-
         DB::beginTransaction();
         try {
             $shop_name = str_replace(' ', '_', explode('_', $request->shop_id_name)[1]);
-            $product = new Product();
-            $product->name = $request->product_name;
-            $product->code = $request->product_code;
-            $product->stock = $request->product_stock;
-            $product->uom = $request->product_uom;
-            $product->price = $request->product_price;
-            $product->category_id = $request->category_ids;
-            $product->shop_id = explode('_', $request->shop_id_name)[0];
-            $product->save();
-            $product_id = $product->id;
+            if ($request->parent_id) {
+                $product_name = str_replace(' ', '_', explode('_', $request->product_name)[1]);
+                $parent_id = $request->parent_id;
+                $product_id = $parent_id;
+            } else {
+                $parent_id = null;
+                $product_id = null;
+                $product_name = $request->product_name;
+            }
+
+            if (!$request->parent_id) {
+                $product = new Product();
+                $product->name = $product_name;
+                $product->code = $request->product_code;
+                $product->stock = $request->product_stock;
+                $product->uom = $request->product_uom;
+                $product->price = $request->product_price;
+                $product->category_id = $request->category_ids;
+                $product->shop_id = explode('_', $request->shop_id_name)[0];
+                $product->parent_product_id = $parent_id;
+                $product->save();
+                $product_id = $product->id;
+            }
 
             foreach ($variants as $variant) {
                 $selected_variant_property = $request->input($variant->id);
@@ -217,9 +229,9 @@ class ProductController extends Controller
                 }
             }
 
-            $parent_product_id = null;
+
             $product = new Product();
-            $product->name = $request->product_name;
+            $product->name = $product_name;
             $product->code = $request->product_code;
             $product->stock = $request->product_stock;
             $product->uom = $request->product_uom;
@@ -227,7 +239,7 @@ class ProductController extends Controller
             $product->category_id = $request->category_ids;
             $product->shop_id = explode('_', $request->shop_id_name)[0];
             $product->variant_combination_ids = $variant_combination_ids;
-            $product->parent_product_id = $product_id;
+            $product->parent_product_id = $parent_id;
             $product->save();
             $product_id = $product->id;
 
@@ -251,7 +263,7 @@ class ProductController extends Controller
             dd($e);
         }
 
-        return redirect(route('product.add.view'));
+        return redirect(route('new.product.add.view'));
     }
 
     public function viewUpdateProduct()

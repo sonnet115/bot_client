@@ -28,7 +28,7 @@
                     <div class="row">
                         <div class="col-sm">
                             <form
-                                action="{{$product_details !== null ? route('product.update') : route('product.store')}}"
+                                action="{{$product_details != null ? route('product.update') : route('product.store')}}"
                                 method="post" novalidate enctype="multipart/form-data" id="order_form">
                                 @csrf
                                 <div class="form-group">
@@ -186,7 +186,7 @@
                                 <div class="form-check mb-25">
                                     <label class="form-check-label">
                                         <input style="width:25px; height: 25px" type="checkbox"
-                                               class="form-check-input mt-0" id="specification_checkbox">
+                                               class="form-check-input mt-0" name="specification_checkbox" id="specification_checkbox">
                                         <span class="font-18 text-primary text-uppercase font-weight-900 ml-4">Product Specification</span>
                                     </label>
                                 </div>
