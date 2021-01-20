@@ -1,6 +1,7 @@
 @extends("admin_panel.main")
 
 @section("main_content")
+
     <!-- Container -->
     <div class="container mt-xl-20 mt-sm-30 mt-50 mt-lg-15">
         <!-- filter starts-->
@@ -97,9 +98,9 @@
                                         <th class="text-center text-white" data-priority="1">Name</th>
                                         <th class="text-center text-white">Code</th>
                                         <th class="text-center text-white">Stock</th>
-                                        <th class="text-center text-white">UoM<p style="font-size: 10px">(Unit of
-                                                measurement)</p></th>
+                                        <th class="text-center text-white">Unit</th>
                                         <th class="text-center text-white">Price</th>
+                                        <th class="text-center text-white">Specification</th>
                                         <th class="text-center text-white">Page Name</th>
                                         <th class="text-center text-white">Category</th>
                                         <th class="text-center text-white">State</th>
@@ -178,6 +179,25 @@
                     {data: 'stock', name: 'stock'},
                     {data: 'uom', name: 'uom'},
                     {data: 'price', name: 'price'},
+                    {
+                        'render': function (data, type, row) {
+                            let specification_name = '';
+                            for (let i = 0; i < row.variants.length; i++) {
+                                let specification_value = '';
+                                for (let j = 0; j < row.variants[i].variant_properties_name.length; j++) {
+                                    if (row.id == row.variants[i].variant_properties_name[j].pivot.product_id) {
+                                        if (row.variants[i].variant_properties_name[j].description != null) {
+                                            specification_value += '<span class="badge badge-dark rounded-15 ml-1" style="font-weight: 500">' + row.variants[i].variant_properties_name[j].property_name + '(' + row.variants[i].variant_properties_name[j].description + ')</span>'
+                                        } else {
+                                            specification_value += '<span class="badge badge-dark rounded-15 ml-1" style="font-weight: 500">' + row.variants[i].variant_properties_name[j].property_name + '</span>'
+                                        }
+                                    }
+                                }
+                                specification_name += '<p style="font-weight: 600; font-size: 14px; text-align: left;margin-bottom: 10px">' + row.variants[i].name + ':' + specification_value + ' </p>'
+                            }
+                            return specification_name;
+                        },
+                    },
                     {data: 'shop.page_name', name: 'shop.page_name'},
                     {data: 'category.name', name: 'category.name'},
                     {

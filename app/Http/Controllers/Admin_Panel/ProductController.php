@@ -29,7 +29,7 @@ class ProductController extends Controller
         $ch = Product::with('childProducts')->get();
         //$query = DB::getQueryLog();
 
-         dd($dd);
+         //dd($dd);
 
         if (request()->get('mode')) {
             $pid = request()->get('pid');
@@ -195,12 +195,8 @@ class ProductController extends Controller
         try {
             $shop_name = str_replace(' ', '_', explode('_', $request->shop_id_name)[1]);
             if ($request->parent_id) {
-                $product_name = str_replace(' ', '_', explode('_', $request->product_name)[1]);
-                $parent_id = $request->parent_id;
-                $product_id = $parent_id;
+                $product_name = explode('_', $request->product_name)[1];
             } else {
-                $parent_id = null;
-                $product_id = null;
                 $product_name = $request->product_name;
             }
 
@@ -213,9 +209,13 @@ class ProductController extends Controller
                 $product->price = $request->product_price;
                 $product->category_id = $request->category_ids;
                 $product->shop_id = explode('_', $request->shop_id_name)[0];
-                $product->parent_product_id = $parent_id;
                 $product->save();
                 $product_id = $product->id;
+            }
+
+            if ($request->parent_id) {
+                $parent_id = $request->parent_id;
+                $product_id = $parent_id;
             }
 
             foreach ($variants as $variant) {
@@ -229,7 +229,6 @@ class ProductController extends Controller
                 }
             }
 
-
             $product = new Product();
             $product->name = $product_name;
             $product->code = $request->product_code;
@@ -239,7 +238,7 @@ class ProductController extends Controller
             $product->category_id = $request->category_ids;
             $product->shop_id = explode('_', $request->shop_id_name)[0];
             $product->variant_combination_ids = $variant_combination_ids;
-            $product->parent_product_id = $parent_id;
+            $product->parent_product_id = $product_id;
             $product->save();
             $product_id = $product->id;
 
@@ -262,12 +261,23 @@ class ProductController extends Controller
             Session::flash('error_message', 'Something went wrong! Please Try again');
             dd($e);
         }
+        if (!$request->parent_id) {
+            return redirect(route('new.product.add.view'));
+        }else{
+            return redirect(route('variation.product.add.view'));
+        }
 
-        return redirect(route('new.product.add.view'));
     }
 
     public function viewUpdateProduct()
     {
+        $dd = Product::where('parent_product_id', '!=', null)->with(['variants' => function ($query) {
+            $query->groupBy('variant_id', 'product_id');
+        }])->with('childProducts')->get();
+        $ch = Product::with('childProducts')->get();
+        //dd($dd);
+
+
         $shops = Shop::where('page_owner_id', auth()->user()->user_id)->where('page_connected_status', 1)->get();
         $shops_id = array();
         foreach ($shops as $key => $value) {
@@ -311,7 +321,9 @@ class ProductController extends Controller
         $product->whereIn('shop_id', $shops_id);
 
         if (auth()->user()->page_added > 0) {
-            return datatables($product->orderBy('id', 'asc')->with("images")->with('shop')->with('category'))->toJson();
+            return datatables($product->where('parent_product_id', '!=', null)->with(['variants' => function ($query) {
+                $query->groupBy('variant_id', 'product_id');
+            }])->orderBy('id', 'asc')->with("images")->with('shop')->with('category'))->toJson();
         } else {
             return datatables(array())->toJson();
         }

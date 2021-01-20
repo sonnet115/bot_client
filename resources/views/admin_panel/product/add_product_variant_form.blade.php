@@ -262,9 +262,9 @@
                                 <input type="hidden" name="old_product_code"
                                        value="{{$product_details !== null ? $product_details->code : ""}}">
 
-                                <input type="text" name="shop_id_name" id="shop_id_name">
-                                <input type="text" name="category_ids" id="category_ids">
-                                <input type="text" name="parent_id" id="parent_id">
+                                <input type="text" name="shop_id_name" id="shop_id_name" value="{{old('shop_id_name')}}">
+                                <input type="text" name="category_ids" id="category_ids" value="{{old('category_ids')}}">
+                                <input type="text" name="parent_id" id="parent_id" value="{{old('parent_id')}}">
 
                                 <input type="hidden" name="image_1_id"
                                        value="{{$product_details !== null ? $product_details->images[0]->id : ""}}">
