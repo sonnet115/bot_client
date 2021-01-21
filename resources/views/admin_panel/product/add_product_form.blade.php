@@ -176,7 +176,7 @@
                                                     @endforeach--}}
                                             @endif
                                         </select>
-                                     </div>
+                                    </div>
                                     <label for="category_ids" class="error text-danger"></label>
                                     @if($errors->has('category_ids'))
                                         <p class="text-danger font-14">{{ $errors->first('category_ids') }}</p>
@@ -186,7 +186,8 @@
                                 <div class="form-check mb-25">
                                     <label class="form-check-label">
                                         <input style="width:25px; height: 25px" type="checkbox"
-                                               class="form-check-input mt-0" name="specification_checkbox" id="specification_checkbox">
+                                               class="form-check-input mt-0" name="specification_checkbox"
+                                               id="specification_checkbox">
                                         <span class="font-18 text-primary text-uppercase font-weight-900 ml-4">Product Specification</span>
                                     </label>
                                 </div>
@@ -260,6 +261,25 @@
                                         @endif
                                     </div>
                                 </div>--}}
+                                <div class="input-images"></div>
+                                <label class="control-label mb-10">Product Images<span
+                                        class="text-danger font-16">*</span></label>
+                                <span class="text-muted font-12">[Max 1 MB | Max 5 images]</span>
+                                <div class="row">
+                                   {{-- <div class="col-sm-6" id="image_uploader_field">
+                                        <input type="file" name="product_images[]" class="product_images image_files"
+                                               multiple/>
+                                    </div>--}}
+
+                                </div>
+                                <hr>
+                                <div class="row" style="padding: 20px !important;" id="image_preview_container">
+                                    {{-- <div class="col-sm-4 p-2">
+                                         <img id="blah" src="{{asset('images/demo/1.jpeg')}}" style="max-width: 100%">
+                                         <a href="javascript:void(0)" class="btn-xs btn-danger remove_image_btn"
+                                            style="right: 0;position: absolute;padding: 1px 7px;top:0px">X</a>
+                                     </div>--}}
+                                </div>
 
                                 @if ($product_details !== null)
                                     <div class="form-group">
@@ -318,8 +338,42 @@
 
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+
+    <script type="text/javascript" src="{{asset("assets/admin_panel/dist/js/image-uploader.min.js")}}"></script>
     <script>
+        $('.input-images').imageUploader({
+            imagesInputName: 'product_images',
+            maxFiles: 5
+        });
+        function readURL(input) {
+            for (let i = 0; i < input.files.length; i++) {
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    // $('#blah').attr('src', e.target.result);
+                    $("#image_preview_container").append(image(e.target.result));
+                }
+
+                reader.readAsDataURL(input.files[i]);
+            }
+        }
+
+        function image(imageUrl) {
+            return '<div class="col-6 col-sm-4 p-2">\n' +
+                '<img src="' + imageUrl + '" style="max-width: 100%">' +
+                '<a href="javascript:void(0)" class="btn-xs btn-danger remove_image_btn"' +
+                'style="right: 0;position: absolute;padding: 1px 7px;top:0px">X</a>' +
+                '</div>';
+        }
+
         $(document).ready(function () {
+            $('body').delegate('.product_images', 'change', function () {
+                console.log(this);
+                readURL(this);
+                $(this).hide();
+                let $newInput = $('<input type="file" name="product_images[]" class="product_images image_files" multiple/>');
+                $("#image_uploader_field").append($newInput);
+            });
+
             $("#specification_checkbox").on('click', function () {
                 if (this.checked) {
                     $("#specification_container").show(500);
@@ -417,11 +471,9 @@
                 });
             });
 
-            $(".remove_image_btn").on("click", function () {
-                $(this).parent().find('.product_images').attr('src', '{{asset("images/products/no.png")}}');
-                $(this).parent().parent().find('.image_files').val('');
-                $(this).parent().parent().find('.image_error_message').html('');
-                $(this).hide();
+            $("body").delegate(".remove_image_btn", "click", function () {
+                console.log($('.product_images'));
+                $(this).parent().remove();
             });
 
             function displayImage(input_object) {
@@ -447,6 +499,7 @@
 @endsection
 
 @section("product-css")
+    <link type="text/css" rel="stylesheet" href="{{asset("assets/admin_panel/dist/css/image-uploader.min.css")}}">
     <link href="{{asset("assets/admin_panel/vendors/select2/dist/css/select2.min.css")}}" rel="stylesheet"
           type="text/css"/>
     <style>
