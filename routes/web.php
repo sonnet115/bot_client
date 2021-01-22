@@ -92,6 +92,7 @@ Route::group(['middleware' => 'unauthenticated.user'], function () {
 
         //Routes for Products
         Route::group(['prefix' => 'product'], function () {
+            Route::get("add-form", "Admin_Panel\ProductController@viewAddNewProductForm")->name("new.product.add.view");
             Route::get("add/new", "Admin_Panel\ProductController@viewAddNewProductForm")->name("new.product.add.view");
             Route::get("add/variation", "Admin_Panel\ProductController@viewAddProductVariantForm")->name("variation.product.add.view");
             Route::post("store-product", "Admin_Panel\ProductController@storeProduct")->name("product.store");

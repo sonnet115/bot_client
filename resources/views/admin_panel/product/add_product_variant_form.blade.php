@@ -32,12 +32,12 @@
                                 method="post" novalidate enctype="multipart/form-data" id="order_form">
                                 @csrf
                                 <div class="form-group">
-                                    <label class="control-label mb-10">Choose a Product<span
+                                    <label class="control-label mb-10">Choose a Parent Product<span
                                             class="text-danger font-16">*</span></label>
                                     <div class="input-group">
 
-                                        <select class="form-control" id="product_name" name="product_name" required>
-                                            <option disabled selected>Select Product</option>
+                                        <select class="form-control" id="parent_product" name="parent_product" required>
+                                            <option disabled selected>Select Parent Product</option>
                                             @if($product_details !== null)
                                                 @foreach($products as $product)
                                                     <option value="{{$product->id}}"
@@ -47,19 +47,39 @@
                                                 @endforeach
                                             @else
                                                 @foreach($products as $product)
-                                                    <option value="{{$product->id.'_'.$product->name}}"
-                                                        {{old('product_name') == $product->id ? "selected" : ""}}>
+                                                    <option value="{{$product->id}}"
+                                                        {{old('parent_product ') == $product->id ? "selected" : ""}}>
                                                         {{$product->name}} ({{$product->shop->page_name}})
                                                     </option>
                                                 @endforeach
                                             @endif
                                         </select>
                                     </div>
-                                    <label for="product_price" class="error text-danger"></label>
-                                    @if($errors->has('shop_id_name'))
-                                        <p class="text-danger font-14">{{ $errors->first('shop_id_name') }}</p>
+
+                                    <label for="parent_product" class="error text-danger"></label>
+                                    @if($errors->has('parent_product'))
+                                        <p class="text-danger font-14">{{ $errors->first('parent_product') }}</p>
                                     @endif
                                 </div>
+
+                                <div class="form-group">
+                                    <label class="control-label mb-10">Product Name<span
+                                            class="text-danger font-16">*</span></label>
+                                    <span class="text-muted font-12">[Max 15 Characters]</span>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-code"></i></span>
+                                        </div>
+                                        <input type="text" id="product_name" name="product_name"
+                                               placeholder="Enter Product Name" class="form-control"
+                                               value="{{ $product_details !== null ? $product_details->name : old('product_name')}}">
+                                    </div>
+                                    <label for="product_name" class="error text-danger"></label>
+                                    @if($errors->has('product_name'))
+                                        <p class="text-danger font-14">{{ $errors->first('product_name') }}</p>
+                                    @endif
+                                </div>
+
                                 <div class="form-group">
                                     <label class="control-label mb-10">Product Code<span
                                             class="text-danger font-16">*</span></label>
@@ -194,46 +214,10 @@
                                     @endforeach
                                 </div>
 
-                                {{--<label class="control-label mb-10">Product Images<span
+                                <label class="control-label mb-10">Product Images<span
                                         class="text-danger font-16">*</span></label>
-                                <span class="text-muted font-12">[Max 1 MB | Upload at least 1 image]</span>
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <div>
-                                            <img
-                                                src="{{$product_details !== null ? asset("images/products")."/".$product_details->images[0]->image_url : asset("images/products/no.png")}}"
-                                                height="200" width="200" alt="N/A"
-                                                style="float: left" class="mb-2 product_images">
-                                            <a href="javascript:void(0)" class="btn-xs btn-danger remove_image_btn"
-                                               style="float:left;margin: 5px 0 0 -25px;display: none;padding: 1px 7px">X</a>
-                                        </div>
-
-                                        <input type="file" name="product_image_1" class="image_files"/>
-
-                                        <p class="text-danger font-14 image_error_message mb-3"></p>
-                                        @if($errors->has('product_image_1'))
-                                            <p class="text-danger font-14 mb-3">{{ $errors->first('product_image_1') }}</p>
-                                        @endif
-                                    </div>
-
-                                    <div class="col-sm-6">
-                                        <div>
-                                            <img
-                                                src="{{$product_details !== null ? count($product_details->images) > 1 ? asset("images/products")."/".$product_details->images[1]->image_url : asset("images/products/no.png") : asset("images/products/no.png")}}"
-                                                height="200" width="200" alt="N/A"
-                                                style="float: left" class="mb-2 product_images">
-                                            <a href="javascript:void(0)" class="btn-xs btn-danger remove_image_btn"
-                                               style="float:left;margin: 5px 0 0 -25px;display: none;padding: 1px 7px">X</a>
-                                        </div>
-
-                                        <input type="file" name="product_image_2" class="image_files"/>
-
-                                        <p class="text-danger font-14 image_error_message mb-3"></p>
-                                        @if($errors->has('product_image_2'))
-                                            <p class="text-danger font-14 mb-3">{{ $errors->first('product_image_2') }}</p>
-                                        @endif
-                                    </div>
-                                </div>--}}
+                                <span class="text-muted font-12">[Max 1 MB | Max 5 images]</span>
+                                <div class="input-images"></div>
 
                                 @if ($product_details !== null)
                                     <div class="form-group">
@@ -296,20 +280,27 @@
 
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
+    <script type="text/javascript" src="{{asset("assets/admin_panel/dist/js/image-uploader.min.js")}}"></script>
     <script>
         $(document).ready(function () {
-            $("#product_name").on('change', function () {
-                let pid = $(this).val().split("_");
+            $('.input-images').imageUploader({
+                imagesInputName: 'product_images',
+                maxFiles: 5
+            });
+
+            $("#parent_product").on('change', function () {
+                let pid = $(this).val();
                 $(".preloader-it").css('opacity', .5).show();
 
                 $.ajax({
                     url: "{{ route('get.product.details') }}",
                     type: "POST",
-                    data: {"pid": pid[0]},
+                    data: {"pid": pid},
                     success: function (result) {
                         console.log(result);
+                        $("#product_name").val(result.name);
                         $("#product_code").val(result.code);
-                        $("#parent_id").val(pid[0]);
+                        $("#parent_id").val(pid);
                         $("#product_stock").val(result.stock);
                         $("#product_uom").val(result.uom);
                         $("#product_price").val(result.price);
@@ -321,7 +312,7 @@
                     }
                 });
             });
-            $('#product_name').select2();
+            $('#parent_product').select2();
 
             /*jQuery.validator.setDefaults({
                 debug: true,
@@ -438,6 +429,7 @@
 @endsection
 
 @section("product-css")
+    <link type="text/css" rel="stylesheet" href="{{asset("assets/admin_panel/dist/css/image-uploader.min.css")}}">
     <link href="{{asset("assets/admin_panel/vendors/select2/dist/css/select2.min.css")}}" rel="stylesheet"
           type="text/css"/>
     <style>

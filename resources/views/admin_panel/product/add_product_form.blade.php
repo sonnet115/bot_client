@@ -261,25 +261,26 @@
                                         @endif
                                     </div>
                                 </div>--}}
-                                <div class="input-images"></div>
+
                                 <label class="control-label mb-10">Product Images<span
                                         class="text-danger font-16">*</span></label>
                                 <span class="text-muted font-12">[Max 1 MB | Max 5 images]</span>
-                                <div class="row">
-                                   {{-- <div class="col-sm-6" id="image_uploader_field">
+                                <div class="input-images"></div>
+                                {{--<div class="row">
+                                   --}}{{-- <div class="col-sm-6" id="image_uploader_field">
                                         <input type="file" name="product_images[]" class="product_images image_files"
                                                multiple/>
-                                    </div>--}}
+                                    </div>--}}{{--
 
                                 </div>
                                 <hr>
                                 <div class="row" style="padding: 20px !important;" id="image_preview_container">
-                                    {{-- <div class="col-sm-4 p-2">
+                                    --}}{{-- <div class="col-sm-4 p-2">
                                          <img id="blah" src="{{asset('images/demo/1.jpeg')}}" style="max-width: 100%">
                                          <a href="javascript:void(0)" class="btn-xs btn-danger remove_image_btn"
                                             style="right: 0;position: absolute;padding: 1px 7px;top:0px">X</a>
-                                     </div>--}}
-                                </div>
+                                     </div>--}}{{--
+                                </div>--}}
 
                                 @if ($product_details !== null)
                                     <div class="form-group">
@@ -301,18 +302,6 @@
                                         </div>
                                     </div>
                                 @endif
-
-                                <input type="hidden" name="product_id"
-                                       value="{{$product_details !== null ? $product_details->id : ""}}">
-
-                                <input type="hidden" name="old_product_code"
-                                       value="{{$product_details !== null ? $product_details->code : ""}}">
-
-                                <input type="hidden" name="image_1_id"
-                                       value="{{$product_details !== null ? $product_details->images[0]->id : ""}}">
-
-                                <input type="hidden" name="image_2_id"
-                                       value="{{$product_details !== null ? count($product_details->images) > 1 ? $product_details->images[1]->id : "" : ""}}">
                                 <hr>
                                 <div class="d-flex justify-content-center">
                                     <button type="submit" class="btn btn-primary btn-rounded">
@@ -321,11 +310,23 @@
                                     </button>
                                 </div>
                                 <br>
+                                <input type="hidden" name="product_id"
+                                       value="{{$product_details !== null ? $product_details->id : ""}}">
+
+                                <input type="hidden" name="old_product_code"
+                                       value="{{$product_details !== null ? $product_details->code : ""}}">
                             </form>
                         </div>
                     </div>
                 </section>
             </div>
+            @if($product_details != null)
+                @foreach($product_details->images as $image)
+                    <input type="hidden" class="product_images"
+                           value="{{$image->id .'__'.asset("images/products/". $image->image_url)}}">
+                @endforeach
+            @endif
+
         </div>
         <!-- /Row -->
     </div>
@@ -341,10 +342,27 @@
 
     <script type="text/javascript" src="{{asset("assets/admin_panel/dist/js/image-uploader.min.js")}}"></script>
     <script>
+        let preloaded_image = [];
+
+        $(".product_images").each(function () {
+            console.log($(this).val());
+
+            let item = {};
+            item ["id"] = $(this).val().split('__')[0];
+            item ["src"] =$(this).val().split('__')[1];
+
+            preloaded_image.push(item);
+        });
+
+        console.log(preloaded_image);
+
         $('.input-images').imageUploader({
             imagesInputName: 'product_images',
-            maxFiles: 5
+            maxFiles: 5,
+            preloaded: preloaded_image,
+            preloadedInputName: 'old_images',
         });
+
         function readURL(input) {
             for (let i = 0; i < input.files.length; i++) {
                 let reader = new FileReader();

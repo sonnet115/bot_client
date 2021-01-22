@@ -86,7 +86,7 @@
                                     <i class="fa fa-check-circle"></i> {{ Session::get('success_message') }}
                                 </p>
                             @endif
-                            @if(Session::has('failed_message'))
+                            @if(Session::has('error_message'))
                                 <p class="text-center alert {{ Session::get('alert-class', 'alert-danger') }}">
                                     <i class="fa fa-times-circle"></i> {{ Session::get('failed_message') }}
                                 </p>

@@ -11,6 +11,7 @@ use App\Shop;
 use App\Variant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -55,7 +56,7 @@ class ProductController extends Controller
         $categories = Category::whereIn('shop_id', $shops_id)->get();
 
         $variant = Variant::where('user_id', auth()->user()->id)->with('variantProperties')->orderBy('id')->get();
-
+//        dd($product_details);
         return view('admin_panel.product.add_product_form')
             ->with("title", "Howkar Technology | Add Product")
             ->with('product_details', $product_details)
@@ -166,7 +167,7 @@ class ProductController extends Controller
 
         //product validation
         $validator = Validator::make($request->all(), [
-            'product_name' => 'required|max:30',
+            'product_name' => 'required|max:15',
             'product_code' => 'required|unique:products,code|max:15',
             'product_stock' => 'required|integer|max:100000',
             'product_uom' => 'required|string|max:10',
@@ -194,15 +195,10 @@ class ProductController extends Controller
         DB::beginTransaction();
         try {
             $shop_name = str_replace(' ', '_', explode('_', $request->shop_id_name)[1]);
-            if ($request->parent_id) {
-                $product_name = explode('_', $request->product_name)[1];
-            } else {
-                $product_name = $request->product_name;
-            }
 
             if (!$request->parent_id) {
                 $product = new Product();
-                $product->name = $product_name;
+                $product->name = $request->product_name;
                 $product->code = $request->product_code;
                 $product->stock = $request->product_stock;
                 $product->uom = $request->product_uom;
@@ -230,7 +226,7 @@ class ProductController extends Controller
             }
 
             $product = new Product();
-            $product->name = $product_name;
+            $product->name = $request->product_name;
             $product->code = $request->product_code;
             $product->stock = $request->product_stock;
             $product->uom = $request->product_uom;
@@ -333,6 +329,7 @@ class ProductController extends Controller
 
     public function updateProduct(Request $request)
     {
+        //dd($request->all());
         $rules = array(
             'product_name' => 'required|max:30',
             'product_stock' => 'required|integer|max:100000',
@@ -340,16 +337,14 @@ class ProductController extends Controller
             'product_price' => 'required|numeric|between:0,500000',
             'shop_id_name' => 'required',
             'category_ids' => 'required',
-            'product_image_1' => 'file|max:1024',
-            'product_image_1.*' => 'mimes:jpeg,png,jpg',
-            'product_image_2' => 'file|max:1024',
-            'product_image_2.*' => 'mimes:jpeg,png,jpg',
         );
-        if ($request->product_code !== $request->old_product_code) {
+
+        if ($request->product_code != $request->old_product_code) {
             $rules['product_code'] = 'required|unique:products,code|max:15';
         } else {
             $rules['product_code'] = 'required|max:15';
         }
+
         //product validation
         $validator = Validator::make($request->all(), $rules);
 
@@ -372,19 +367,17 @@ class ProductController extends Controller
             $product->shop_id = explode('_', $request->shop_id_name)[0];
             $product->save();
 
-            //product image save
-            if ($request->hasfile('product_image_1')) {
-                $this->updateProductImage($request, 'product_image_1', 1, $shop_name);
-            }
-            if ($request->hasfile('product_image_2')) {
-                $this->updateProductImage($request, 'product_image_2', 2, $shop_name);
-            }
+            $this->updateProductImage($request, $request->product_id);
+
+            $this->storeProductImage($request, $request->product_id, $shop_name);
 
             DB::commit();
             Session::flash('success_message', 'Product Updated Successfully');
-        } catch (\Exception $e) {
+        } catch
+        (\Exception $e) {
             DB::rollBack();
             Session::flash('error_message', 'Something went wrong! Please Try again');
+            dd($e);
         }
 
         return redirect(route('product.manage.view'));
@@ -407,29 +400,15 @@ class ProductController extends Controller
         }
     }
 
-    public function updateProductImage($request, $image, $image_no, $shop_name)
+    public function updateProductImage($request, $product_id)
     {
-        $file = $request->file($image);
-        $image_name = $request->product_code . '_' . $image_no . '.' . $file->extension();
-        $file->move(public_path() . '/images/products/' . $shop_name . '/', $image_name);
-
-        $image_id = 0;
-        if ($image_no === 1) {
-            $image_id = $request->image_1_id;
-        } else {
-            $image_id = $request->image_2_id;
+        $product_images = ProductImage::where('pid', $product_id)->whereNotIn('id', $request->old_images)->get();
+        foreach ($product_images as $image) {
+            if (File::exists(public_path() . '/images/products/' . $image->image_url)) {
+                File::delete(public_path() . '/images/products/' . $image->image_url);
+            }
         }
-
-        $productImage = ProductImage::where('id', $image_id)->first();
-        if ($productImage) {
-            $productImage->image_url = $shop_name . '/' . $image_name;
-            $productImage->save();
-        } else {
-            $productImage = new ProductImage();
-            $productImage->pid = $request->product_id;
-            $productImage->image_url = $shop_name . '/' . $image_name;
-            $productImage->save();
-        }
+        ProductImage::where('pid', $product_id)->whereNotIn('id', $request->old_images)->delete();
     }
 
     public function viewAddBotProducts()
