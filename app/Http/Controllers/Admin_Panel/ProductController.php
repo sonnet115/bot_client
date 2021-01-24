@@ -352,6 +352,19 @@ class ProductController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+        $variants = Variant::select('id')->where('user_id', auth()->user()->id)->get();
+        $variant_ids = array();
+
+        foreach ($variants as $variant) {
+            $selected_variant_property = $request->input($variant->id);
+
+            if ($selected_variant_property != '') {
+                array_push($variant_ids, $selected_variant_property);
+            }
+        }
+        $variant_combination_ids = implode('_', $variant_ids);
+
+
         DB::beginTransaction();
         try {
             $shop_name = str_replace(' ', '_', explode('_', $request->shop_id_name)[1]);
@@ -364,8 +377,33 @@ class ProductController extends Controller
             $product->price = $request->product_price;
             $product->state = $request->product_state;
             $product->category_id = $request->category_ids;
+            if($variant_combination_ids){
+                $product->variant_combination_ids = $variant_combination_ids;
+            }
             $product->shop_id = explode('_', $request->shop_id_name)[0];
             $product->save();
+
+            foreach ($variants as $variant) {
+                $selected_variant_property = $request->input($variant->id);
+                if ($selected_variant_property != '') {
+                    $products_variants = new ProductVariant();
+                    $products_variants->variant_id = $variant->id;
+                    $products_variants->variant_property_ids = $selected_variant_property;
+                    $products_variants->product_id = $request->parent_product_id;
+                    $products_variants->save();
+                }
+            }
+
+            foreach ($variants as $variant) {
+                $selected_variant_property = $request->input($variant->id);
+                if ($selected_variant_property != '') {
+                    $products_variants = new ProductVariant();
+                    $products_variants->variant_id = $variant->id;
+                    $products_variants->variant_property_ids = $selected_variant_property;
+                    $products_variants->product_id = $product->id;
+                    $products_variants->save();
+                }
+            }
 
             $this->updateProductImage($request, $request->product_id);
 

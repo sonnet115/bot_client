@@ -183,84 +183,87 @@
                                     @endif
                                 </div>
 
-                                <div class="form-check mb-25">
-                                    <label class="form-check-label">
-                                        <input style="width:25px; height: 25px" type="checkbox"
-                                               class="form-check-input mt-0" name="specification_checkbox"
-                                               id="specification_checkbox">
-                                        <span class="font-18 text-primary text-uppercase font-weight-900 ml-4">Product Specification</span>
-                                    </label>
-                                </div>
+                                @if($product_details != null)
+                                    @if($product_details->variant_combination_ids == null || $product_details->variant_combination_ids == "")
+                                        <div class="form-check mb-25">
+                                            <label class="form-check-label">
+                                                <input style="width:25px; height: 25px" type="checkbox"
+                                                       class="form-check-input mt-0" name="specification_checkbox"
+                                                       id="specification_checkbox">
+                                                <span class="font-18 text-primary text-uppercase font-weight-900 ml-4">Product Specification</span>
+                                            </label>
+                                        </div>
 
-                                <div id="specification_container">
-                                    @foreach($variants as $variant)
-                                        <div class="form-group">
-                                            <label class="control-label mb-10">{{$variant->name}}<span
-                                                    class="text-danger font-16">*</span></label>
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="icon-shuffle"></i></span>
+                                        <div id="specification_container">
+                                            @foreach($variants as $variant)
+                                                <div class="form-group">
+                                                    <label class="control-label mb-10">{{$variant->name}}<span
+                                                            class="text-danger font-16">*</span></label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text"><i class="icon-shuffle"></i></span>
+                                                        </div>
+                                                        <select class="form-control" required name="{{$variant->id}}">
+                                                            <option disabled selected>Select {{$variant->name}}</option>
+                                                            @foreach($variant->variantProperties as $property)
+                                                                @if($property->description != null)
+                                                                    <option
+                                                                        value="{{$property->id}}">{{$property->property_name}}
+                                                                        ({{$property->description}})
+                                                                    </option>
+                                                                @else
+                                                                    <option
+                                                                        value="{{$property->id}}">{{$property->property_name}}</option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <label for="" class="error text-danger"></label>
                                                 </div>
-                                                <select class="form-control" required name="{{$variant->id}}">
-                                                    <option disabled selected>Select {{$variant->name}}</option>
-                                                    @foreach($variant->variantProperties as $property)
-                                                        @if($property->description != null)
-                                                            <option
-                                                                value="{{$property->id}}">{{$property->property_name}}
-                                                                ({{$property->description}})
-                                                            </option>
-                                                        @else
-                                                            <option
-                                                                value="{{$property->id}}">{{$property->property_name}}</option>
-                                                        @endif
-                                                    @endforeach
-                                                </select>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                @else
+                                    <div class="form-check mb-25">
+                                        <label class="form-check-label">
+                                            <input style="width:25px; height: 25px" type="checkbox"
+                                                   class="form-check-input mt-0" name="specification_checkbox"
+                                                   id="specification_checkbox">
+                                            <span class="font-18 text-primary text-uppercase font-weight-900 ml-4">Product Specification</span>
+                                        </label>
+                                    </div>
+
+                                    <div id="specification_container">
+                                        @foreach($variants as $variant)
+                                            <div class="form-group">
+                                                <label class="control-label mb-10">{{$variant->name}}<span
+                                                        class="text-danger font-16">*</span></label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i
+                                                                class="icon-shuffle"></i></span>
+                                                    </div>
+                                                    <select class="form-control" required name="{{$variant->id}}">
+                                                        <option disabled selected>Select {{$variant->name}}</option>
+                                                        @foreach($variant->variantProperties as $property)
+                                                            @if($property->description != null)
+                                                                <option
+                                                                    value="{{$property->id}}">{{$property->property_name}}
+                                                                    ({{$property->description}})
+                                                                </option>
+                                                            @else
+                                                                <option
+                                                                    value="{{$property->id}}">{{$property->property_name}}</option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <label for="" class="error text-danger"></label>
                                             </div>
-                                            <label for="" class="error text-danger"></label>
-                                        </div>
-                                    @endforeach
-                                </div>
-
-                                {{--<label class="control-label mb-10">Product Images<span
-                                        class="text-danger font-16">*</span></label>
-                                <span class="text-muted font-12">[Max 1 MB | Upload at least 1 image]</span>
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <div>
-                                            <img
-                                                src="{{$product_details !== null ? asset("images/products")."/".$product_details->images[0]->image_url : asset("images/products/no.png")}}"
-                                                height="200" width="200" alt="N/A"
-                                                style="float: left" class="mb-2 product_images">
-                                            <a href="javascript:void(0)" class="btn-xs btn-danger remove_image_btn"
-                                               style="float:left;margin: 5px 0 0 -25px;display: none;padding: 1px 7px">X</a>
-                                        </div>
-
-                                        <input type="file" name="product_image_1" class="image_files"/>
-
-                                        <p class="text-danger font-14 image_error_message mb-3"></p>
-                                        @if($errors->has('product_image_1'))
-                                            <p class="text-danger font-14 mb-3">{{ $errors->first('product_image_1') }}</p>
-                                        @endif
+                                        @endforeach
                                     </div>
+                                @endif
 
-                                    <div class="col-sm-6">
-                                        <div>
-                                            <img
-                                                src="{{$product_details !== null ? count($product_details->images) > 1 ? asset("images/products")."/".$product_details->images[1]->image_url : asset("images/products/no.png") : asset("images/products/no.png")}}"
-                                                height="200" width="200" alt="N/A"
-                                                style="float: left" class="mb-2 product_images">
-                                            <a href="javascript:void(0)" class="btn-xs btn-danger remove_image_btn"
-                                               style="float:left;margin: 5px 0 0 -25px;display: none;padding: 1px 7px">X</a>
-                                        </div>
-
-                                        <input type="file" name="product_image_2" class="image_files"/>
-
-                                        <p class="text-danger font-14 image_error_message mb-3"></p>
-                                        @if($errors->has('product_image_2'))
-                                            <p class="text-danger font-14 mb-3">{{ $errors->first('product_image_2') }}</p>
-                                        @endif
-                                    </div>
-                                </div>--}}
 
                                 <label class="control-label mb-10">Product Images<span
                                         class="text-danger font-16">*</span></label>
@@ -313,6 +316,9 @@
                                 <input type="hidden" name="product_id"
                                        value="{{$product_details !== null ? $product_details->id : ""}}">
 
+                                <input type="hidden" name="parent_product_id"
+                                       value="{{$product_details !== null ? $product_details->parent_product_id : ""}}">
+
                                 <input type="hidden" name="old_product_code"
                                        value="{{$product_details !== null ? $product_details->code : ""}}">
                             </form>
@@ -349,7 +355,7 @@
 
             let item = {};
             item ["id"] = $(this).val().split('__')[0];
-            item ["src"] =$(this).val().split('__')[1];
+            item ["src"] = $(this).val().split('__')[1];
 
             preloaded_image.push(item);
         });
