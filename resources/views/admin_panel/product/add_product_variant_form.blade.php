@@ -29,7 +29,7 @@
                         <div class="col-sm">
                             <form
                                 action="{{$product_details != null ? route('product.update') : route('product.store')}}"
-                                method="post" novalidate enctype="multipart/form-data" id="order_form">
+                                method="post" enctype="multipart/form-data" id="order_form">
                                 @csrf
                                 <div class="form-group">
                                     <label class="control-label mb-10">Choose a Parent Product<span
@@ -48,7 +48,7 @@
                                             @else
                                                 @foreach($products as $product)
                                                     <option value="{{$product->id}}"
-                                                        {{old('parent_product ') == $product->id ? "selected" : ""}}>
+                                                        {{old('parent_product') == $product->id ? "selected" : ""}}>
                                                         {{$product->name}} ({{$product->shop->page_name}})
                                                     </option>
                                                 @endforeach
@@ -152,7 +152,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="control-label mb-10">Choose a shop<span
+                                    <label class="control-label mb-10">Shop<span
                                             class="text-danger font-16">*</span></label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -162,14 +162,14 @@
                                                placeholder="Enter Product Price" class="form-control"
                                                value="{{ $product_details !== null ? $product_details->price : old('shop_name')}}">
                                     </div>
-                                    <label for="product_price" class="error text-danger"></label>
+                                    <label for="shop_name" class="error text-danger"></label>
                                     @if($errors->has('shop_name'))
                                         <p class="text-danger font-14">{{ $errors->first('shop_name') }}</p>
                                     @endif
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="control-label mb-10">Choose Category<span
+                                    <label class="control-label mb-10"> Category<span
                                             class="text-danger font-16">*</span></label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
@@ -179,7 +179,7 @@
                                                placeholder="Enter Product Price" class="form-control"
                                                value="{{ $product_details !== null ? $product_details->price : old('category_name')}}">
                                     </div>
-                                    <label for="category_ids" class="error text-danger"></label>
+                                    <label for="category_name" class="error text-danger"></label>
                                     @if($errors->has('category_name'))
                                         <p class="text-danger font-14">{{ $errors->first('category_name') }}</p>
                                     @endif
@@ -194,7 +194,7 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text"><i class="icon-shuffle"></i></span>
                                                 </div>
-                                                <select class="form-control" required name="{{$variant->id}}">
+                                                <select class="form-control" name="{{$variant->id}}">
                                                     <option disabled selected>Select {{$variant->name}}</option>
                                                     @foreach($variant->variantProperties as $property)
                                                         @if($property->description != null)
@@ -246,8 +246,10 @@
                                 <input type="hidden" name="old_product_code"
                                        value="{{$product_details !== null ? $product_details->code : ""}}">
 
-                                <input type="text" name="shop_id_name" id="shop_id_name" value="{{old('shop_id_name')}}">
-                                <input type="text" name="category_ids" id="category_ids" value="{{old('category_ids')}}">
+                                <input type="text" name="shop_id_name" id="shop_id_name"
+                                       value="{{old('shop_id_name')}}">
+                                <input type="text" name="category_ids" id="category_ids"
+                                       value="{{old('category_ids')}}">
                                 <input type="text" name="parent_id" id="parent_id" value="{{old('parent_id')}}">
 
                                 <input type="hidden" name="image_1_id"
@@ -314,13 +316,16 @@
             });
             $('#parent_product').select2();
 
-            /*jQuery.validator.setDefaults({
+            jQuery.validator.setDefaults({
                 debug: true,
                 success: "valid"
             });
 
             $("#order_form").validate({
                 rules: {
+                    parent_product: {
+                        required: true
+                    },
                     product_name: {
                         required: true,
                         maxlength: 30
@@ -331,7 +336,8 @@
                     },
                     product_stock: {
                         max: 100000,
-                        digits: true
+                        digits: true,
+                        required: true
                     },
                     product_uom: {
                         required: true,
@@ -342,11 +348,17 @@
                         max: 500000,
                         number: true
                     },
-                    category_ids: {
+                    category_name: {
+                        required: true,
+                    },
+                    shop_name: {
                         required: true,
                     },
                 },
                 messages: {
+                    parent_product: {
+                        required: "Choose a parent product"
+                    },
                     product_name: {
                         required: "Name is required",
                         maxlength: "Max {0} Characters"
@@ -356,6 +368,7 @@
                         maxlength: "Max {0} Characters"
                     },
                     product_stock: {
+                        required: "Stock is required",
                         maxlength: "Max value {0}"
                     },
                     product_uom: {
@@ -366,14 +379,17 @@
                         required: "Price is required",
                         maxlength: "Max value {0}"
                     },
-                    category_ids: {
+                    category_name: {
                         required: "Category is required",
+                    },
+                    shop_name: {
+                        required: "Shop is required",
                     },
                 },
                 submitHandler: function (form) {
                     form.submit();
                 },
-            });*/
+            });
 
             $(".image_files").on('change', function () {
                 displayImage($(this));

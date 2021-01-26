@@ -329,7 +329,7 @@ class ProductController extends Controller
 
     public function updateProduct(Request $request)
     {
-        //dd($request->all());
+//        dd($request->all());
         $rules = array(
             'product_name' => 'required|max:30',
             'product_stock' => 'required|integer|max:100000',
@@ -377,7 +377,7 @@ class ProductController extends Controller
             $product->price = $request->product_price;
             $product->state = $request->product_state;
             $product->category_id = $request->category_ids;
-            if($variant_combination_ids){
+            if ($variant_combination_ids) {
                 $product->variant_combination_ids = $variant_combination_ids;
             }
             $product->shop_id = explode('_', $request->shop_id_name)[0];
@@ -405,17 +405,14 @@ class ProductController extends Controller
                 }
             }
 
-            $this->updateProductImage($request, $request->product_id);
-
-            $this->storeProductImage($request, $request->product_id, $shop_name);
-
             DB::commit();
+            $this->deleteOldImages($request, $request->product_id);
+            $this->storeProductImage($request, $request->product_id, $shop_name);
             Session::flash('success_message', 'Product Updated Successfully');
         } catch
         (\Exception $e) {
             DB::rollBack();
             Session::flash('error_message', 'Something went wrong! Please Try again');
-            dd($e);
         }
 
         return redirect(route('product.manage.view'));
@@ -438,15 +435,17 @@ class ProductController extends Controller
         }
     }
 
-    public function updateProductImage($request, $product_id)
+    public function deleteOldImages($request, $product_id)
     {
-        $product_images = ProductImage::where('pid', $product_id)->whereNotIn('id', $request->old_images)->get();
-        foreach ($product_images as $image) {
-            if (File::exists(public_path() . '/images/products/' . $image->image_url)) {
-                File::delete(public_path() . '/images/products/' . $image->image_url);
+        if ($request->old_images) {
+            $product_images = ProductImage::where('pid', $product_id)->whereNotIn('id', $request->old_images)->get();
+            foreach ($product_images as $image) {
+                if (File::exists(public_path() . '/images/products/' . $image->image_url)) {
+                    File::delete(public_path() . '/images/products/' . $image->image_url);
+                }
             }
+            ProductImage::where('pid', $product_id)->whereNotIn('id', $request->old_images)->delete();
         }
-        ProductImage::where('pid', $product_id)->whereNotIn('id', $request->old_images)->delete();
     }
 
     public function viewAddBotProducts()

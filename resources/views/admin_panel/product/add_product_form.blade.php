@@ -139,14 +139,14 @@
                                                 @endforeach
                                             @else
                                                 @foreach($shop_list as $shop)
-                                                    <option value="{{$shop->id."_".$shop->page_name}} ">
+                                                    <option value="{{$shop->id."_".$shop->page_name}}">
                                                         {{$shop->page_name}}
                                                     </option>
                                                 @endforeach
                                             @endif
                                         </select>
                                     </div>
-                                    <label for="product_price" class="error text-danger"></label>
+                                    <label for="shop_id" class="error text-danger"></label>
                                     @if($errors->has('shop_id_name'))
                                         <p class="text-danger font-14">{{ $errors->first('shop_id_name') }}</p>
                                     @endif
@@ -203,7 +203,7 @@
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text"><i class="icon-shuffle"></i></span>
                                                         </div>
-                                                        <select class="form-control" required name="{{$variant->id}}">
+                                                        <select class="form-control" name="{{$variant->id}}">
                                                             <option disabled selected>Select {{$variant->name}}</option>
                                                             @foreach($variant->variantProperties as $property)
                                                                 @if($property->description != null)
@@ -243,7 +243,7 @@
                                                         <span class="input-group-text"><i
                                                                 class="icon-shuffle"></i></span>
                                                     </div>
-                                                    <select class="form-control" required name="{{$variant->id}}">
+                                                    <select class="form-control" name="{{$variant->id}}">
                                                         <option disabled selected>Select {{$variant->name}}</option>
                                                         @foreach($variant->variantProperties as $property)
                                                             @if($property->description != null)
@@ -263,7 +263,6 @@
                                         @endforeach
                                     </div>
                                 @endif
-
 
                                 <label class="control-label mb-10">Product Images<span
                                         class="text-danger font-16">*</span></label>
@@ -348,55 +347,8 @@
 
     <script type="text/javascript" src="{{asset("assets/admin_panel/dist/js/image-uploader.min.js")}}"></script>
     <script>
-        let preloaded_image = [];
-
-        $(".product_images").each(function () {
-            console.log($(this).val());
-
-            let item = {};
-            item ["id"] = $(this).val().split('__')[0];
-            item ["src"] = $(this).val().split('__')[1];
-
-            preloaded_image.push(item);
-        });
-
-        console.log(preloaded_image);
-
-        $('.input-images').imageUploader({
-            imagesInputName: 'product_images',
-            maxFiles: 5,
-            preloaded: preloaded_image,
-            preloadedInputName: 'old_images',
-        });
-
-        function readURL(input) {
-            for (let i = 0; i < input.files.length; i++) {
-                let reader = new FileReader();
-                reader.onload = function (e) {
-                    // $('#blah').attr('src', e.target.result);
-                    $("#image_preview_container").append(image(e.target.result));
-                }
-
-                reader.readAsDataURL(input.files[i]);
-            }
-        }
-
-        function image(imageUrl) {
-            return '<div class="col-6 col-sm-4 p-2">\n' +
-                '<img src="' + imageUrl + '" style="max-width: 100%">' +
-                '<a href="javascript:void(0)" class="btn-xs btn-danger remove_image_btn"' +
-                'style="right: 0;position: absolute;padding: 1px 7px;top:0px">X</a>' +
-                '</div>';
-        }
 
         $(document).ready(function () {
-            $('body').delegate('.product_images', 'change', function () {
-                console.log(this);
-                readURL(this);
-                $(this).hide();
-                let $newInput = $('<input type="file" name="product_images[]" class="product_images image_files" multiple/>');
-                $("#image_uploader_field").append($newInput);
-            });
 
             $("#specification_checkbox").on('click', function () {
                 if (this.checked) {
@@ -410,7 +362,7 @@
 
             $('#product_state').select2();
 
-            /*jQuery.validator.setDefaults({
+           /* jQuery.validator.setDefaults({
                 debug: true,
                 success: "valid"
             });
@@ -427,7 +379,8 @@
                     },
                     product_stock: {
                         max: 100000,
-                        digits: true
+                        digits: true,
+                        required: true
                     },
                     product_uom: {
                         required: true,
@@ -441,6 +394,10 @@
                     category_ids: {
                         required: true,
                     },
+
+                    shop_id_name: {
+                        required: true,
+                    },
                 },
                 messages: {
                     product_name: {
@@ -452,6 +409,7 @@
                         maxlength: "Max {0} Characters"
                     },
                     product_stock: {
+                        required: "Stock is required",
                         maxlength: "Max value {0}"
                     },
                     product_uom: {
@@ -465,15 +423,14 @@
                     category_ids: {
                         required: "Category is required",
                     },
+                    shop_id_name: {
+                        required: "Shop is required",
+                    },
                 },
                 submitHandler: function (form) {
                     form.submit();
                 },
             });*/
-
-            $(".image_files").on('change', function () {
-                displayImage($(this));
-            });
 
             $("#shop_id").on('change', function () {
                 $(".preloader-it").css('opacity', .5).show();
@@ -495,29 +452,26 @@
                 });
             });
 
-            $("body").delegate(".remove_image_btn", "click", function () {
-                console.log($('.product_images'));
-                $(this).parent().remove();
+            let preloaded_image = [];
+
+            $(".product_images").each(function () {
+                console.log($(this).val());
+
+                let item = {};
+                item ["id"] = $(this).val().split('__')[0];
+                item ["src"] = $(this).val().split('__')[1];
+
+                preloaded_image.push(item);
             });
 
-            function displayImage(input_object) {
-                let input_field = input_object[0];
-                let image_file = input_field.files[0];
-                let file_type = image_file["type"];
-                let valid_image_types = ["image/jpg", "image/jpeg", "image/png"];
+            console.log(preloaded_image);
 
-                if (input_field.files && image_file && $.inArray(file_type, valid_image_types) > 0) {
-                    let reader = new FileReader();
-                    reader.onload = function (e) {
-                        input_object.parent().find('.product_images').attr('src', e.target.result);
-                        input_object.parent().find('.remove_image_btn').show();
-                        input_object.parent().find('.image_error_message').html('');
-                    };
-                    reader.readAsDataURL(input_field.files[0]); // convert to base64 string
-                } else {
-                    input_object.parent().find('.image_error_message').html('Invalid Image! Only png, jpg, jpeg allowed');
-                }
-            }
+            $('.input-images').imageUploader({
+                imagesInputName: 'product_images',
+                maxFiles: 5,
+                preloaded: preloaded_image,
+                preloadedInputName: 'old_images',
+            });
         });
     </script>
 @endsection
